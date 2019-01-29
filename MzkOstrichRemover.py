@@ -13,14 +13,18 @@ from mutagen.mp3 import MP3, BitrateMode
 
 
 global scriptVersion
+scriptVersion = '0.6'
+
 global verbose
 global oprhans
+global debug
+verbose = False
+orphans = False
+debug = False
+
 global fileCounter
 global errorCounter
 global orphanCounter
-scriptVersion = '0.5'
-verbose = False
-orphans = False
 fileCounter = 0
 errorCounter = 0
 orphanCounter = 0
@@ -70,27 +74,24 @@ class FolderInfo:
 # Script main frame
 def main():
     global verbose
-    userPath = ''
-    folderInfo = ''
+    global orphans
+    global debug
     printCredentials()
     if len(sys.argv) == 2:
-        # Usr want to display the comand usage
-        if sys.argv[1] == '-h' or sys.argv[1] == '--help':
+        scriptOptions = list(sys.argv[1])
+        if '-' in scriptOptions and 'h' in scriptOptions: # Usr want to display the comand usage
             printHelp()
         else:
-            userPath = sys.argv[1]
-            if userPath.endswith('/'):
-                userPath = userPath[:-1]
-            folderInfo = computeRootFolderInfo(userPath)
-            crawlFolders(userPath, folderInfo)
+            crawlFolders(os.path.normpath(sys.argv[1]), computeRootFolderInfo(os.path.normpath(sys.argv[1])))
     elif len(sys.argv) == 3: # Two arguments
-        if sys.argv[1] == '-v' or sys.argv[1] == '--verbose':
+        scriptOptions = list(sys.argv[1])
+        if 'v' in scriptOptions:
             verbose = True
-            userPath = sys.argv[2]
-            if userPath.endswith('/'):
-                userPath = userPath[:-1]
-        folderInfo = computeRootFolderInfo(userPath)
-        crawlFolders(userPath, folderInfo)
+        if 'o' in scriptOptions:
+            orphans = True
+        if 'd' in scriptOptions:
+            debug = True
+        crawlFolders(os.path.normpath(sys.argv[2]), computeRootFolderInfo(os.path.normpath(sys.argv[2])))
     else:
         print('No argument provided')
 
@@ -103,65 +104,59 @@ def crawlFolders(folder, folderInfo):
     global fileCounter
     step = 10
     percentage = step
-    previousLetter = 'A'
+    previousLetter = '1'
     print('  Folder crawling')
     print('> Crawling files in folder {} and all its sub-directories'.format(folder))
     print('> Folder analysis in progress...\n')
     rootPathLength = len(folder.split(os.sep))
     for root, directories, files in sorted(os.walk(folder)): # Sort directories so they are handled in the alphabetical order
-        path = root.split(os.sep)
-        for x in range(rootPathLength - 1):
+        files = [f for f in files if not f[0] == '.'] # Ignore hidden files
+        directories[:] = [d for d in directories if not d[0] == '.'] # ignore hidden directories
+        path = root.split(os.sep) # Split root into an array of folders
+        preservedPath = list(path) # Mutagen needs an preserved path when using ID3() or FLAC()
+        for x in range(rootPathLength - 1): # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
             path.pop(0)
-        if len(path) == 2 and path[1] != '' and verbose == True: # Artists release name
+        if len(path) == 2 and path[1] != '' and verbose == True: # Artists release name -> Add in UI
             print('+ {}'.format(path[1]))
-        elif len(path) == 3 and path[2] != '' and verbose == True: # Album title
+        elif len(path) == 3 and path[2] != '' and verbose == True: # Album title -> Add in UI
             print('| + {}'.format(path[2]))
         for fileName in files:
-            if fileName[-3:] == 'mp3':
-                testMp3(fileName, path)
-            elif fileName[-4:] == 'flac':
-                testFlac(fileName, path)
+            testFile(fileName, preservedPath)
             fileCounter += 1
-        # Display a progress every 5% when not verbose
+        # Display a progress every step % when not verbose
         if verbose == False and (fileCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter) > percentage and percentage < 100:
             purity = round(100 - round((errorCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter), 2), 2)
-            orphanPercentage =  round((orphanCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter), 2)
-            print('> Crawling completion : {:02d} % -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage - round(step / 2), previousLetter, path[1][0], errorCounter, (folderInfo.flacCounter + folderInfo.mp3Counter), purity))
-            print('  including {} orphans ({} %)'.format(orphanCounter, orphanPercentage))
+            print('> Crawling completion : {:02d} % -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage - round(step / 2), previousLetter, path[len(path) - 1][0], errorCounter, (folderInfo.flacCounter + folderInfo.mp3Counter), purity))
+            if orphans == True:
+                orphanPercentage = round((orphanCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter), 2)
+                print('  including {} orphans ({} %)'.format(orphanCounter, orphanPercentage))
             percentage += step;
-            previousLetter = path[1][0]
+            previousLetter = path[len(path) - 1][0]
     purity = round(100 - round((errorCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter), 2), 2)
-    orphanPercentage =  round((orphanCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter), 2)
     print('\n> Folder analysis done!')
     print('> {} errors on {} tracks (purity : {} %)'.format(errorCounter, (folderInfo.flacCounter + folderInfo.mp3Counter), purity))
-    print('  including {} orphans ({} %) -- Orphans are files that aren\'t placed in an album folder (matching the track album tag)'.format(orphanCounter, orphanPercentage))
+    if orphans == True:
+        orphanPercentage = round((orphanCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter), 2)
+        print('  including {} orphans ({} %) -- Orphans are files that aren\'t placed in an album folder (matching the track album tag)'.format(orphanCounter, orphanPercentage))
 
 
 ##  --------  File tests function  --------  ##
 
 
 # Manages the MP3 files to test in the pipeline
-def testMp3(fileName, path):
-    filePath = ''
+def testFile(fileName, path):
+    filePath = audioTag = ''
     for folder in path: # Build the file path by concatenating folder in the file path
         filePath += '{}/'.format(folder)
     filePath += fileName # Append the filename at the end of the newly created path
-    audioTag = ID3(filePath) # Send the file path to the mutagen ID3 to get its tags
-    track = computeTrackFromMp3(audioTag) # Create the associated Track object
-    track.fileName = fileName
-    track.fileNameList = computeFileNameList(fileName) # Computes its fileNameList
-    track.folderNameList = computeFolderNameList(path) # Computes its folderNameList
-    testTrackObject(track, path) # Actual Track test
-
-
-# Manages the FLAC files to test in the pipeline
-def testFlac(fileName, path):
-    filePath = ''
-    for folder in path: # Build the file path by concatenating folder in the file path
-        filePath += '{}/'.format(folder)
-    filePath += fileName # Append the filename at the end of the newly created path
-    audioTag = FLAC(filePath) # Send the file path to the mutagen ID3 to get its tags
-    track = computeTrackFromFlac(audioTag) # Create the associated Track object
+    if fileName[-3:] == 'mp3' or fileName[-3:] == 'MP3': # Send the file path to the mutagen ID3 to get its tags and create the associated Track object
+        audioTag = ID3(filePath)
+        track = computeTrackFromMp3(audioTag)
+    elif fileName[-4:] == 'flac' or fileName[-4:] == 'FLAC':
+        audioTag = FLAC(filePath)
+        track = computeTrackFromFlac(audioTag)
+    else:
+        return
     track.fileName = fileName
     track.fileNameList = computeFileNameList(fileName) # Computes its fileNameList
     track.folderNameList = computeFolderNameList(path) # Computes its folderNameList
@@ -174,64 +169,65 @@ def testTrackObject(track, path):
     global orphanCounter
     if len(track.fileNameList) < 6: # TypeError : Invalid file name (doesn't comply with the naming convention)
         orphanCounter += 1
-        if orphans == True:
+        if orphans == True and debug == True:
             print('| KO - Filename -> The file \'{}\' isn\'t named following the naming convention. Use MzkOstrichRemover.py --help for informations'.format(track.fileName))
         return
-    #if verbose == True:
-        #print('| | + {}'.format(track.fileName))
-    # The track release artists in filename isn't matching the folder in which it sits
-    if track.fileNameList[0] != path[len(path) - 2]:
-        errorCounter += 1
-        if verbose == True:
-            print('| | | KO -- Release artists -> Filename release artists   : \'{}\''.format(track.fileNameList[0]))
-            print('| | |                          Foldername release artists : \'{}\''.format(path[len(path) - 2]))
-    if track.fileNameList[1] != track.year: # The track year tag doesn't match the filename year
-        errorCounter += 1
-        if verbose == True:
-            print('| | | KO ------------- Year -> Filename year              : \'{}\''.format(track.fileNameList[1]))
-            print('| | |                          Track year tag             : \'{}\''.format(track.year))
-    if track.folderNameList[0] != track.year: # The track year tag doesn't match the foldername year
-        errorCounter += 1
-        if verbose == True:
-            print('| | | KO ------------- Year -> Foldername year            : \'{}\''.format(track.folderNameList[0]))
-            print('| | |                          Track year tag             : \'{}\''.format(track.year))
-    if track.fileNameList[2] != track.albumTitle: # The album title tag doesn't match the filename album title
-        if areStringsMatchingWithFoldernameRestrictions(track.fileNameList[2], track.albumTitle) == False: # Strings do not match even w/ foldername restrictions
+    if debug == True:
+        print('| | + {}'.format(track.fileName))
+    # Track release artists and artist folder name doesn't match
+    testErrorForTopic(0, track.fileNameList[0], path[len(path) - 2], track)
+    # Track year and file name year doesn't match
+    testErrorForTopic(1, track.fileNameList[1], track.year, track)
+    # Track year and folder name year doesn't match
+    testErrorForTopic(2, track.folderNameList[0], track.year, track)
+    # Track album and file name album doesn't match
+    testErrorForTopic(3, track.fileNameList[2], track.albumTitle, track)
+    # Track album and folder name album doesn't match
+    testErrorForTopic(4, track.folderNameList[1], track.albumTitle, track)
+    # Track disc+track number and file name disc+track number doesn't match
+    testErrorForTopic(5, track.fileNameList[3], '{}{:02d}'.format(track.discNumber, int(track.trackNumber)), track)
+    # Track artists and file name artists doesn't match
+    testErrorForTopic(6, track.fileNameList[4], track.artists, track)
+    # Track title and file name title doesn't match  (handle both MP3 and FLAC files)
+    if track.fileNameList[5][-3:] == 'mp3' or track.fileNameList[5][-3:] == 'MP3':
+        testErrorForTopic(7, track.fileNameList[5][:-4], track.title, track)
+    elif track.fileNameList[5][-4:] == 'flac' or track.fileNameList[5][-4:] == '.FLAC':
+        testErrorForTopic(7, track.fileNameList[5][:-5], track.title, track)
+    #if not track.fileNameList[5][:-5].istitle():
+    #    print(track.fileNameList[5][:-5])
+    #    errorCounter += 1
+
+# Tests a Track on a given topic using an error code as documented in this function
+def testErrorForTopic(errorCode, string1, string2, track):
+    # errorCode values :
+    # 0 : Track release artists and artist folder name doesn't match
+    # 1 : Track year and file name year doesn't match
+    # 2 : Track year and folder name year doesn't match
+    # 3 : Track album and file name album doesn't match
+    # 4 : Track album and folder name album doesn't match
+    # 5 : Track disc+track number and file name disc+track number doesn't match
+    # 6 : Track artists and file name artists doesn't match
+    # 7 : Track title and file name title doesn't match
+    if string1 != string2: # The track title tag doesn't match the filename track title
+        if areStringsMatchingWithFoldernameRestrictions(string1, string2) == False: # Strings do not match even w/ foldername restrictions
+            # There is an error for the given topics, errorCode and strings
+            global errorCounter
             errorCounter += 1
-            if verbose == True:
-                print('| | | KO ------------ Album -> Filename album title       : \'{}\''.format(track.fileNameList[2]))
-                print('| | |                          Track album title tag      : \'{}\''.format(track.albumTitle))
-    if track.folderNameList[1] != track.albumTitle: # The album title tag doesn't match the foldername album title
-        if areStringsMatchingWithFoldernameRestrictions(track.folderNameList[1], track.albumTitle) == False: # Strings do not match even w/ foldername restrictions
-            errorCounter += 1
-            if verbose == True:
-                print('| | | KO ------------ Album -> Foldername album title     : \'{}\''.format(track.folderNameList[1]))
-                print('| | |                          Track album title tag      : \'{}\''.format(track.albumTitle))
-    if track.fileNameList[3] != '{}{:02d}'.format(track.discNumber, int(track.trackNumber)): # The Disc/TrackNumber tag doesn't match the filename Disc/TrackNumber
-        errorCounter += 1
-        if verbose == True:
-            print('| | | KO - Disc/TrackNumber -> Filename Disc/Track        : \'{}\''.format(track.fileNameList[3]))
-            print('| | |                          Track Disc/Track tag       : \'{}{:02d}\''.format(track.discNumber, int(track.trackNumber)))
-    if track.fileNameList[4] != track.artists: # The artist tag doesn't match the filename artist
-        if areStringsMatchingWithFoldernameRestrictions(track.fileNameList[4], track.artists) == False: # Strings do not match even w/ foldername restrictions
-            errorCounter += 1
-            if verbose == True:
-                print('| | | KO ---------- Artists -> Filename artists           : \'{}\''.format(track.fileNameList[4]))
-                print('| | |                          Track artists tag          : \'{}\''.format(track.artists))
-    if track.fileNameList[5][:-4] == '.mp3' or track.fileNameList[5][:-4] == '.MP3':
-        if track.fileNameList[5][:-4] != track.title: # The track title tag doesn't match the filename track title
-            if areStringsMatchingWithFoldernameRestrictions(track.fileNameList[5][:-4], track.title) == False: # Strings do not match even w/ foldername restrictions
-                errorCounter += 1
-                if verbose == True:
-                    print('| | | KO ------------ Title -> Filename title             : \'{}\''.format(track.fileNameList[5][:-4]))
-                    print('| | |                          Track title tag            : \'{}\''.format(track.title))
-    elif track.fileNameList[5][:-5] == '.flac' or track.fileNameList[5][:-5] == '.FLAC':
-        if track.fileNameList[5][:-5] != track.title: # The track title tag doesn't match the filename track title
-            if areStringsMatchingWithFoldernameRestrictions(track.fileNameList[5][:-5], track.title) == False: # Strings do not match even w/ foldername restrictions
-                errorCounter += 1
-                if verbose == True:
-                    print('| | | KO ------------ Title -> Filename title             : \'{}\''.format(track.fileNameList[5][:-5]))
-                    print('| | |                          Track title tag            : \'{}\''.format(track.title))
+            topic = '                  '
+            if errorCode == 0:
+                topic = '-- Release artists'
+            elif errorCode == 1 or errorCode == 2:
+                topic = '------------- Year'
+            elif errorCode == 3 or errorCode == 4:
+                topic = '------------ Album'
+            elif errorCode == 5:
+                topic = '- Disc/TrackNumber'
+            elif errorCode == 6:
+                topic = '---------- Artists'
+            elif errorCode == 7:
+                topic = '------------ Title'
+            if verbose == True: # Only print errors if the script is launched in verbose mode
+                printTrackErrorInfo(topic, errorCode, string1, string2)
 
 
 ##  --------  Track computations function  --------  ##
@@ -347,7 +343,7 @@ def computeFileNameList(fileName):
     fileNameList = fileName.split(' - ')
     # Here we handle all specific cases (whene ' - ' is not a separator)
     if len(fileNameList) > 6:
-        if fileNameList[3] == 'Single': # When album is a single, we must re-join the album name and the 'Single' suffix
+        if fileNameList[3] == 'Single' or fileNameList[3] == 'ÉPILOGUE': # When album is a single, we must re-join the album name and the 'Single' suffix
             fileNameList[2:4] = [' - '.join(fileNameList[2:4])] # Re-join with a ' - ' separator
     return fileNameList
 
@@ -356,7 +352,7 @@ def computeFileNameList(fileName):
 def computeFolderNameList(path):
     # We also split the folder name to make a double check for Year and Album name
     folderNameList = path[len(path) - 1].split(' - ')
-    if len(folderNameList) > 2:
+    if len(folderNameList) == 3:
         if folderNameList[2] == 'Single': # When album is a single, we must re-join the album name and the 'Single' suffix
             folderNameList[1:3] = [' - '.join(folderNameList[1:3])] # Re-join with a ' - ' separator
     return folderNameList
@@ -378,9 +374,10 @@ def printCredentials():
 def printHelp():
     print('  Script usage')
     print('> python MzkOstrichRemover.py ./path/to/library    : Do a crawling on the given folder')
-    print('> python MzkOstrichRemover.py -v ./path/to/library : Do a crawling on the given folder in verbose mode (--verbose)')
-    print('> python MzkOstrichRemover.py -h                   : Displays the script help menu (--help)')
-    print('> python MzkOstrichRemover.py -v                   : Displays the script version (--version)\n')
+    print('> python MzkOstrichRemover.py -v ./path/to/library : Do a crawling on the given folder in verbose mode')
+    print('> python MzkOstrichRemover.py -o ./path/to/library : Do a crawling including the orphans tracks')
+    print('> python MzkOstrichRemover.py -d ./path/to/library : Do a crawling and display in console all the crawled filenames')
+    print('> python MzkOstrichRemover.py -h                   : Displays the script help menu')
 
 
 # Display the studied folder and its informations
@@ -394,6 +391,23 @@ def printRootFolderInfo(folderInfo):
     print('> FLAC : {} file(s) ({} %)\n> MP3  : {} file(s) ({} %)\n'.format(folderInfo.flacCounter, folderInfo.flacPercentage, folderInfo.mp3Counter, folderInfo.mp3Percentage))
     print('  Artworks informations')
     print('> PNG : {} file(s) ({} %)\n> JPG : {} file(s) ({} %)\n'.format(folderInfo.pngCounter, folderInfo.pngPercentage, folderInfo.jpgCounter, folderInfo.jpgPercentage))
+
+
+# Display the error message according to the topic and error code. It will display the two !matching values
+def printTrackErrorInfo(topic, errorCode, string1, string2):
+    if verbose == True: # Only print errors if the script is launch in verbose mode
+        location1 = location2 = '                   '
+        if errorCode == 0:
+            location1 = 'From Filename      '
+            location2 = 'From Foldername    '
+        elif errorCode == 2 or errorCode == 4:
+            location1 = 'From Foldername    '
+            location2 = 'From Track Metadata'
+        else:
+            location1 = 'From Filename      '
+            location2 = 'From Track Metadata'
+        print('| | | KO {} -> {} : \'{}\''.format(topic, location1, string1))
+        print('| | |                          {} : \'{}\''.format(location2, string2))
 
 
 ##  --------  Utils function  --------  ##
@@ -412,6 +426,14 @@ def areStringsMatchingWithFoldernameRestrictions(string1, string2):
     list1 = list(string1)
     list2 = list(string2)
     if len(list1) != len(list2):
+        if list1[0] == '.': # Check prefix dot
+            return True
+        if list1[0] == '.' and list1[1] == '.' and list1[2] == '.': # Check for three prefix dots
+            return True
+        if list1[len(list1) - 1] == '.': # Check if the trailing char isn't a dot
+            return True
+        if list1[len(list1) - 1] == '.' and list1[len(list1) - 2] == '.' and list1[len(list1) - 3] == '.': # Check for 3 trailing dots
+            return True
         if list2[0] == '.': # Check prefix dot
             return True
         if list2[0] == '.' and list2[1] == '.' and list2[2] == '.': # Check for three prefix dots
@@ -423,11 +445,13 @@ def areStringsMatchingWithFoldernameRestrictions(string1, string2):
         else:
             return False
     # Checking first that the differents char are bc of an illegal symbol
-    for x in range(0, len(list1) - 1): # TODO handle several special char in one string
+    for x in range(0, len(list1)): # TODO handle several special char in one string
         if list1[x] != list2[x]:
             if list2[x] == '/' and list1[x] == '-':
                 return True
             elif list2[x] == ':' and list1[x] == '-':
+                return True
+            elif list2[x] == '*' and list1[x] == '-':
                 return True
             elif list2[x] == '?' and list1[x] == '-':
                 return True
