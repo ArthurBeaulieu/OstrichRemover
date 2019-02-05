@@ -126,12 +126,12 @@ def crawlFolders(folder, folderInfo):
         # Display a progress every step % when not verbose
         if verbose == False and (fileCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter) > percentage and percentage < 100:
             purity = round(100 - round((errorCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter), 2), 2)
-            print('> Crawling completion : {:02d} % -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage - round(step / 2), previousLetter, path[len(path) - 1][0], errorCounter, (folderInfo.flacCounter + folderInfo.mp3Counter), purity))
+            print('> Crawling completion : {:02d} % -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage - round(step / 2), previousLetter, path[1][0], errorCounter, (folderInfo.flacCounter + folderInfo.mp3Counter), purity))
             if orphans == True:
                 orphanPercentage = round((orphanCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter), 2)
                 print('  including {} orphans ({} %)'.format(orphanCounter, orphanPercentage))
             percentage += step;
-            previousLetter = path[len(path) - 1][0]
+            previousLetter = path[1][0] # Path 1 is the Artists name
     purity = round(100 - round((errorCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter), 2), 2)
     print('\n> Folder analysis done!')
     print('> {} errors on {} tracks (purity : {} %)'.format(errorCounter, (folderInfo.flacCounter + folderInfo.mp3Counter), purity))
@@ -197,6 +197,7 @@ def testTrackObject(track, path):
     #    print(track.fileNameList[5][:-5])
     #    errorCounter += 1
 
+
 # Tests a Track on a given topic using an error code as documented in this function
 def testErrorForTopic(errorCode, string1, string2, track):
     # errorCode values :
@@ -212,7 +213,6 @@ def testErrorForTopic(errorCode, string1, string2, track):
         if areStringsMatchingWithFoldernameRestrictions(string1, string2) == False: # Strings do not match even w/ foldername restrictions
             # There is an error for the given topics, errorCode and strings
             global errorCounter
-            errorCounter += 1
             topic = '                  '
             if errorCode == 0:
                 topic = '-- Release artists'
@@ -224,10 +224,15 @@ def testErrorForTopic(errorCode, string1, string2, track):
                 topic = '- Disc/TrackNumber'
             elif errorCode == 6:
                 topic = '---------- Artists'
+                remixerName = getRemixerName(string2, track)
+                if remixerName != 'NOT_A_REMIX' and remixerName != string2:
+                    errorCounter += 1
+                    printTrackErrorInfo(topic, errorCode, remixerName, string2)
+                return # Track is a remix and is properly named
             elif errorCode == 7:
                 topic = '------------ Title'
-            if verbose == True: # Only print errors if the script is launched in verbose mode
-                printTrackErrorInfo(topic, errorCode, string1, string2)
+            errorCounter += 1
+            printTrackErrorInfo(topic, errorCode, string1, string2)
 
 
 ##  --------  Track computations function  --------  ##
@@ -449,6 +454,8 @@ def areStringsMatchingWithFoldernameRestrictions(string1, string2):
         if list1[x] != list2[x]:
             if list2[x] == '/' and list1[x] == '-':
                 return True
+            elif list2[x] == '\\' and list1[x] == '-':
+                return True
             elif list2[x] == ':' and list1[x] == '-':
                 return True
             elif list2[x] == '*' and list1[x] == '-':
@@ -463,6 +470,12 @@ def areStringsMatchingWithFoldernameRestrictions(string1, string2):
                 return True
     return False
 
+
+def getRemixerName(trackTitle, track):
+    remixerName = track.fileName[track.fileName.rfind("(", 0, len(track.fileName))+1:track.fileName.find(" Remix)")]
+    if remixerName == trackTitle:
+        return remixerName
+    return 'NOT_A_REMIX'
 
 ##  --------  Script execution zone  --------  ##
 
