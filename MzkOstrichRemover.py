@@ -13,7 +13,7 @@ from mutagen.mp3 import MP3, BitrateMode
 
 
 global scriptVersion
-scriptVersion = '0.6'
+scriptVersion = '0.7'
 
 global verbose
 global oprhans
@@ -358,7 +358,7 @@ def computeFolderNameList(path):
     # We also split the folder name to make a double check for Year and Album name
     folderNameList = path[len(path) - 1].split(' - ')
     if len(folderNameList) == 3:
-        if folderNameList[2] == 'Single': # When album is a single, we must re-join the album name and the 'Single' suffix
+        if folderNameList[2] == 'Single' or folderNameList[2] == 'ÉPILOGUE': # When album is a single, we must re-join the album name and the 'Single' suffix
             folderNameList[1:3] = [' - '.join(folderNameList[1:3])] # Re-join with a ' - ' separator
     return folderNameList
 
@@ -450,32 +450,24 @@ def areStringsMatchingWithFoldernameRestrictions(string1, string2):
         else:
             return False
     # Checking first that the differents char are bc of an illegal symbol
-    for x in range(0, len(list1)): # TODO handle several special char in one string
+    forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|']
+    for x in range(0, len(list1)):
         if list1[x] != list2[x]:
-            if list2[x] == '/' and list1[x] == '-':
-                return True
-            elif list2[x] == '\\' and list1[x] == '-':
-                return True
-            elif list2[x] == ':' and list1[x] == '-':
-                return True
-            elif list2[x] == '*' and list1[x] == '-':
-                return True
-            elif list2[x] == '?' and list1[x] == '-':
-                return True
-            elif list2[x] == '<' and list1[x] == '-':
-                return True
-            elif list2[x] == '>' and list1[x] == '-':
-                return True
-            elif list2[x] == ';' and list1[x] == ',':
-                return True
-    return False
+            if list1[x] == '-': # Forbidden char must have been replaced with a -, return False otherwise (char are differents for no valuable reasons)
+                if list2[x] not in forbiddenChars:
+                    return False
+            else:
+                return False
+    return True
 
 
+# Extract the track remix artist name from the track fileName
 def getRemixerName(trackTitle, track):
-    remixerName = track.fileName[track.fileName.rfind("(", 0, len(track.fileName))+1:track.fileName.find(" Remix)")]
+    remixerName = track.fileName[track.fileName.rfind('(', 0, len(track.fileName))+1:track.fileName.find(' Remix)')]
     if remixerName == trackTitle:
         return remixerName
     return 'NOT_A_REMIX'
+
 
 ##  --------  Script execution zone  --------  ##
 
