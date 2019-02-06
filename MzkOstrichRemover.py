@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# TODO utiliser moins de variable globale, mais faire des objets qui permettent au classe de communiquer
+# faire des enum pour logger dans un dict facilement els erreur var.ENUM -> la liste des erreur
 
 
 import os
@@ -8,6 +10,8 @@ from mutagen.flac import FLAC
 from mutagen.id3 import ID3, ID3NoHeaderError
 from mutagen.mp3 import MP3, BitrateMode
 
+from models.track import Track
+from models.folderInfo import FolderInfo
 
 ##  --------  Globals  --------  ##
 
@@ -28,45 +32,6 @@ global orphanCounter
 fileCounter = 0
 errorCounter = 0
 orphanCounter = 0
-
-
-##  --------  Internal class  --------  ##
-
-
-# A Track container class
-class Track:
-    def __init__(self):
-        self.title = ''
-        self.artists = ''
-        self.albumTitle = ''
-        self.year = ''
-        self.performers = ''
-        self.composers = ''
-        self.producer = ''
-        self.trackNumber = ''
-        self.trackTotal = ''
-        self.discNumber = ''
-        self.discTotal = ''
-        self.fileNameList = []
-        self.folderNameList = []
-        self.fileName = ''
-
-
-# The target folder info class
-class FolderInfo:
-    def __init__(self):
-        self.folder = ''
-        self.filesCounter = ''
-        self.foldersCounter = ''
-        self.folderSize = ''
-        self.flacCounter = ''
-        self.flacPercentage = ''
-        self.mp3Counter = ''
-        self.mp3Percentage = ''
-        self.pngCounter = ''
-        self.pngPercentage = ''
-        self.jpgCounter = ''
-        self.jpgPercentage = ''
 
 
 ##  --------  Main function  --------  ##
@@ -100,6 +65,7 @@ def main():
 ##  --------  Folder navigation function  --------  ##
 
 
+# TODO : mettre dans fileUtils
 # Will crawl the folder path given as an argument, and all its sub-directories
 def crawlFolders(folder, folderInfo):
     global fileCounter
@@ -116,7 +82,7 @@ def crawlFolders(folder, folderInfo):
         path = root.split(os.sep) # Split root into an array of folders
         preservedPath = list(path) # Mutagen needs an preserved path when using ID3() or FLAC()
         for x in range(rootPathLength - 1): # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
-            path.pop(0)
+            path.pop(0) 
         if len(path) == 2 and path[1] != '' and verbose == True: # Artists release name -> Add in UI
             print('+ {}'.format(path[1]))
         elif len(path) == 3 and path[2] != '' and verbose == True: # Album title -> Add in UI
@@ -143,7 +109,7 @@ def crawlFolders(folder, folderInfo):
 
 ##  --------  File tests function  --------  ##
 
-
+# TODO : Metttre dans fileUtils 
 # Manages the MP3 files to test in the pipeline
 def testFile(fileName, path):
     filePath = audioTag = ''
@@ -164,6 +130,7 @@ def testFile(fileName, path):
     testTrackObject(track, path) # Actual Track test
 
 
+# TODO : mettre la fonction dans track
 # Tests a Track object to check if it is matching the naming convention
 def testTrackObject(track, path):
     global errorCounter
@@ -192,7 +159,7 @@ def testTrackObject(track, path):
     # Track title and file name title doesn't match  (handle both MP3 and FLAC files)
     if track.fileNameList[5][-3:] == 'mp3' or track.fileNameList[5][-3:] == 'MP3':
         testErrorForTopic(7, track.fileNameList[5][:-4], track.title, track)
-    elif track.fileNameList[5][-4:] == 'flac' or track.fileNameList[5][-4:] == '.FLAC':
+    elif track.fileNameList[5][-4:] == 'flac' or track.fileNameList[5][-4:] == 'FLAC':
         testErrorForTopic(7, track.fileNameList[5][:-5], track.title, track)
     #if not track.fileNameList[5][:-5].istitle():
     #    print(track.fileNameList[5][:-5])
@@ -201,6 +168,7 @@ def testTrackObject(track, path):
 
 # Tests a Track on a given topic using an error code as documented in this function
 def testErrorForTopic(errorCode, string1, string2, track):
+    # TODO: utiliser l'enum
     # errorCode values :
     # 0 : Track release artists and artist folder name doesn't match
     # 1 : Track year and file name year doesn't match
@@ -238,7 +206,7 @@ def testErrorForTopic(errorCode, string1, string2, track):
 
 ##  --------  Track computations function  --------  ##
 
-
+# TODO : move to fileUtils
 # Reads the user given folder and store a few informations about it
 def computeRootFolderInfo(folder):
     folderInfo = FolderInfo()
@@ -284,7 +252,7 @@ def computeRootFolderInfo(folder):
     printRootFolderInfo(folderInfo)
     return folderInfo
 
-
+# TODO: déplacer la fonction dans models.track
 # Read the mp3 track ID3 tags and extract all interresting values into a Track object
 def computeTrackFromMp3(audioTag):
     track = Track()
@@ -318,7 +286,7 @@ def computeTrackFromMp3(audioTag):
             track.discTotal = -1
     return track
 
-
+# TODO: déplacer la fonction dans models.track
 # Read the flac track Vorbis tags and extract all interresting values into a Track object
 def computeTrackFromFlac(audioTag):
     track = Track()
@@ -328,8 +296,8 @@ def computeTrackFromFlac(audioTag):
         track.year = audioTag['DATE'][0]
     if 'TRACKNUMBER' in audioTag:
         track.trackNumber = audioTag['TRACKNUMBER'][0]
-    if 'ORGANIZATION' in audioTag:
-        track.producer = audioTag['ORGANIZATION'][0]
+    if 'PRODUCER' in audioTag:
+        track.producer = audioTag['PRODUCER'][0]
     if 'DISCNUMBER' in audioTag:
         track.discNumber = audioTag['DISCNUMBER'][0]
     if 'TOTALDISC' in audioTag:
@@ -347,6 +315,7 @@ def computeTrackFromFlac(audioTag):
     return track
 
 
+# TODO : faire un fileUtils avec des methode static 
 # Splits the filename into its components (%releaseArtists% - %year% - %albumTitle% - %discNumber%%trackNumber% - %artists% - %title%)
 def computeFileNameList(fileName):
     # We split the filename into its differents parts
@@ -358,6 +327,7 @@ def computeFileNameList(fileName):
     return fileNameList
 
 
+# TODO : faire un fileUtils avec des methode static
 # Splits the folderame into its components (%year% - %albumTitle%)
 def computeFolderNameList(path):
     # We also split the folder name to make a double check for Year and Album name
@@ -367,7 +337,7 @@ def computeFolderNameList(path):
             folderNameList[1:3] = [' - '.join(folderNameList[1:3])] # Re-join with a ' - ' separator
     return folderNameList
 
-
+# TODO : faire un printhelper qui s'apelle en static avec des objets en paramètre si besoin.
 ##  --------  UI function  --------  ##
 
 
@@ -422,7 +392,7 @@ def printTrackErrorInfo(topic, errorCode, string1, string2):
 
 ##  --------  Utils function  --------  ##
 
-
+# TODO : faire une class utils 
 # Converts a given number to a properly formatted file size
 def convertBytes(num):
     for i in ['bytes', 'KB', 'MB', 'GB', 'TB']:
@@ -430,11 +400,12 @@ def convertBytes(num):
             return '%3.2f %s' % (num, i)
         num /= 1024.0
 
-
+# TODO : déplacer dans fileUtils
 # Test if the character that do not match in string are forbidden on some OS. string1 is from the filename, string2 is from the tags
 def areStringsMatchingWithFoldernameRestrictions(string1, string2):
     list1 = list(string1)
     list2 = list(string2)
+    # TODO: Faire des fonctions pour la vérification des . et des ... et grouper les par liste
     if len(list1) != len(list2):
         if list1[0] == '.': # Check prefix dot
             return True
@@ -465,7 +436,7 @@ def areStringsMatchingWithFoldernameRestrictions(string1, string2):
                 return False
     return True
 
-
+# TODO : déplacer dans fileUtils
 # Extract the track remix artist name from the track fileName
 def getRemixerName(trackTitle, track):
     remixerName = track.fileName[track.fileName.rfind('(', 0, len(track.fileName))+1:track.fileName.find(' Remix)')]
