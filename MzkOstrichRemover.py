@@ -42,6 +42,7 @@ class Track:
         self.year = ''
         self.performers = ''
         self.composers = ''
+        self.producer = ''
         self.trackNumber = ''
         self.trackTotal = ''
         self.discNumber = ''
@@ -295,6 +296,8 @@ def computeTrackFromMp3(audioTag):
         track.albumTitle = audioTag['TALB'].text[0].rstrip()
     if 'TDRC' in audioTag and audioTag['TDRC'].text[0].get_text() != '':
         track.year = audioTag['TDRC'].text[0].get_text()[:4].rstrip()
+    if 'TPUB' in audioTag and audioTag['TPUB'].text[0] != '':
+        track.producer = audioTag['TPUB'].text[0].rstrip()
     if 'TCOM' in audioTag and audioTag['TCOM'].text[0] != '':
         track.composers = audioTag['TCOM'].text[0]
     if 'TOPE' in audioTag and audioTag['TOPE'].text[0] != '':
@@ -325,6 +328,8 @@ def computeTrackFromFlac(audioTag):
         track.year = audioTag['DATE'][0]
     if 'TRACKNUMBER' in audioTag:
         track.trackNumber = audioTag['TRACKNUMBER'][0]
+    if 'ORGANIZATION' in audioTag:
+        track.producer = audioTag['ORGANIZATION'][0]
     if 'DISCNUMBER' in audioTag:
         track.discNumber = audioTag['DISCNUMBER'][0]
     if 'TOTALDISC' in audioTag:
