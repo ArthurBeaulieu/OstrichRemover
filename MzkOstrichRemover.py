@@ -6,12 +6,15 @@
 import os
 import sys
 import json
-from mutagen.flac import FLAC
-from mutagen.id3 import ID3, ID3NoHeaderError
-from mutagen.mp3 import MP3, BitrateMode
 
+
+from mutagen.id3 import ID3
+from mutagen.mp3 import MP3
+from mutagen.flac import FLAC
 from models.track import Track
 from models.folderInfo import FolderInfo
+from utils.uiBuilder import printCredentials, printHelp, printRootFolderInfo, printTrackErrorInfo
+
 
 ##  --------  Globals  --------  ##
 
@@ -42,7 +45,7 @@ def main():
     global verbose
     global orphans
     global debug
-    printCredentials()
+    printCredentials(scriptVersion)
     if len(sys.argv) == 2:
         scriptOptions = list(sys.argv[1])
         if '-' in scriptOptions and 'h' in scriptOptions: # Usr want to display the comand usage
@@ -82,7 +85,7 @@ def crawlFolders(folder, folderInfo):
         path = root.split(os.sep) # Split root into an array of folders
         preservedPath = list(path) # Mutagen needs an preserved path when using ID3() or FLAC()
         for x in range(rootPathLength - 1): # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
-            path.pop(0) 
+            path.pop(0)
         if len(path) == 2 and path[1] != '' and verbose == True: # Artists release name -> Add in UI
             print('+ {}'.format(path[1]))
         elif len(path) == 3 and path[2] != '' and verbose == True: # Album title -> Add in UI
@@ -109,7 +112,7 @@ def crawlFolders(folder, folderInfo):
 
 ##  --------  File tests function  --------  ##
 
-# TODO : Metttre dans fileUtils 
+# TODO : Metttre dans fileUtils
 # Manages the MP3 files to test in the pipeline
 def testFile(fileName, path):
     filePath = audioTag = ''
@@ -117,16 +120,11 @@ def testFile(fileName, path):
         filePath += '{}/'.format(folder)
     filePath += fileName # Append the filename at the end of the newly created path
     if fileName[-3:] == 'mp3' or fileName[-3:] == 'MP3': # Send the file path to the mutagen ID3 to get its tags and create the associated Track object
-        audioTag = ID3(filePath)
-        track = computeTrackFromMp3(audioTag)
+        track = Track('MP3', path, fileName, ID3(filePath))
     elif fileName[-4:] == 'flac' or fileName[-4:] == 'FLAC':
-        audioTag = FLAC(filePath)
-        track = computeTrackFromFlac(audioTag)
+        track = Track('FLAC', path, fileName, FLAC(filePath))
     else:
         return
-    track.fileName = fileName
-    track.fileNameList = computeFileNameList(fileName) # Computes its fileNameList
-    track.folderNameList = computeFolderNameList(path) # Computes its folderNameList
     testTrackObject(track, path) # Actual Track test
 
 
@@ -193,15 +191,17 @@ def testErrorForTopic(errorCode, string1, string2, track):
                 topic = '- Disc/TrackNumber'
             elif errorCode == 6:
                 topic = '---------- Artists'
-                remixerName = getRemixerName(string2, track)
+                remixerName = extractRemixerNameFromTrackTitle(string2, track)
                 if remixerName != 'NOT_A_REMIX' and remixerName != string2:
                     errorCounter += 1
-                    printTrackErrorInfo(topic, errorCode, remixerName, string2)
+                    if verbose == True: # Only print errors if the script is launch in verbose mode
+                        printTrackErrorInfo(topic, errorCode, remixerName, string2)
                 return # Track is a remix and is properly named
             elif errorCode == 7:
                 topic = '------------ Title'
             errorCounter += 1
-            printTrackErrorInfo(topic, errorCode, string1, string2)
+            if verbose == True: # Only print errors if the script is launch in verbose mode
+                printTrackErrorInfo(topic, errorCode, string1, string2)
 
 
 ##  --------  Track computations function  --------  ##
@@ -252,153 +252,9 @@ def computeRootFolderInfo(folder):
     printRootFolderInfo(folderInfo)
     return folderInfo
 
-# TODO: déplacer la fonction dans models.track
-# Read the mp3 track ID3 tags and extract all interresting values into a Track object
-def computeTrackFromMp3(audioTag):
-    track = Track()
-    if 'TIT2' in audioTag and audioTag['TIT2'].text[0] != '':
-        track.title = audioTag['TIT2'].text[0].rstrip()
-    if 'TPE1' in audioTag:
-        track.artists = audioTag['TPE1'].text[0]
-    if 'TALB' in audioTag:
-        track.albumTitle = audioTag['TALB'].text[0].rstrip()
-    if 'TDRC' in audioTag and audioTag['TDRC'].text[0].get_text() != '':
-        track.year = audioTag['TDRC'].text[0].get_text()[:4].rstrip()
-    if 'TPUB' in audioTag and audioTag['TPUB'].text[0] != '':
-        track.producer = audioTag['TPUB'].text[0].rstrip()
-    if 'TCOM' in audioTag and audioTag['TCOM'].text[0] != '':
-        track.composers = audioTag['TCOM'].text[0]
-    if 'TOPE' in audioTag and audioTag['TOPE'].text[0] != '':
-        track.performers = audioTag['TOPE'].text[0].rstrip()
-    if 'TRCK' in audioTag and audioTag['TRCK'].text[0] != '':
-        if '/' in audioTag['TRCK'].text[0]:
-            tags = audioTag['TRCK'].text[0].rstrip().split('/')
-            track.trackNumber = tags[0]
-            track.trackTotal = tags[1]
-        else:
-            track.trackNumber = audioTag['TRCK'].text[0].rstrip()
-    if 'TPOS' in audioTag and audioTag['TPOS'].text[0] != '':
-        tags = audioTag['TPOS'].text[0].rstrip().split('/')
-        track.discNumber = tags[0]
-        if len(tags) > 1:
-            track.discTotal = tags[1]
-        else:
-            track.discTotal = -1
-    return track
-
-# TODO: déplacer la fonction dans models.track
-# Read the flac track Vorbis tags and extract all interresting values into a Track object
-def computeTrackFromFlac(audioTag):
-    track = Track()
-    if 'TITLE' in audioTag:
-        track.title = audioTag['TITLE'][0]
-    if 'DATE' in audioTag:
-        track.year = audioTag['DATE'][0]
-    if 'TRACKNUMBER' in audioTag:
-        track.trackNumber = audioTag['TRACKNUMBER'][0]
-    if 'PRODUCER' in audioTag:
-        track.producer = audioTag['PRODUCER'][0]
-    if 'DISCNUMBER' in audioTag:
-        track.discNumber = audioTag['DISCNUMBER'][0]
-    if 'TOTALDISC' in audioTag:
-        track.totalDisc = audioTag['TOTALDISC'][0]
-    if 'TOTALTRACK' in audioTag:
-        track.totalTrack = audioTag['TOTALTRACK'][0]
-    if 'COMPOSER' in audioTag:
-        track.composers = audioTag['COMPOSER'][0]
-    if 'PERFORMER' in audioTag:
-        track.performers = audioTag['PERFORMER'][0]
-    if 'ARTIST' in audioTag:
-        track.artists = audioTag['ARTIST'][0]
-    if 'ALBUM' in audioTag:
-        track.albumTitle = audioTag['ALBUM'][0]
-    return track
-
-
-# TODO : faire un fileUtils avec des methode static 
-# Splits the filename into its components (%releaseArtists% - %year% - %albumTitle% - %discNumber%%trackNumber% - %artists% - %title%)
-def computeFileNameList(fileName):
-    # We split the filename into its differents parts
-    fileNameList = fileName.split(' - ')
-    # Here we handle all specific cases (whene ' - ' is not a separator)
-    if len(fileNameList) > 6:
-        if fileNameList[3] == 'Single' or fileNameList[3] == 'ÉPILOGUE': # When album is a single, we must re-join the album name and the 'Single' suffix
-            fileNameList[2:4] = [' - '.join(fileNameList[2:4])] # Re-join with a ' - ' separator
-    return fileNameList
-
-
-# TODO : faire un fileUtils avec des methode static
-# Splits the folderame into its components (%year% - %albumTitle%)
-def computeFolderNameList(path):
-    # We also split the folder name to make a double check for Year and Album name
-    folderNameList = path[len(path) - 1].split(' - ')
-    if len(folderNameList) == 3:
-        if folderNameList[2] == 'Single' or folderNameList[2] == 'ÉPILOGUE': # When album is a single, we must re-join the album name and the 'Single' suffix
-            folderNameList[1:3] = [' - '.join(folderNameList[1:3])] # Re-join with a ' - ' separator
-    return folderNameList
-
-# TODO : faire un printhelper qui s'apelle en static avec des objets en paramètre si besoin.
-##  --------  UI function  --------  ##
-
-
-# Display script credentials
-def printCredentials():
-    print('##--------------------------------------##')
-    print('##                                      ##')
-    print('##  MzkOstrichRemover.py - version {}  ##'.format(scriptVersion))
-    print('##                                      ##')
-    print('##--------------------------------------##\n')
-
-
-# Display script 'man' page
-def printHelp():
-    print('  Script usage')
-    print('> python MzkOstrichRemover.py ./path/to/library    : Do a crawling on the given folder')
-    print('> python MzkOstrichRemover.py -v ./path/to/library : Do a crawling on the given folder in verbose mode')
-    print('> python MzkOstrichRemover.py -o ./path/to/library : Do a crawling including the orphans tracks')
-    print('> python MzkOstrichRemover.py -d ./path/to/library : Do a crawling and display in console all the crawled filenames')
-    print('> python MzkOstrichRemover.py -h                   : Displays the script help menu')
-
-
-# Display the studied folder and its informations
-def printRootFolderInfo(folderInfo):
-    print('  Files and folders information')
-    print('> Folder name  : {}'.format(folderInfo.folder))
-    print('> File count   : {}'.format(folderInfo.filesCounter))
-    print('> Folder count : {}'.format(folderInfo.foldersCounter))
-    print('> Folder size  : {}\n'.format(convertBytes(folderInfo.folderSize)))
-    print('  Audio files informations')
-    print('> FLAC : {} file(s) ({} %)\n> MP3  : {} file(s) ({} %)\n'.format(folderInfo.flacCounter, folderInfo.flacPercentage, folderInfo.mp3Counter, folderInfo.mp3Percentage))
-    print('  Artworks informations')
-    print('> PNG : {} file(s) ({} %)\n> JPG : {} file(s) ({} %)\n'.format(folderInfo.pngCounter, folderInfo.pngPercentage, folderInfo.jpgCounter, folderInfo.jpgPercentage))
-
-
-# Display the error message according to the topic and error code. It will display the two !matching values
-def printTrackErrorInfo(topic, errorCode, string1, string2):
-    if verbose == True: # Only print errors if the script is launch in verbose mode
-        location1 = location2 = '                   '
-        if errorCode == 0:
-            location1 = 'From Filename      '
-            location2 = 'From Foldername    '
-        elif errorCode == 2 or errorCode == 4:
-            location1 = 'From Foldername    '
-            location2 = 'From Track Metadata'
-        else:
-            location1 = 'From Filename      '
-            location2 = 'From Track Metadata'
-        print('| | | KO {} -> {} : \'{}\''.format(topic, location1, string1))
-        print('| | |                          {} : \'{}\''.format(location2, string2))
-
 
 ##  --------  Utils function  --------  ##
 
-# TODO : faire une class utils 
-# Converts a given number to a properly formatted file size
-def convertBytes(num):
-    for i in ['bytes', 'KB', 'MB', 'GB', 'TB']:
-        if num < 1024.0:
-            return '%3.2f %s' % (num, i)
-        num /= 1024.0
 
 # TODO : déplacer dans fileUtils
 # Test if the character that do not match in string are forbidden on some OS. string1 is from the filename, string2 is from the tags
@@ -438,11 +294,10 @@ def areStringsMatchingWithFoldernameRestrictions(string1, string2):
 
 # TODO : déplacer dans fileUtils
 # Extract the track remix artist name from the track fileName
-def getRemixerName(trackTitle, track):
-    remixerName = track.fileName[track.fileName.rfind('(', 0, len(track.fileName))+1:track.fileName.find(' Remix)')]
-    if remixerName == trackTitle:
-        return remixerName
-    return 'NOT_A_REMIX'
+def extractRemixerNameFromTrackTitle(trackTitle, track):
+    if track.fileName.find(' Remix)') != -1:
+        return track.fileName[track.fileName.rfind('(', 0, len(track.fileName))+1:track.fileName.find(' Remix)')]
+    return ''
 
 
 ##  --------  Script execution zone  --------  ##
