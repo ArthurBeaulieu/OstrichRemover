@@ -125,7 +125,6 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
         printTrackErrorInfo(errorCode, track.year, trackTester.album.year)
 
 
-
 # Display the error message according to the topic and error code. It will display the two !matching values
 def printTrackErrorInfo(errorCode, string1, string2):
     topic = getTopicStringFromErrorCode(errorCode)

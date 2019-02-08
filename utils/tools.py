@@ -34,9 +34,9 @@ def suffixThreeDots(charList):
         return False
 
 
-def computePurity(errorCounter, folderInfo):
-    totalTracks = (folderInfo.flacCounter + folderInfo.mp3Counter) * 17 # Enum length minus 1 (ErrorCode 17 doesn't concerns a track but an album)
-    return round(100 - round((errorCounter * 100) / totalTracks, 2), 2)
+def computePurity(errorCounter, tracksSample):
+    totalPossibleError = tracksSample * 18
+    return round(100 - round((errorCounter * 100) / totalPossibleError, 2), 2)
 
 
 def removeSpecialCharFromString(string):

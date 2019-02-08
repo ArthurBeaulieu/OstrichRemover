@@ -67,13 +67,13 @@ def crawlFolders(folder):
             albumTesters.append(albumTester)
             # Display a progress every step %
             if (scannedTracks * 100) / totalTracks > percentage and percentage < 100:
-                printCrawlingProgress(percentage - round(step / 2), previousLetter, path[1][0], 0, scannedTracks, computePurity(0, folderInfo))
+                printCrawlingProgress(percentage, previousLetter, path[1][0], errorCounter, scannedTracks, computePurity(errorCounter, scannedTracks))
                 percentage += step;
                 previousLetter = path[1][0] # Path 1 is the Artists name
                 #printOrphansProgress(0, folderInfo)
 
     printErroredTracksReport(albumTesters)
-    printEndCrawling(0, folderInfo.flacCounter + folderInfo.mp3Counter, computePurity(0, folderInfo));
+    printEndCrawling(0, folderInfo.flacCounter + folderInfo.mp3Counter, computePurity(errorCounter, scannedTracks));
     printOrphansProgress(0, folderInfo)
 
 
