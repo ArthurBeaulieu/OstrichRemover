@@ -114,7 +114,7 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     elif errorCode == 11: # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
         printTrackErrorInfo(errorCode, 'Here is the list of missing tags:', trackTester.missingTags)
     elif errorCode == 12: # ErrorCode 12 : Performer does not contains both the artist and the featuring artist
-        printTrackErrorInfo(errorCode, sorted(track.performers), sorted(track.composePerformerFromTitle()))
+        printTrackErrorInfo(errorCode, sorted(track.performers), sorted(track.composedPerformer))
     elif errorCode == 13: # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
         printTrackErrorInfo(errorCode, 'Here is the list of misordered tags:', trackTester.missorderedTag)
     elif errorCode == 14: # ErrorCode 14 : Computed album total track is not equal to the track total track tag
@@ -152,8 +152,8 @@ def printTrackErrorInfo(errorCode, string1, string2):
         location2 = 'From Track Tags     '
     # ErrorCode 08 : Filename artists doesn't match the track artist tag
     elif errorCode == 9:
-        location1 = 'From Filename      '
-        location2 = 'From Computed Remix'
+        location1 = 'From Filename       '
+        location2 = 'From Computed Remix '
     # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
     elif errorCode == 11:
         location1 = 'Missing Tags        '

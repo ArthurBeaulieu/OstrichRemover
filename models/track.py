@@ -13,6 +13,7 @@ class Track:
         self.albumTitle = ''
         self.year = ''
         self.performers = []
+        self.composedPerformer = []
         self.composers = ''
         self.producer = ''
         self.trackNumber = ''
@@ -112,10 +113,10 @@ class Track:
     def _computeFileNameList(self):
         # We split the filename into its differents parts, as mentioned in this method description
         self.fileNameList = self.fileName.split(' - ')
-        # TODO mk list of forbidden patterns
+        forbiddenPattern = ['Single', 'ÉPILOGUE']
         # Here we handle all specific cases (when ' - ' is not a separator)
         if len(self.fileNameList) > 6:
-            if self.fileNameList[3] == 'Single' or self.fileNameList[3] == 'ÉPILOGUE': # When album is a single, we must re-join the album name and the 'Single' suffix
+            if self.fileNameList[3] in forbiddenPattern: # When album is a single, we must re-join the album name and the 'Single' suffix
                 self.fileNameList[2:4] = [' - '.join(self.fileNameList[2:4])] # Re-join with a ' - ' separator
 
 
@@ -123,16 +124,22 @@ class Track:
     def _computeFolderNameList(self):
         # We also split the folder name to make a double check for Year and Album name
         self.folderNameList = self.pathList[len(self.pathList) - 1].split(' - ')
+        forbiddenPattern = ['Single', 'ÉPILOGUE']
+
         if len(self.folderNameList) == 3:
-            if self.folderNameList[2] == 'Single' or self.folderNameList[2] == 'ÉPILOGUE': # When album is a single, we must re-join the album name and the 'Single' suffix
+            if self.folderNameList[2] in forbiddenPattern: # When album is a single, we must re-join the album name and the 'Single' suffix
                 self.folderNameList[1:3] = [' - '.join(self.folderNameList[1:3])] # Re-join with a ' - ' separator
 
 
     # Extract the featured artist(s) name(s) from the track fileName
     def _computeFeaturing(self):
         if self.fileName.find('(feat.') != -1:
-            self.feat = self.fileName[self.fileName.rfind('(feat.', 0, len(self.fileName))+7:self.fileName.find(')')].split(', ') # +7 is to remove the `(feat. ` string from feat artist
-                        
+            startIndex = self.fileName.rfind('(feat.', 0, len(self.fileName))
+            self.feat = self.fileName[startIndex+7:self.fileName.find(')', startIndex)].split(', ') # +7 is to remove the `(feat. ` string from feat artist
+            if len(self.feat) != 1 and self.feat[0] == '':
+                self.composedPerformer = [*self.feat, *self.artists]
+                return
+        self.composedPerformer = self.artists
 
     # Extract the track remix artist name from the track fileName
     def _computeRemixer(self):
@@ -152,10 +159,3 @@ class Track:
             self.hasCover = True
         else:
             self.cover = False
-
-
-    def composePerformerFromTitle(self):
-        if len(self.feat) != 1 and self.feat[0] == '':
-            return [*self.feat, *self.artists]
-        else:
-            return self.artists

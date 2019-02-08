@@ -140,9 +140,8 @@ class TrackTester:
 
     def _testPerformerComposition(self):
         # If track has featured artists, we append them to the performer tmp string
-        recomposedPerformer = self.track.composePerformerFromTitle()
         # Sorted comparaison to only test value equality. The artists alphabetic order is tested elswhere
-        if len(self.track.performers) != len(recomposedPerformer) or sorted(self.track.performers) != sorted(recomposedPerformer):
+        if len(self.track.performers) != len(self.track.composedPerformer) or sorted(self.track.performers) != sorted(self.track.composedPerformer):
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INCONSISTENT_PERFORMER)
 
@@ -188,6 +187,7 @@ class TrackTester:
                 if self._areStringsMatchingWithFoldernameRestrictions(item1, item2) == False:
                     self.errorCounter += 1
                     self.errors.append(errorCode)
+                    return
 
 
     # Test if the character that do not match in string are forbidden on some OS. string1 is from the filename, string2 is from the tags
