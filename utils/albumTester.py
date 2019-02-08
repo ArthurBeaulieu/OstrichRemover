@@ -23,7 +23,7 @@ class AlbumTester:
 
     def _analyseAlbumInternals(self):
         for fileName in self.album.filesIterable:
-            if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-3:] == 'FLAC' or fileName[-3:] == 'flac':
+            if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-4:] == 'FLAC' or fileName[-4:] == 'flac':
                 self.album.trackTotal += 1
                 fileNameList = fileName.split(' - ')
                 if int(fileNameList[len(fileNameList) - 3][:-2]) > self.album.discTotal:

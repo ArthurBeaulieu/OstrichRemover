@@ -1,5 +1,5 @@
 from utils.errorEnum import ErrorEnum
-from utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots
+from utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray
 
 
 class TrackTester:
@@ -19,7 +19,7 @@ class TrackTester:
     def _testTrackObject(self):
         global orphanCounter
         if len(self.track.fileNameList) < 6: # TypeError : Invalid file name (doesn't comply with the naming convention)
-            # TODO handle incorrect list length
+            # TODO handle incorrect list length in ErrorEnum
             #orphanCounter += 1
             #if orphans == True and debug == True:
             #    print('| KO - Filename -> The file \'{}\' isn\'t named following the naming convention. Use MzkOstrichRemover.py --help for informations'.format(track.fileName))
@@ -85,25 +85,25 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_DISC_TRACK_VS_TRACK_DISC_TRACK)
         # ErrorCode 16 : Computed album yeas is not equal to the track year tag
-        if self.track.year == '' or int(self.track.year) != self.album.year:
+        if self.track.year == '' or self.track.year != self.album.year:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_YEAR_VS_TRACK_YEAR)
 
 
     def _testFilenameTrackArtist(self):
-        if len(self.track.remix) != 0:
+        if len(self.track.remix) == 0:
             # ErrorCode 08 : Filename artists doesn't match the track artist tag
-            self._testErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_REMIX_ARTIST, self.track.fileNameList[4], self.track.remix)
+            self._testArrayErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_ARTIST_TAG, self.track.fileNameList[4].split(', '), self.track.artists)
         else:
             # ErrorCode 09 : Title remix artist doesn't match the filename artist
-            self._testErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_ARTIST_TAG, self.track.fileNameList[4], self.track.artists)
+            self._testErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_REMIX_ARTIST, self.track.fileNameList[4], self.track.remix)
 
 
     def _testForMissingtags(self):
         if self.track.title == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Title')
-        if self.track.artists == '':
+        if len(self.track.artists) == 1 and self.track.artists[0] == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Artists')
         if self.track.albumTitle == '':
@@ -112,7 +112,7 @@ class TrackTester:
         if self.track.year == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Year')
-        if self.track.performers == '':
+        if len(self.track.performers) == 1 and self.track.performers[0] == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Performers')
         if self.track.composers == '':
@@ -139,26 +139,28 @@ class TrackTester:
 
 
     def _testPerformerComposition(self):
-        featuring = self.track.feat.split(', ')
-        artists = self.track.artists.split('; ')
-        performers = self.track.performers.split('; ')
-        recomposedPerformer = [*featuring, *artists]
-        if len(performers) != len(recomposedPerformer) or sorted(performers) != sorted(recomposedPerformer):
+        # If track has featured artists, we append them to the performer tmp string
+        recomposedPerformer = self.track.composePerformerFromTitle()
+        # Sorted comparaison to only test value equality. The artists alphabetic order is tested elswhere
+        if len(self.track.performers) != len(recomposedPerformer) or sorted(self.track.performers) != sorted(recomposedPerformer):
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INCONSISTENT_PERFORMER)
 
 
     def _testMissorderedTags(self):
-        if sorted(self.track.artists) != self.track.artists:
+        if sorted(removeSpecialCharFromArray(self.track.artists)) != removeSpecialCharFromArray(self.track.artists):
             self.missorderedTag.append('Artists')
             self.missorderedTagsCounter += 1
-        if sorted(self.track.performers) != self.track.performers:
+        if sorted(removeSpecialCharFromArray(self.track.artists)) != removeSpecialCharFromArray(self.track.fileNameList[4].split(', ')):
+            self.missorderedTag.append('Artists')
+            self.missorderedTagsCounter += 1
+        if sorted(removeSpecialCharFromArray(self.track.performers)) != removeSpecialCharFromArray(self.track.performers):
             self.missorderedTag.append('Performers')
             self.missorderedTagsCounter += 1
-        if sorted(self.track.performers) != self.track.performers:
+        if sorted(removeSpecialCharFromArray(self.track.feat)) != removeSpecialCharFromArray(self.track.feat):
             self.missorderedTag.append('Featuring')
             self.missorderedTagsCounter += 1
-        if sorted(self.track.performers) != self.track.performers:
+        if sorted(removeSpecialCharFromArray(self.track.remix)) != removeSpecialCharFromArray(self.track.remix):
             self.missorderedTag.append('Remixer')
             self.missorderedTagsCounter += 1
         if self.missorderedTagsCounter > 0:
@@ -172,6 +174,20 @@ class TrackTester:
             if self._areStringsMatchingWithFoldernameRestrictions(string1, string2) == False:
                 self.errorCounter += 1
                 self.errors.append(errorCode)
+
+
+    # Tests a Track on a given topic using an error code as documented in this function
+    def _testArrayErrorForErrorCode(self, errorCode, array1, array2):
+        if len(array1) != len(array2):
+            self.errorCounter += 1
+            self.errors.append(errorCode)
+            return
+
+        for item1, item2 in zip(array1, array2):
+            if item1 != item2:
+                if self._areStringsMatchingWithFoldernameRestrictions(item1, item2) == False:
+                    self.errorCounter += 1
+                    self.errors.append(errorCode)
 
 
     # Test if the character that do not match in string are forbidden on some OS. string1 is from the filename, string2 is from the tags

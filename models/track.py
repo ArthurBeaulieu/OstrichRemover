@@ -9,10 +9,10 @@ class Track:
     def __init__(self, fileType, pathList, fileName, audioTagPath):
         # ID3 tags
         self.title = ''
-        self.artists = ''
+        self.artists = []
         self.albumTitle = ''
         self.year = ''
-        self.performers = ''
+        self.performers = []
         self.composers = ''
         self.producer = ''
         self.trackNumber = ''
@@ -22,8 +22,8 @@ class Track:
         # Computed
         self.audioTagPath = audioTagPath
         self.audioTag = {}
-        self.feat = ''
-        self.remix = ''
+        self.feat = []
+        self.remix = []
         self.hasCover = False
         # Filesystem path and name as lists (separator is ` - `)
         self.pathList = pathList
@@ -36,7 +36,7 @@ class Track:
             self.audioTag = ID3(audioTagPath)
             self._fillFromMP3()
         elif fileType == 'FLAC':
-            self.audioTag = FLAC(audioTagPath)            
+            self.audioTag = FLAC(audioTagPath)
             self._fillFromFLAC()
         self._computeInternals()
 
@@ -46,7 +46,7 @@ class Track:
         if 'TIT2' in self.audioTag and self.audioTag['TIT2'].text[0] != '':
             self.title = self.audioTag['TIT2'].text[0].rstrip()
         if 'TPE1' in self.audioTag:
-            self.artists = self.audioTag['TPE1'].text[0]
+            self.artists.append(self.audioTag['TPE1'].text[0])
         if 'TALB' in self.audioTag:
             self.albumTitle = self.audioTag['TALB'].text[0].rstrip()
         if 'TDRC' in self.audioTag and self.audioTag['TDRC'].text[0].get_text() != '':
@@ -92,9 +92,9 @@ class Track:
         if 'COMPOSER' in self.audioTag:
             self.composers = self.audioTag['COMPOSER'][0]
         if 'PERFORMER' in self.audioTag:
-            self.performers = self.audioTag['PERFORMER'][0]
+            self.performers = self.audioTag['PERFORMER'][0].split('; ')
         if 'ARTIST' in self.audioTag:
-            self.artists = self.audioTag['ARTIST'][0]
+            self.artists = self.audioTag['ARTIST'][0].split('; ')
         if 'ALBUM' in self.audioTag:
             self.albumTitle = self.audioTag['ALBUM'][0]
 
@@ -131,13 +131,13 @@ class Track:
     # Extract the featured artist(s) name(s) from the track fileName
     def _computeFeaturing(self):
         if self.fileName.find('(feat.') != -1:
-            self.feat = self.fileName[self.fileName.rfind('(feat.', 0, len(self.fileName))+7:self.fileName.find(')')] # +7 is to remove the `(feat. ` string from feat artist
-
+            self.feat = self.fileName[self.fileName.rfind('(feat.', 0, len(self.fileName))+7:self.fileName.find(')')].split(', ') # +7 is to remove the `(feat. ` string from feat artist
+                        
 
     # Extract the track remix artist name from the track fileName
     def _computeRemixer(self):
         if self.fileName.find(' Remix)') != -1:
-            self.remix = self.fileName[self.fileName.rfind('(', 0, len(self.fileName))+1:self.fileName.find(' Remix)')] # +1 is to remove the opening parenthesis
+            self.remix = self.fileName[self.fileName.rfind('(', 0, len(self.fileName))+1:self.fileName.find(' Remix)')].split(', ') # +1 is to remove the opening parenthesis
 
 
     # Test the cover existence in the file
@@ -152,3 +152,10 @@ class Track:
             self.hasCover = True
         else:
             self.cover = False
+
+
+    def composePerformerFromTitle(self):
+        if len(self.feat) != 1 and self.feat[0] == '':
+            return [*self.feat, *self.artists]
+        else:
+            return self.artists

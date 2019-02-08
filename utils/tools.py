@@ -39,24 +39,24 @@ def computePurity(errorCounter, folderInfo):
     return round(100 - round((errorCounter * 100) / totalTracks, 2), 2)
 
 
-def getTopicStringFromErrorCode(errorCode):
-    topic = '                  '
-    if errorCode == 0:
-        topic = '--- Release artists'
-    elif errorCode == 1 or errorCode == 3 or errorCode == 4:
-        topic = '-------------- Year'
-    elif errorCode == 2 or errorCode == 5 or errorCode == 6:
-        topic = '------------- Album'
-    elif errorCode == 7:
-        topic = '- Disc/TrackNumber'
-    elif errorCode == 8 or errorCode == 9:
-        topic = '----------- Artists'
-    elif errorCode == 10:
-        topic = '------------- Title'
-    elif errorCode == 14:
-        topic = '- Album Total Track'
-    elif errorCode == 15:
-        topic = '-- Album Total Disc'
-    elif errorCode == 16:
-        topic = '-------- Album Year'
-    return topic
+def removeSpecialCharFromString(string):
+    # Checking first that the differents char are bc of an illegal symbol
+    forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|']
+    for x in range(0, len(string)):
+        if string[x] in forbiddenChars:
+            string[x] = '-'
+    return string
+
+
+def removeSpecialCharFromArray(array):
+    forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|']
+    output = []
+    for item in array:
+        string = ''
+        for x in range(0, len(item)):
+            if item[x] in forbiddenChars:
+                string += '-'
+            else:
+                string += item[x]
+        output.append(string)
+    return output
