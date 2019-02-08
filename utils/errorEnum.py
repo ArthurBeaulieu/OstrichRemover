@@ -15,7 +15,7 @@ class ErrorEnum(Enum):
     FILENAME_ALBUM_VS_ALBUM_FOLDERNAME = 2
 
   # Category 2 : Filesystem naming vs ID3 tags inconsistencies
-    # ErrorCode 03 : Filename year doesn't math the track year tag    
+    # ErrorCode 03 : Filename year doesn't math the track year tag
     FILENAME_YEAR_VS_YEAR_TAG = 3
 
     # ErrorCode 04 : Foldername year doesn't math the track year tag
@@ -49,16 +49,22 @@ class ErrorEnum(Enum):
     # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
     MISSORDERED_TAGS = 13
 
-  # Category 4 : Track tags coherence with album metrics   
+  # Category 4 : Track tags coherence with album metrics
     # ErrorCode 14 : Computed album total track is not equal to the track total track tag
     ALBUM_TOTAL_TRACK_VS_TRACK_TOTAL_TRACK = 14
-    
+
     # ErrorCode 15 : Computed album disc track is not equal to the track disc track tag
     ALBUM_DISC_TRACK_VS_TRACK_DISC_TRACK = 15
-    
-    # ErrorCode 16 : Computed album yeas is not equal to the track year tag
-    ALBUM_YEAR_VS_TRACK_YEAR = 16  
 
-  # Category 5 : Only concerns albums 
+    # ErrorCode 16 : Computed album yeas is not equal to the track year tag
+    ALBUM_YEAR_VS_TRACK_YEAR = 16
+
+  # Category 5 : Only concerns albums
     # ErrorCode 17 : Year is not the same on all physical files of the album
-    FILES_ALBUM_YEAR_NOT_EQUAL = 17            
+    FILES_ALBUM_YEAR_NOT_EQUAL = 17
+
+
+
+
+    # ErrorCode 18 : Performer does not contains both the artist and the featuring artist
+    INCONSISTENT_FILENAME = 18

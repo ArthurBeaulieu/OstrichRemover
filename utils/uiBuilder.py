@@ -62,8 +62,8 @@ def printEndCrawling(errorCounter, totalTracks, purity):
     print('> {} errors on {} tracks (purity : {} %)'.format(errorCounter, totalTracks, purity))
 
 
-def printCrawlingProgress(percentage, previousLetter, currentLetter, errorCounter, totalTracks, purity):
-    print('> Crawling completion : {:02d} % -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage, previousLetter, currentLetter, errorCounter, totalTracks, purity))
+def printCrawlingProgress(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity):
+    print('> Crawling completion : {:02d} % -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity))
 
 
 def printOrphansProgress(orphanCounter, folderInfo):

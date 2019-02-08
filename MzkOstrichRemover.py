@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# TODO utiliser moins de variable globale, mais faire des objets qui permettent au classe de communiquer
-# faire des enum pour logger dans un dict facilement els erreur var.ENUM -> la liste des erreur
 
 
 import os
@@ -40,7 +38,10 @@ def crawlFolders(folder):
     printRootFolderInfo(folderInfo)
     printStartCrawling(folder)
 
+    totalTracks = folderInfo.flacCounter + folderInfo.mp3Counter
+    scannedTracks = 0
     fileCounter = 0
+    errorCounter = 0
     albumTesters = []
 
     step = 10
@@ -60,14 +61,16 @@ def crawlFolders(folder):
 
         if len(path) == 3 and path[2] != '': # Current path is for an album directory : perform tests
             albumTester = AlbumTester(files, preservedPath)
-            fileCounter += albumTester.album.trackTotal
+            scannedTracks += albumTester.album.trackTotal
+            errorCounter += albumTester.errorCounter
+            errorCounter += albumTester.tracksErrorCounter()
             albumTesters.append(albumTester)
-            # TODO restore progress during crawling
-            # Display a progress every step % when not verbose
-            #printCrawlingProgress(percentage - round(step / 2), previousLetter, path[1][0], 0, (folderInfo.flacCounter + folderInfo.mp3Counter), computePurity(0, folderInfo))
-            #percentage += step;
-            #previousLetter = path[1][0] # Path 1 is the Artists name
-            #printOrphansProgress(0, folderInfo)
+            # Display a progress every step %
+            if (scannedTracks * 100) / totalTracks > percentage and percentage < 100:
+                printCrawlingProgress(percentage - round(step / 2), previousLetter, path[1][0], 0, scannedTracks, computePurity(0, folderInfo))
+                percentage += step;
+                previousLetter = path[1][0] # Path 1 is the Artists name
+                #printOrphansProgress(0, folderInfo)
 
     printErroredTracksReport(albumTesters)
     printEndCrawling(0, folderInfo.flacCounter + folderInfo.mp3Counter, computePurity(0, folderInfo));

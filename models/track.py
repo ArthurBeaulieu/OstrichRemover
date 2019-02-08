@@ -141,6 +141,7 @@ class Track:
                 return
         self.composedPerformer = self.artists
 
+
     # Extract the track remix artist name from the track fileName
     def _computeRemixer(self):
         if self.fileName.find(' Remix)') != -1:

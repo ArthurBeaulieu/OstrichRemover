@@ -26,7 +26,10 @@ class AlbumTester:
             if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-4:] == 'FLAC' or fileName[-4:] == 'flac':
                 self.album.trackTotal += 1
                 fileNameList = fileName.split(' - ')
-                if int(fileNameList[len(fileNameList) - 3][:-2]) > self.album.discTotal:
+                if fileNameList[len(fileNameList) - 3][:-2] != type(int()):
+                    self.errorCounter += 1
+                    self.errors.append(ErrorEnum.INCONSISTENT_FILENAME)
+                elif int(fileNameList[len(fileNameList) - 3][:-2]) > self.album.discTotal:
                     self.album.discTotal = fileNameList[len(fileNameList) - 3][:-2]
                 if self.album.year == 0:
                     self.album.year = fileNameList[1]
@@ -56,3 +59,10 @@ class AlbumTester:
         else:
             return None
         return TrackTester(track, album)
+
+
+    def tracksErrorCounter(self):
+        errorCounter = 0
+        for trackTester in self.tracks:
+            errorCounter += trackTester.errorCounter
+        return errorCounter
