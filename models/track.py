@@ -1,9 +1,12 @@
-from utils.uiBuilder import printDetailledTrack
+from mutagen.id3 import ID3
+from mutagen.mp3 import MP3
+from mutagen.flac import FLAC
+#from utils.uiBuilder import printDetailledTrack # Uncomment for debug purpose only (printDetailledTrack() is very verbose)
 
 
 # A Track container class
 class Track:
-    def __init__(self, fileTye, pathList, fileName, audioTag):
+    def __init__(self, fileType, pathList, fileName, audioTagPath):
         # ID3 tags
         self.title = ''
         self.artists = ''
@@ -17,50 +20,52 @@ class Track:
         self.discNumber = ''
         self.discTotal = ''
         # Computed
-        self.remix = ''
+        self.audioTagPath = audioTagPath
+        self.audioTag = {}
         self.feat = ''
+        self.remix = ''
+        self.hasCover = False
         # Filesystem path and name as lists (separator is ` - `)
         self.pathList = pathList
-        self.fileTye = fileTye
+        self.fileType = fileType
         self.fileName = fileName # Filename as a string
         self.fileNameList = [] # %releaseArtists% - %year% - %albumTitle% - %discNumber%%trackNumber% - %artists% - %title%
         self.folderNameList = [] # %year% - %albumTitle%
-        # Data collection
-        self.errors = [] # TODO insert in it items that are in the errorEnum
         # Self fill
-        if fileTye == 'MP3':
-            self._fillFromMP3(audioTag)
-        elif fileTye == 'FLAC':
-            self._fillFromFLAC(audioTag)
+        if fileType == 'MP3':
+            self.audioTag = ID3(audioTagPath)
+            self._fillFromMP3()
+        elif fileType == 'FLAC':
+            self.audioTag = FLAC(audioTagPath)            
+            self._fillFromFLAC()
         self._computeInternals()
-        printDetailledTrack(self)
 
 
     # Read the mp3 track ID3 tags and extract all interresting values into a Track object
-    def _fillFromMP3(self, audioTag):
-        if 'TIT2' in audioTag and audioTag['TIT2'].text[0] != '':
-            self.title = audioTag['TIT2'].text[0].rstrip()
-        if 'TPE1' in audioTag:
-            self.artists = audioTag['TPE1'].text[0]
-        if 'TALB' in audioTag:
-            self.albumTitle = audioTag['TALB'].text[0].rstrip()
-        if 'TDRC' in audioTag and audioTag['TDRC'].text[0].get_text() != '':
-            self.year = audioTag['TDRC'].text[0].get_text()[:4].rstrip()
-        if 'TPUB' in audioTag and audioTag['TPUB'].text[0] != '':
-            self.producer = audioTag['TPUB'].text[0].rstrip()
-        if 'TCOM' in audioTag and audioTag['TCOM'].text[0] != '':
-            self.composers = audioTag['TCOM'].text[0]
-        if 'TOPE' in audioTag and audioTag['TOPE'].text[0] != '':
-            self.performers = audioTag['TOPE'].text[0].rstrip()
-        if 'TRCK' in audioTag and audioTag['TRCK'].text[0] != '':
-            if '/' in audioTag['TRCK'].text[0]:
-                tags = audioTag['TRCK'].text[0].rstrip().split('/')
+    def _fillFromMP3(self):
+        if 'TIT2' in self.audioTag and self.audioTag['TIT2'].text[0] != '':
+            self.title = self.audioTag['TIT2'].text[0].rstrip()
+        if 'TPE1' in self.audioTag:
+            self.artists = self.audioTag['TPE1'].text[0]
+        if 'TALB' in self.audioTag:
+            self.albumTitle = self.audioTag['TALB'].text[0].rstrip()
+        if 'TDRC' in self.audioTag and self.audioTag['TDRC'].text[0].get_text() != '':
+            self.year = self.audioTag['TDRC'].text[0].get_text()[:4].rstrip()
+        if 'TPUB' in self.audioTag and self.audioTag['TPUB'].text[0] != '':
+            self.producer = self.audioTag['TPUB'].text[0].rstrip()
+        if 'TCOM' in self.audioTag and self.audioTag['TCOM'].text[0] != '':
+            self.composers = self.audioTag['TCOM'].text[0]
+        if 'TOPE' in self.audioTag and self.audioTag['TOPE'].text[0] != '':
+            self.performers = self.audioTag['TOPE'].text[0].rstrip()
+        if 'TRCK' in self.audioTag and self.audioTag['TRCK'].text[0] != '':
+            if '/' in self.audioTag['TRCK'].text[0]:
+                tags = self.audioTag['TRCK'].text[0].rstrip().split('/')
                 self.trackNumber = tags[0]
                 self.trackTotal = tags[1]
             else:
-                self.trackNumber = audioTag['TRCK'].text[0].rstrip()
-        if 'TPOS' in audioTag and audioTag['TPOS'].text[0] != '':
-            tags = audioTag['TPOS'].text[0].rstrip().split('/')
+                self.trackNumber = self.audioTag['TRCK'].text[0].rstrip()
+        if 'TPOS' in self.audioTag and self.audioTag['TPOS'].text[0] != '':
+            tags = self.audioTag['TPOS'].text[0].rstrip().split('/')
             self.discNumber = tags[0]
             if len(tags) > 1:
                 self.discTotal = tags[1]
@@ -69,36 +74,38 @@ class Track:
 
 
     # Read the flac track Vorbis tags and extract all interresting values into a Track object
-    def _fillFromFLAC(self, audioTag):
-        if 'TITLE' in audioTag:
-            self.title = audioTag['TITLE'][0]
-        if 'DATE' in audioTag:
-            self.year = audioTag['DATE'][0]
-        if 'TRACKNUMBER' in audioTag:
-            self.trackNumber = audioTag['TRACKNUMBER'][0]
-        if 'PRODUCER' in audioTag:
-            self.producer = audioTag['PRODUCER'][0]
-        if 'DISCNUMBER' in audioTag:
-            self.discNumber = audioTag['DISCNUMBER'][0]
-        if 'TOTALDISC' in audioTag:
-            self.totalDisc = audioTag['TOTALDISC'][0]
-        if 'TOTALTRACK' in audioTag:
-            self.totalTrack = audioTag['TOTALTRACK'][0]
-        if 'COMPOSER' in audioTag:
-            self.composers = audioTag['COMPOSER'][0]
-        if 'PERFORMER' in audioTag:
-            self.performers = audioTag['PERFORMER'][0]
-        if 'ARTIST' in audioTag:
-            self.artists = audioTag['ARTIST'][0]
-        if 'ALBUM' in audioTag:
-            self.albumTitle = audioTag['ALBUM'][0]
+    def _fillFromFLAC(self):
+        if 'TITLE' in self.audioTag:
+            self.title = self.audioTag['TITLE'][0]
+        if 'DATE' in self.audioTag:
+            self.year = self.audioTag['DATE'][0]
+        if 'TRACKNUMBER' in self.audioTag:
+            self.trackNumber = self.audioTag['TRACKNUMBER'][0]
+        if 'PRODUCER' in self.audioTag:
+            self.producer = self.audioTag['PRODUCER'][0]
+        if 'DISCNUMBER' in self.audioTag:
+            self.discNumber = self.audioTag['DISCNUMBER'][0]
+        if 'TOTALDISC' in self.audioTag:
+            self.totalDisc = self.audioTag['TOTALDISC'][0]
+        if 'TOTALTRACK' in self.audioTag:
+            self.totalTrack = self.audioTag['TOTALTRACK'][0]
+        if 'COMPOSER' in self.audioTag:
+            self.composers = self.audioTag['COMPOSER'][0]
+        if 'PERFORMER' in self.audioTag:
+            self.performers = self.audioTag['PERFORMER'][0]
+        if 'ARTIST' in self.audioTag:
+            self.artists = self.audioTag['ARTIST'][0]
+        if 'ALBUM' in self.audioTag:
+            self.albumTitle = self.audioTag['ALBUM'][0]
 
 
+    # Compute all class internals that can not be extracted from ID3 tags
     def _computeInternals(self):
         self._computeFileNameList()
         self._computeFolderNameList()
-        self._computeRemixer()
         self._computeFeaturing()
+        self._computeRemixer()
+        self._containsCover()
 
 
     # Splits the filename into its components (%releaseArtists% - %year% - %albumTitle% - %discNumber%%trackNumber% - %artists% - %title%)
@@ -121,13 +128,27 @@ class Track:
                 self.folderNameList[1:3] = [' - '.join(self.folderNameList[1:3])] # Re-join with a ' - ' separator
 
 
+    # Extract the featured artist(s) name(s) from the track fileName
+    def _computeFeaturing(self):
+        if self.fileName.find('(feat.') != -1:
+            self.feat = self.fileName[self.fileName.rfind('(feat.', 0, len(self.fileName))+7:self.fileName.find(')')] # +7 is to remove the `(feat. ` string from feat artist
+
+
     # Extract the track remix artist name from the track fileName
     def _computeRemixer(self):
         if self.fileName.find(' Remix)') != -1:
             self.remix = self.fileName[self.fileName.rfind('(', 0, len(self.fileName))+1:self.fileName.find(' Remix)')] # +1 is to remove the opening parenthesis
 
 
-    # Extract the featured artist(s) name(s) from the track fileName
-    def _computeFeaturing(self):
-        if self.fileName.find('(feat.') != -1:
-            self.feat = self.fileName[self.fileName.rfind('(feat.', 0, len(self.fileName))+7:self.fileName.find(')')] # +7 is to remove the `(feat. ` string from feat artist
+    # Test the cover existence in the file
+    def _containsCover(self):
+        # Extract image from file
+        if self.fileType == 'MP3' and 'APIC:' in self.audioTag:
+            frontPicture = self.audioTag['APIC:'].data
+        elif self.fileType == 'FLAC':
+            frontPicture = self.audioTag.pictures
+        # Test cover existence
+        if len(frontPicture) != 0:
+            self.hasCover = True
+        else:
+            self.cover = False
