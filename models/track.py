@@ -17,9 +17,9 @@ class Track:
         self.composers = ''
         self.producer = ''
         self.trackNumber = ''
-        self.trackTotal = ''
+        self.totalTrack = ''
         self.discNumber = ''
-        self.discTotal = ''
+        self.totalDisc = ''
         # Computed
         self.audioTagPath = audioTagPath
         self.audioTag = {}
@@ -62,16 +62,16 @@ class Track:
             if '/' in self.audioTag['TRCK'].text[0]:
                 tags = self.audioTag['TRCK'].text[0].rstrip().split('/')
                 self.trackNumber = tags[0]
-                self.trackTotal = tags[1]
+                self.totalTrack = tags[1]
             else:
                 self.trackNumber = self.audioTag['TRCK'].text[0].rstrip()
         if 'TPOS' in self.audioTag and self.audioTag['TPOS'].text[0] != '':
             tags = self.audioTag['TPOS'].text[0].rstrip().split('/')
             self.discNumber = tags[0]
             if len(tags) > 1:
-                self.discTotal = tags[1]
+                self.totalDisc = tags[1]
             else:
-                self.discTotal = -1
+                self.totalDisc = -1
 
 
     # Read the flac track Vorbis tags and extract all interresting values into a Track object
@@ -86,10 +86,10 @@ class Track:
             self.producer = self.audioTag['PRODUCER'][0]
         if 'DISCNUMBER' in self.audioTag:
             self.discNumber = self.audioTag['DISCNUMBER'][0]
-        if 'TOTALDISC' in self.audioTag:
-            self.totalDisc = self.audioTag['TOTALDISC'][0]
-        if 'TOTALTRACK' in self.audioTag:
-            self.totalTrack = self.audioTag['TOTALTRACK'][0]
+        if 'DISCTOTAL' in self.audioTag:
+            self.totalDisc = self.audioTag['DISCTOTAL'][0]
+        if 'TRACKTOTAL' in self.audioTag:
+            self.totalTrack = self.audioTag['TRACKTOTAL'][0]
         if 'COMPOSER' in self.audioTag:
             self.composers = self.audioTag['COMPOSER'][0]
         if 'PERFORMER' in self.audioTag:

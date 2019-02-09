@@ -19,10 +19,8 @@ class TrackTester:
     def _testTrackObject(self):
         global orphanCounter
         if len(self.track.fileNameList) < 6: # TypeError : Invalid file name (doesn't comply with the naming convention)
-            # TODO handle incorrect list length in ErrorEnum
-            #orphanCounter += 1
-            #if orphans == True and debug == True:
-            #    print('| KO - Filename -> The file \'{}\' isn\'t named following the naming convention. Use MzkOstrichRemover.py --help for informations'.format(track.fileName))
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.INCONSISTENT_FILENAME)
             return
         # Category 1 : Filesystem naming inconsistencies
         self._testFileSystemNaming()
@@ -77,11 +75,11 @@ class TrackTester:
     # Testing Category 4 : Track tags coherence with album metrics
     def _testAlbumValuesCoherence(self):
         # ErrorCode 14 : Computed album total track is not equal to the track total track tag
-        if self.track.trackTotal == '' or int(self.track.trackTotal) != self.album.trackTotal:
+        if self.track.totalTrack == '' or int(self.track.totalTrack) != self.album.totalTrack:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_TOTAL_TRACK_VS_TRACK_TOTAL_TRACK)
         # ErrorCode 15 : Computed album disc track is not equal to the track disc track tag
-        if self.track.discTotal == '' or int(self.track.discTotal) != self.album.discTotal:
+        if self.track.totalDisc == '' or int(self.track.totalDisc) != int(self.album.totalDisc):
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_DISC_TRACK_VS_TRACK_DISC_TRACK)
         # ErrorCode 16 : Computed album yeas is not equal to the track year tag
@@ -124,13 +122,13 @@ class TrackTester:
         if self.track.trackNumber == '':
             self.missingTagsCounter += 1
             self.missingTags.append('TrackNumber')
-        if self.track.trackTotal == '':
+        if self.track.totalTrack == '':
             self.missingTagsCounter += 1
             self.missingTags.append('TrackTotal')
         if self.track.discNumber == '':
             self.missingTagsCounter += 1
             self.missingTags.append('DiscNumber')
-        if self.track.discTotal == '':
+        if self.track.totalDisc == '':
             self.missingTagsCounter += 1
             self.missingTags.append('DiscTotal')
         if self.missingTagsCounter > 0:

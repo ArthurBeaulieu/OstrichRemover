@@ -24,13 +24,10 @@ class AlbumTester:
     def _analyseAlbumInternals(self):
         for fileName in self.album.filesIterable:
             if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-4:] == 'FLAC' or fileName[-4:] == 'flac':
-                self.album.trackTotal += 1
+                self.album.totalTrack += 1
                 fileNameList = fileName.split(' - ')
-                if fileNameList[len(fileNameList) - 3][:-2] != type(int()):
-                    self.errorCounter += 1
-                    self.errors.append(ErrorEnum.INCONSISTENT_FILENAME)
-                elif int(fileNameList[len(fileNameList) - 3][:-2]) > self.album.discTotal:
-                    self.album.discTotal = fileNameList[len(fileNameList) - 3][:-2]
+                if int(fileNameList[len(fileNameList) - 3][:-2]) > int(self.album.totalDisc):
+                    self.album.totalDisc = fileNameList[len(fileNameList) - 3][:-2]
                 if self.album.year == 0:
                     self.album.year = fileNameList[1]
                 elif self.album.year != fileNameList[1]:

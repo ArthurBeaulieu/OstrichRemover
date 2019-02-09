@@ -39,9 +39,9 @@ def printDetailledTrack(track):
     print('ID3 Composers : {}'.format(track.composers))
     print('ID3 Producer : {}'.format(track.producer))
     print('ID3 Track n° : {}'.format(track.trackNumber))
-    print('ID3 Track total : {}'.format(track.trackTotal))
+    print('ID3 Track total : {}'.format(track.totalTrack))
     print('ID3 Disc n° : {}'.format(track.discNumber))
-    print('ID3 Disc total : {}'.format(track.discTotal))
+    print('ID3 Disc total : {}'.format(track.totalDisc))
     print('Remixer : {}'.format(track.remix))
     print('Featuring : {}'.format(track.feat))
     print('FileType : {}'.format(track.fileType))
@@ -64,11 +64,6 @@ def printEndCrawling(errorCounter, totalTracks, purity):
 
 def printCrawlingProgress(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity):
     print('> Crawling completion : {:02d} % -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity))
-
-
-def printOrphansProgress(orphanCounter, folderInfo):
-    orphanPercentage = round((orphanCounter * 100) / (folderInfo.flacCounter + folderInfo.mp3Counter), 2)
-    print('  including {} orphans ({} %) -- Orphans are files that aren\'t placed in an album folder (matching the track album tag)'.format(orphanCounter, orphanPercentage))
 
 
 def printErroredTracksReport(albumTesters):
@@ -118,9 +113,9 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     elif errorCode == 13: # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
         printTrackErrorInfo(errorCode, 'Here is the list of misordered tags:', trackTester.missorderedTag)
     elif errorCode == 14: # ErrorCode 14 : Computed album total track is not equal to the track total track tag
-        printTrackErrorInfo(errorCode, track.trackTotal, trackTester.album.trackTotal)
+        printTrackErrorInfo(errorCode, track.totalTrack, trackTester.album.totalTrack)
     elif errorCode == 15: # ErrorCode 15 : Computed album disc track is not equal to the track disc track tag
-        printTrackErrorInfo(errorCode, track.discTotal, trackTester.album.discTotal)
+        printTrackErrorInfo(errorCode, track.totalDisc, trackTester.album.totalDisc)
     elif errorCode == 16: # ErrorCode 16 : Computed album yeas is not equal to the track year tag
         printTrackErrorInfo(errorCode, track.year, trackTester.album.year)
 
