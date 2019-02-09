@@ -74,6 +74,8 @@ def printErroredTracksReport(albumTesters):
             print('+ {}'.format(albumPathList[len(albumPathList) - 2]))
             currentArtist = albumPathList[len(albumPathList) - 2]
         print('| + {}'.format(albumPathList[len(albumPathList) - 1])) # Print current album name
+        for error in albumTester.errors:
+            _printErroredAlbumsReport_aux(error.value)
         for trackTester in albumTester.tracks:
             if trackTester.errorCounter > 0:
                 print('| | + {}'.format(trackTester.track.fileName))
@@ -118,6 +120,13 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
         printTrackErrorInfo(errorCode, track.totalDisc, trackTester.album.totalDisc)
     elif errorCode == 16: # ErrorCode 16 : Computed album yeas is not equal to the track year tag
         printTrackErrorInfo(errorCode, track.year, trackTester.album.year)
+    elif errorCode == 18: # ErrorCode 18 : The Filename doesn't follow the naming pattern properly
+        printTrackErrorInfo(errorCode, computeNamingConventionString(), 'AC-DC - 1978 - Powerage - 105 - AC-DC - Sin City')
+
+
+def _printErroredAlbumsReport_aux(errorCode):
+    if errorCode == 17: # ErrorCode 17 : Year is not the same on all physical files of the album
+        printTrackErrorInfo(errorCode, 'All files in folder does not have the same year', 'Rename them properly to remove this error')
 
 
 # Display the error message according to the topic and error code. It will display the two !matching values
@@ -164,6 +173,12 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 14 or errorCode == 15 or errorCode == 16:
         location1 = 'From Track Tags     '
         location2 = 'From Album Computed '
+    elif errorCode == 17:
+        location1 = 'Expected Pattern    '
+        location2 = 'Example             '
+    elif errorCode == 18:
+        location1 = 'Expected Pattern    '
+        location2 = 'Example             '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -192,4 +207,12 @@ def getTopicStringFromErrorCode(errorCode):
         topic = '--- Album Total Disc'
     elif errorCode == 16:
         topic = '--------- Album Year'
+    elif errorCode == 17:
+        topic = '--- Wrong Year Files'
+    elif errorCode == 18:
+        topic = '-- Wrong File Naming'
     return topic
+
+
+def computeNamingConventionString():
+    return '%releaseArtist% - %year% - %album% - %disc n°%%track n°% - %artist% - %title%'

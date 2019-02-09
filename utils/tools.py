@@ -1,3 +1,5 @@
+from utils.errorEnum import ErrorEnum
+
 # Converts a given number to a properly formatted file size
 def convertBytes(num):
     for i in ['bytes', 'KB', 'MB', 'GB', 'TB']:
@@ -35,7 +37,7 @@ def suffixThreeDots(charList):
 
 
 def computePurity(errorCounter, tracksSample):
-    totalPossibleError = tracksSample * 18
+    totalPossibleError = tracksSample * len(ErrorEnum)
     return round(100 - round((errorCounter * 100) / totalPossibleError, 2), 2)
 
 

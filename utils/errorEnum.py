@@ -4,7 +4,8 @@ from enum import unique, Enum
 @unique
 ## The enumeration containing all the keys of each possible errors.
 class ErrorEnum(Enum):
-  # Category 1 : Filesystem naming inconsistencies
+## ------------
+## Category 1 : Filesystem naming inconsistencies
     # ErrorCode 00 : Filename release artists doesn't match the artist foldername
     FILENAME_RELEASE_ARTIST_VS_ARTIST_FOLDERNAME = 0
 
@@ -14,7 +15,14 @@ class ErrorEnum(Enum):
     # ErrorCode 02 : Filename album doesn't match the album foldername
     FILENAME_ALBUM_VS_ALBUM_FOLDERNAME = 2
 
-  # Category 2 : Filesystem naming vs ID3 tags inconsistencies
+    # ErrorCode 17 : Year is not the same on all physical files of the album
+    FILES_ALBUM_YEAR_NOT_EQUAL = 17
+
+    # ErrorCode 18 : The Filename doesn't follow the naming pattern properly
+    INCONSISTENT_FILENAME = 18
+
+## ------------
+## Category 2 : Filesystem naming vs ID3 tags inconsistencies
     # ErrorCode 03 : Filename year doesn't math the track year tag
     FILENAME_YEAR_VS_YEAR_TAG = 3
 
@@ -39,7 +47,8 @@ class ErrorEnum(Enum):
     # ErrorCode 10 : Filename title doesn't match the track title tag
     FILENAME_TITLE_VS_TITLE_TAG = 10
 
-  # Category 3 : ID3 tags inconsistencies
+## ------------
+# Category 3 : ID3 tags inconsistencies
     # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
     MISSING_TAGS = 11
 
@@ -49,22 +58,13 @@ class ErrorEnum(Enum):
     # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
     MISSORDERED_TAGS = 13
 
-  # Category 4 : Track tags coherence with album metrics
+## ------------
+# Category 4 : Track tags coherence with album metrics
     # ErrorCode 14 : Computed album total track is not equal to the track total track tag
     ALBUM_TOTAL_TRACK_VS_TRACK_TOTAL_TRACK = 14
 
     # ErrorCode 15 : Computed album disc track is not equal to the track disc track tag
     ALBUM_DISC_TRACK_VS_TRACK_DISC_TRACK = 15
 
-    # ErrorCode 16 : Computed album yeas is not equal to the track year tag
+    # ErrorCode 16 : Computed album year is not equal to the track year tag
     ALBUM_YEAR_VS_TRACK_YEAR = 16
-
-  # Category 5 : Only concerns albums
-    # ErrorCode 17 : Year is not the same on all physical files of the album
-    FILES_ALBUM_YEAR_NOT_EQUAL = 17
-
-
-
-
-    # ErrorCode 18 : Performer does not contains both the artist and the featuring artist
-    INCONSISTENT_FILENAME = 18

@@ -18,7 +18,8 @@ class TrackTester:
     # Tests a Track object to check if it is matching the naming convention
     def _testTrackObject(self):
         global orphanCounter
-        if len(self.track.fileNameList) < 6: # TypeError : Invalid file name (doesn't comply with the naming convention)
+        # ErrorCode 18 : The filename doesn't follow the naming pattern properly
+        if len(self.track.fileNameList) != 6: # TypeError : Invalid file name (doesn't comply with the naming convention)
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INCONSISTENT_FILENAME)
             return
@@ -83,7 +84,7 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_DISC_TRACK_VS_TRACK_DISC_TRACK)
         # ErrorCode 16 : Computed album yeas is not equal to the track year tag
-        if self.track.year == '' or self.track.year != self.album.year:
+        if self.album.year != -1 and (self.track.year == '' or self.track.year != self.album.year): # If computed is -1, we do not display the error since Err17 is launched on album
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_YEAR_VS_TRACK_YEAR)
 

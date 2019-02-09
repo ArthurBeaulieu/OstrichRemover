@@ -150,6 +150,7 @@ class Track:
 
     # Test the cover existence in the file
     def _containsCover(self):
+        frontPicture = {}
         # Extract image from file
         if self.fileType == 'MP3' and 'APIC:' in self.audioTag:
             frontPicture = self.audioTag['APIC:'].data
@@ -159,4 +160,4 @@ class Track:
         if len(frontPicture) != 0:
             self.hasCover = True
         else:
-            self.cover = False
+            self.hasCover = False
