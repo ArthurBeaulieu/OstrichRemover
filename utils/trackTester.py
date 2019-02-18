@@ -97,7 +97,7 @@ class TrackTester:
             self._testArrayErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_ARTIST_TAG, self.track.fileNameList[4].split(', '), self.track.artists)
         else:
             # ErrorCode 09 : Title remix artist doesn't match the filename artist
-            self._testErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_REMIX_ARTIST, self.track.fileNameList[4], self.track.remix)
+            self._testErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_REMIX_ARTIST, self.track.artists, self.track.remix)
 
 
     def _testForMissingtags(self):
@@ -153,9 +153,10 @@ class TrackTester:
         if sorted(removeSpecialCharFromArray(self.track.artists), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.artists):
             self.missorderedTag.append('Artists')
             self.missorderedTagsCounter += 1
-        if sorted(removeSpecialCharFromArray(self.track.artists), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.fileNameList[4].split(', ')):
-            self.missorderedTag.append('Artists')
-            self.missorderedTagsCounter += 1
+        if self.track.remix == '':
+            if sorted(removeSpecialCharFromArray(self.track.artists), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.fileNameList[4].split(', ')):
+                self.missorderedTag.append('Artists')
+                self.missorderedTagsCounter += 1
         if sorted(removeSpecialCharFromArray(self.track.performers), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.performers):
             self.missorderedTag.append('Performers')
             self.missorderedTagsCounter += 1
