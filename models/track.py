@@ -47,7 +47,7 @@ class Track:
         if 'TIT2' in self.audioTag and self.audioTag['TIT2'].text[0] != '':
             self.title = self.audioTag['TIT2'].text[0].rstrip()
         if 'TPE1' in self.audioTag:
-            self.artists.append(self.audioTag['TPE1'].text[0])
+            self.artists = self.audioTag['TPE1'].text[0].split('; ')
         if 'TALB' in self.audioTag:
             self.albumTitle = self.audioTag['TALB'].text[0].rstrip()
         if 'TDRC' in self.audioTag and self.audioTag['TDRC'].text[0].get_text() != '':
@@ -113,7 +113,7 @@ class Track:
     def _computeFileNameList(self):
         # We split the filename into its differents parts, as mentioned in this method description
         self.fileNameList = self.fileName.split(' - ')
-        forbiddenPattern = ['Single', 'ÉPILOGUE']
+        forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE']
         # Here we handle all specific cases (when ' - ' is not a separator)
         if len(self.fileNameList) > 6:
             if self.fileNameList[3] in forbiddenPattern: # When album is a single, we must re-join the album name and the 'Single' suffix
@@ -124,7 +124,7 @@ class Track:
     def _computeFolderNameList(self):
         # We also split the folder name to make a double check for Year and Album name
         self.folderNameList = self.pathList[len(self.pathList) - 1].split(' - ')
-        forbiddenPattern = ['Single', 'ÉPILOGUE']
+        forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE']
 
         if len(self.folderNameList) == 3:
             if self.folderNameList[2] in forbiddenPattern: # When album is a single, we must re-join the album name and the 'Single' suffix

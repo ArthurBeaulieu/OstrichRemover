@@ -20,6 +20,9 @@ class TrackTester:
     # Tests a Track object to check if it is matching the naming convention
     def _testTrackObject(self):
         global orphanCounter
+        forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE']
+        if len(self.track.fileNameList) == 7 and any(s in self.track.fileNameList[6] for s in forbiddenPattern): # When album is a single, we must re-join the album name and the 'Single' suffix
+            self.track.fileNameList[5:7] = [' - '.join(self.track.fileNameList[5:7])] # Re-join with a ' - ' separator
         # ErrorCode 18 : The filename doesn't follow the naming pattern properly
         if len(self.track.fileNameList) != 6: # TypeError : Invalid file name (doesn't comply with the naming convention)
             self.errorCounter += 1
