@@ -57,7 +57,7 @@ class Track:
         if 'TCOM' in self.audioTag and self.audioTag['TCOM'].text[0] != '':
             self.composers = self.audioTag['TCOM'].text[0]
         if 'TOPE' in self.audioTag and self.audioTag['TOPE'].text[0] != '':
-            self.performers = self.audioTag['TOPE'].text[0].rstrip()
+            self.performers = self.audioTag['TOPE'].text[0].rstrip().split('; ')
         if 'TRCK' in self.audioTag and self.audioTag['TRCK'].text[0] != '':
             if '/' in self.audioTag['TRCK'].text[0]:
                 tags = self.audioTag['TRCK'].text[0].rstrip().split('/')
@@ -144,7 +144,7 @@ class Track:
     # Extract the track remix artist name from the track fileName
     def _computeRemixer(self):
         if self.fileName.find(' Remix)') != -1:
-            self.remix = self.fileName[self.fileName.rfind('(', 0, len(self.fileName))+1:self.fileName.find(' Remix)')].split(', ') # +1 is to remove the opening parenthesis
+            self.remix = self.fileName[self.fileName.rfind('(', 0, len(self.fileName))+1:self.fileName.rfind(' Remix)')].split(', ') # +1 is to remove the opening parenthesis
 
 
     # Test the cover existence in the file

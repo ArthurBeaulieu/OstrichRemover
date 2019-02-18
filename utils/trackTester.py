@@ -1,7 +1,7 @@
 import icu
 
 from utils.errorEnum import ErrorEnum
-from utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray, accentSort
+from utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray
 
 
 class TrackTester:

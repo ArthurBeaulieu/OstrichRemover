@@ -82,10 +82,13 @@ def printErroredTracksReport(albumTesters):
             print('| | + Errors that are album wide:')
             print('| | |----------------------------')
             _printErroredAlbumsReport_aux(error.value)
-        print('| | + Errors that are track wide:')
-        print('| | |----------------------------')
+        trackErrorWarning = False
         for trackTester in albumTester.tracks:
             if trackTester.errorCounter > 0:
+                if trackErrorWarning == False:
+                    trackErrorWarning = True
+                    print('| | + Errors that are track wide:')
+                    print('| | |----------------------------')
                 print('| | + {}'.format(trackTester.track.fileName))
                 for error in trackTester.errors:
                     _printErroredTracksReport_aux(error.value, trackTester, albumTester)
