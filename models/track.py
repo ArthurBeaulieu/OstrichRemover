@@ -136,11 +136,10 @@ class Track:
         if self.fileName.find('(feat.') != -1:
             startIndex = self.fileName.rfind('(feat.', 0, len(self.fileName))
             self.feat = self.fileName[startIndex+7:self.fileName.find(')', startIndex)].split(', ') # +7 is to remove the `(feat. ` string from feat artist
-            if len(self.feat) != 1 and self.feat[0] == '':
+            if len(self.feat) > 0 and self.feat[0] != '':
                 self.composedPerformer = [*self.feat, *self.artists]
                 return
         self.composedPerformer = self.artists
-
 
     # Extract the track remix artist name from the track fileName
     def _computeRemixer(self):

@@ -66,7 +66,7 @@ class TrackTester:
     # Testing Category 3 : ID3 tags inconsistencies
     def _testTagsInconsistencies(self):
         # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
-        self._testForMissingtags()
+        #self._testForMissingtags()
         # ErrorCode 12 : Performer does not contains both the artist and the featuring artist
         self._testPerformerComposition()
         # ErrorCode 13 : Performer does not contains both the artist and the featuring artist

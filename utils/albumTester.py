@@ -23,15 +23,20 @@ class AlbumTester:
 
     def _analyseAlbumInternals(self):
         lockErrors = False
+        # Filling internals
         for fileName in self.album.filesIterable:
             if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-4:] == 'FLAC' or fileName[-4:] == 'flac':
                 self.album.totalTrack += 1
                 fileNameList = fileName.split(' - ')
-                if len(fileName) == 6 and int(fileNameList[len(fileNameList) - 3][:-2]) > int(self.album.totalDisc):
+                if len(fileNameList) == 6 and int(fileNameList[len(fileNameList) - 3][:-2]) > int(self.album.totalDisc):
                     self.album.totalDisc = fileNameList[len(fileNameList) - 3][:-2]
-                if int(self.album.year) == 0:
+                if len(fileNameList) == 6 and self.album.year == 0:
                     self.album.year = fileNameList[1]
-                elif self.album.year != fileNameList[1] and lockErrors == False:
+        # Tracking errors
+        for fileName in self.album.filesIterable:
+            if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-4:] == 'FLAC' or fileName[-4:] == 'flac':
+                fileNameList = fileName.split(' - ')
+                if self.album.year != fileNameList[1] and lockErrors == False:
                     lockErrors = True
                     self.errorCounter += 1
                     self.errors.append(ErrorEnum.FILES_ALBUM_YEAR_NOT_EQUAL)
