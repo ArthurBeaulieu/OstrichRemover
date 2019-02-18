@@ -1,3 +1,6 @@
+import icu
+
+
 from utils.tools import convertBytes
 
 
@@ -89,6 +92,7 @@ def printErroredTracksReport(albumTesters):
 
 
 def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
+    collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
     t = trackTester.track
     if errorCode == 0: # ErrorCode 00 : Filename release artists doesn't match the artist foldername
         printTrackErrorInfo(errorCode, t.fileNameList[0], t.pathList[len(t.pathList) - 2])
@@ -116,7 +120,7 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     elif errorCode == 11: # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
         printTrackErrorInfo(errorCode, 'Here is the list of missing tags:', trackTester.missingTags)
     elif errorCode == 12: # ErrorCode 12 : Performer does not contains both the artist and the featuring artist
-        printTrackErrorInfo(errorCode, sorted(t.performers), sorted(t.composedPerformer))
+        printTrackErrorInfo(errorCode, sorted(t.performers, key=collator.getSortKey), sorted(t.composedPerformer, key=collator.getSortKey))
     elif errorCode == 13: # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
         printTrackErrorInfo(errorCode, 'Here is the list of misordered tags:', trackTester.missorderedTag)
     elif errorCode == 14: # ErrorCode 14 : Computed album total track is not equal to the track total track tag

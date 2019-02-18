@@ -1,5 +1,7 @@
+import icu
+
 from utils.errorEnum import ErrorEnum
-from utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray
+from utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray, accentSort
 
 
 class TrackTester:
@@ -138,27 +140,29 @@ class TrackTester:
 
 
     def _testPerformerComposition(self):
+        collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
         # If track has featured artists, we append them to the performer tmp string
         # Sorted comparaison to only test value equality. The artists alphabetic order is tested elswhere
-        if len(self.track.performers) != len(self.track.composedPerformer) or sorted(self.track.performers) != sorted(self.track.composedPerformer):
+        if len(self.track.performers) != len(self.track.composedPerformer) or sorted(self.track.performers, key=collator.getSortKey) != sorted(self.track.composedPerformer, key=collator.getSortKey):
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INCONSISTENT_PERFORMER)
 
 
     def _testMissorderedTags(self):
-        if sorted(removeSpecialCharFromArray(self.track.artists)) != removeSpecialCharFromArray(self.track.artists):
+        collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
+        if sorted(removeSpecialCharFromArray(self.track.artists), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.artists):
             self.missorderedTag.append('Artists')
             self.missorderedTagsCounter += 1
-        if sorted(removeSpecialCharFromArray(self.track.artists)) != removeSpecialCharFromArray(self.track.fileNameList[4].split(', ')):
+        if sorted(removeSpecialCharFromArray(self.track.artists), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.fileNameList[4].split(', ')):
             self.missorderedTag.append('Artists')
             self.missorderedTagsCounter += 1
-        if sorted(removeSpecialCharFromArray(self.track.performers)) != removeSpecialCharFromArray(self.track.performers):
+        if sorted(removeSpecialCharFromArray(self.track.performers), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.performers):
             self.missorderedTag.append('Performers')
             self.missorderedTagsCounter += 1
-        if sorted(removeSpecialCharFromArray(self.track.feat)) != removeSpecialCharFromArray(self.track.feat):
+        if sorted(removeSpecialCharFromArray(self.track.feat), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.feat):
             self.missorderedTag.append('Featuring')
             self.missorderedTagsCounter += 1
-        if sorted(removeSpecialCharFromArray(self.track.remix)) != removeSpecialCharFromArray(self.track.remix):
+        if sorted(removeSpecialCharFromArray(self.track.remix), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.remix):
             self.missorderedTag.append('Remixer')
             self.missorderedTagsCounter += 1
         if self.missorderedTagsCounter > 0:
