@@ -1,6 +1,6 @@
 # MzkOstrichRemover
 
-This script is a tool specially made to test a folder against the [ManaZeak naming convention](https://github.com/d3/d3). It handles both the folder tree structure and the files themselves. It is highly recommended to diggest the naming convention before going any further, as explanations are about to become raw.
+This script is a tool specially made to test a folder against the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention). It handles both the folder tree structure and the files themselves. It is highly recommended to diggest the naming convention before going any further, as explanations are about to become raw.
 
 MzkOstrichRemover can detect **18 errors** per file (so far). Those errors are grouped in four categories that are detailed [in the wiki](https://github.com/ManaZeak/MzkOstrichRemover/wiki/Tracked-Errors), respectively:
 
@@ -17,7 +17,7 @@ This script uses `Python3`, and requires `mutagen` and `PyICU`. Please ensure th
 
 `# pip install mutagen PyICU`
 
-At this point, you must ensure that the folder you are about to test match at least the recommended tree structure of the [ManaZeak naming convention](https://github.com/d3/d3), since other folder structure may results in the script failure. Then in your cloned repository, run:
+At this point, you must ensure that the folder you are about to test match at least the recommended tree structure of the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention), since other folder structure may results in the script failure. Then in your cloned repository, run:
 
 `$ python3 ./MzkOstrichRemover.py ./path/to/library/folder/` *NB*: absoulte or relative path, whatever..
 
