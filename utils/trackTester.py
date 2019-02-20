@@ -80,14 +80,14 @@ class TrackTester:
 
     # Testing Category 4 : Track tags coherence with album metrics
     def _testAlbumValuesCoherence(self):
-        # ErrorCode 14 : Computed album total track is not equal to the track total track tag
-        if self.track.totalTrack == '' or int(self.track.totalTrack) != self.album.totalTrack:
-            self.errorCounter += 1
-            self.errors.append(ErrorEnum.ALBUM_TOTAL_TRACK_VS_TRACK_TOTAL_TRACK)
-        # ErrorCode 15 : Computed album disc track is not equal to the track disc track tag
-        if self.track.totalDisc == '' or int(self.track.totalDisc) != int(self.album.totalDisc):
-            self.errorCounter += 1
-            self.errors.append(ErrorEnum.ALBUM_DISC_TRACK_VS_TRACK_DISC_TRACK)
+        # # ErrorCode 14 : Computed album total track is not equal to the track total track tag
+        # if self.track.totalTrack == '' or int(self.track.totalTrack) != self.album.totalTrack:
+        #     self.errorCounter += 1
+        #     self.errors.append(ErrorEnum.ALBUM_TOTAL_TRACK_VS_TRACK_TOTAL_TRACK)
+        # # ErrorCode 15 : Computed album disc track is not equal to the track disc track tag
+        # if self.track.totalDisc == '' or int(self.track.totalDisc) != int(self.album.totalDisc):
+        #     self.errorCounter += 1
+        #     self.errors.append(ErrorEnum.ALBUM_DISC_TRACK_VS_TRACK_DISC_TRACK)
         # ErrorCode 16 : Computed album yeas is not equal to the track year tag
         if self.album.year != -1 and (self.track.year == '' or self.track.year != self.album.year): # If computed is -1, we do not display the error since Err17 is launched on album
             self.errorCounter += 1
@@ -99,8 +99,8 @@ class TrackTester:
             # ErrorCode 08 : Filename artists doesn't match the track artist tag
             self._testArrayErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_ARTIST_TAG, self.track.fileNameList[4].split(', '), self.track.artists)
         else:
-            # ErrorCode 09 : Title remix artist doesn't match the filename artist
-            self._testErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_REMIX_ARTIST, self.track.artists, self.track.remix)
+            # ErrorCode 09 : Title remix artist doesn't match the filename artist, we put remix first bc it comes from filename, and could contain a forbidden char
+            self._testArrayErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_REMIX_ARTIST, self.track.remix, self.track.artists)
 
 
     def _testForMissingtags(self):

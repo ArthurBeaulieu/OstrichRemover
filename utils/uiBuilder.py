@@ -117,7 +117,7 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     elif errorCode == 8: # ErrorCode 08 : Filename artists doesn't match the track artist tag
         printTrackErrorInfo(errorCode, t.fileNameList[4].split(', '), t.artists)
     elif errorCode == 9: # ErrorCode 09 : Title remix artist doesn't match the filename artist
-        printTrackErrorInfo(errorCode, t.fileNameList[4], t.remix)
+        printTrackErrorInfo(errorCode, t.artists, t.remix)
     elif errorCode == 10: # ErrorCode 10 : Filename title doesn't match the track title tag
         printTrackErrorInfo(errorCode, t.fileNameList[5].rsplit('.', 1)[0], t.title)
     elif errorCode == 11: # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
@@ -167,7 +167,7 @@ def printTrackErrorInfo(errorCode, string1, string2):
         location2 = 'From Track Tags        '
     # ErrorCode 08 : Filename artists doesn't match the track artist tag
     elif errorCode == 9:
-        location1 = 'From Filename          '
+        location1 = 'From Track Tag         '
         location2 = 'From Computed Remix    '
     # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
     elif errorCode == 11:

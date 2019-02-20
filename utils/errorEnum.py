@@ -41,7 +41,7 @@ class ErrorEnum(Enum):
     # ErrorCode 08 : Filename artists doesn't match the track artist tag
     FILENAME_ARTIST_VS_ARTIST_TAG = 8
 
-    # ErrorCode 09 : Title remix artist doesn't match the filename artist
+    # ErrorCode 09 : Title remix artist doesn't match the track artist
     FILENAME_ARTIST_VS_REMIX_ARTIST = 9
 
     # ErrorCode 10 : Filename title doesn't match the track title tag

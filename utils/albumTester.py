@@ -27,7 +27,7 @@ class AlbumTester:
         for fileName in self.album.filesIterable:
             if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-4:] == 'FLAC' or fileName[-4:] == 'flac':
                 self.album.totalTrack += 1
-                forbiddenPattern = ['Single']
+                forbiddenPattern = ['Single', 'ÉPILOGUE']
                 fileNameList = fileName.split(' - ')
                 # Re-join Single properly into list
                 if len(fileNameList) == 7 and fileNameList[3] in forbiddenPattern: # When album is a single, we must re-join the album name and the 'Single' suffix
@@ -41,7 +41,7 @@ class AlbumTester:
         for fileName in self.album.filesIterable:
             if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-4:] == 'FLAC' or fileName[-4:] == 'flac':
                 fileNameList = fileName.split(' - ')
-                # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
+                # ErrorCode 17 : Year is not the same on all physical files of the album
                 if self.album.year != fileNameList[1] and lockErrors == False:
                     lockErrors = True
                     self.errorCounter += 1
