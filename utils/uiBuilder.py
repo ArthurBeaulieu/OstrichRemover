@@ -6,11 +6,11 @@ from utils.tools import convertBytes
 
 # Display script credentials
 def printCredentials(scriptVersion):
-    print('##--------------------------------------##')
-    print('##                                      ##')
+    print('##----------------------------------------##')
+    print('##                                        ##')
     print('##  MzkOstrichRemover.py - version {}  ##'.format(scriptVersion))
-    print('##                                      ##')
-    print('##--------------------------------------##\n')
+    print('##                                        ##')
+    print('##----------------------------------------##\n')
 
 
 # Display script 'man' page
@@ -18,6 +18,10 @@ def printHelp():
     print('  Script usage')
     print('> python MzkOstrichRemover.py ./path/to/library    : Do a crawling on the given folder')
     print('> python MzkOstrichRemover.py -h                   : Displays the script help menu')
+
+
+def printRetrieveFolderInfo():
+    print('  Retrieving folder information...\n')
 
 
 # Display the studied folder and its informations
@@ -58,7 +62,6 @@ def printDetailledTrack(track):
 def printStartCrawling(targetFolder):
     print('  Folder crawling')
     print('> Crawling files in folder {} and all its sub-directories'.format(targetFolder))
-    print('> Folder analysis in progress...\n')
 
 
 def printCrawlingProgress(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity):
@@ -66,11 +69,12 @@ def printCrawlingProgress(percentage, previousLetter, currentLetter, errorCounte
 
 
 def printEndCrawling(errorCounter, totalTracks, purity):
-    print('\n> Folder analysis done!')
+    print('  Folder analysis done!')
     print('> {} errors on {} tracks (purity : {} %)'.format(errorCounter, totalTracks, purity))
 
 
 def printErroredTracksReport(albumTesters):
+    print('\n  Errors in tree:')
     currentArtist = ''
     for albumTester in albumTesters:
         albumPathList = albumTester.preservedPath

@@ -1,6 +1,8 @@
 from mutagen.id3 import ID3
 from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
+
+
 #from utils.uiBuilder import printDetailledTrack # Uncomment for debug purpose only (printDetailledTrack() is very verbose)
 
 
@@ -93,7 +95,7 @@ class Track:
         if 'COMPOSER' in self.audioTag:
             self.composers = self.audioTag['COMPOSER'][0]
         if 'PERFORMER' in self.audioTag:
-            self.performers = self.audioTag['PERFORMER'][0].split('; ')
+            self.performers = self.audioTag['PERFORMER'][0].split('; ')            
         if 'ARTIST' in self.audioTag:
             self.artists = self.audioTag['ARTIST'][0].split('; ')
         if 'ALBUM' in self.audioTag:
@@ -134,12 +136,13 @@ class Track:
     # Extract the featured artist(s) name(s) from the track fileName
     def _computeFeaturing(self):
         if self.fileName.find('(feat.') != -1:
-            startIndex = self.fileName.rfind('(feat.', 0, len(self.fileName))
+            startIndex = self.fileName.rfind('(feat.', 0, len(self.fileName)) # TODO handle matching brace -> in cas (feat. Zob(Thom))
             self.feat = self.fileName[startIndex+7:self.fileName.find(')', startIndex)].split(', ') # +7 is to remove the `(feat. ` string from feat artist
             if len(self.feat) > 0 and self.feat[0] != '':
                 self.composedPerformer = [*self.feat, *self.artists]
                 return
-        self.composedPerformer = self.artists
+        self.composedPerformer = self.artists # No featuring so performer should be equal to artist
+
 
     # Extract the track remix artist name from the track fileName
     def _computeRemixer(self):

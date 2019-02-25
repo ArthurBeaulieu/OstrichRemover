@@ -1,5 +1,5 @@
 from utils.errorEnum import ErrorEnum
-
+import json
 
 # Converts a given number to a properly formatted file size
 def convertBytes(num):
@@ -44,7 +44,7 @@ def computePurity(errorCounter, tracksSample):
 
 def removeSpecialCharFromString(string):
     # Checking first that the differents char are bc of an illegal symbol
-    forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|']
+    forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|', '\'']
     for x in range(0, len(string)):
         if string[x] in forbiddenChars:
             string[x] = '-'
@@ -52,7 +52,7 @@ def removeSpecialCharFromString(string):
 
 
 def removeSpecialCharFromArray(array):
-    forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|']
+    forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|', '\'']
     output = []
     for item in array:
         string = ''

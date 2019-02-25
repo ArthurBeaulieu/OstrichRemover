@@ -17,7 +17,7 @@ from utils.tools import computePurity
 
 
 global scriptVersion
-scriptVersion = '0.8'
+scriptVersion = '0.9.0'
 
 
 # Script main frame
@@ -35,6 +35,7 @@ def main():
 # Will crawl the folder path given as an argument, and all its sub-directories
 def crawlFolders(folder):
     folderInfo = FolderInfo(folder)
+    printRetrieveFolderInfo()
     printRootFolderInfo(folderInfo)
     printStartCrawling(folder)
 
@@ -66,13 +67,13 @@ def crawlFolders(folder):
             errorCounter += albumTester.tracksErrorCounter()
             albumTesters.append(albumTester)
             # Display a progress every step %
-            if (scannedTracks * 100) / totalTracks > percentage and percentage < 100:
+            if totalTracks > 10 and (scannedTracks * 100) / totalTracks > percentage and percentage < 100:
                 printCrawlingProgress(percentage, previousLetter, path[1][0], errorCounter, scannedTracks, computePurity(errorCounter, scannedTracks))
                 percentage += step;
                 previousLetter = path[1][0] # Path 1 is the Artists name
 
-    printErroredTracksReport(albumTesters)
     printEndCrawling(errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
+    printErroredTracksReport(albumTesters)
 
 
 # Script start point
