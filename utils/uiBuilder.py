@@ -32,12 +32,14 @@ def printRootFolderInfo(folderInfo):
     print('> Folder count : {}'.format(folderInfo.foldersCounter))
     print('> Folder size  : {}\n'.format(convertBytes(folderInfo.folderSize)))
     print('  Audio files informations')
-    print('> FLAC : {} file(s) ({} %)\n> MP3  : {} file(s) ({} %)\n'.format(folderInfo.flacCounter, folderInfo.flacPercentage, folderInfo.mp3Counter, folderInfo.mp3Percentage))
+    print('> FLAC  : {} file(s) ({} %)\n> MP3   : {} file(s) ({} %)'.format(folderInfo.flacCounter, folderInfo.flacPercentage, folderInfo.mp3Counter, folderInfo.mp3Percentage))
+    print('> Total : {} file(s)\n'.format(folderInfo.flacCounter + folderInfo.mp3Counter))
     print('  Artworks informations')
-    print('> PNG : {} file(s) ({} %)\n> JPG : {} file(s) ({} %)\n'.format(folderInfo.pngCounter, folderInfo.pngPercentage, folderInfo.jpgCounter, folderInfo.jpgPercentage))
+    print('> PNG   : {} file(s) ({} %)\n> JPG   : {} file(s) ({} %)'.format(folderInfo.pngCounter, folderInfo.pngPercentage, folderInfo.jpgCounter, folderInfo.jpgPercentage))
+    print('> Total : {} file(s)\n'.format(folderInfo.pngCounter + folderInfo.jpgCounter))
 
 
-# Print a detailled view of a given track. Very verbose, use carefully with big libraries
+# Print a detailled view of a given track. Very verbose, use carefully with big libraries (unless you're ok with the shell dying in the field!)
 def printDetailledTrack(track):
     print('ID3 Title : {}'.format(track.title))
     print('ID3 Artists : {}'.format(track.artists))
@@ -59,16 +61,16 @@ def printDetailledTrack(track):
     print('Path list : {}\n'.format(track.pathList))
 
 
-def printStartCrawling(targetFolder):
-    print('  Folder crawling')
-    print('> Crawling files in folder {} and all its sub-directories'.format(targetFolder))
+def printScanStart(targetFolder, totalTracks):
+    print('  Folder scan : {} track(s) to test'.format(totalTracks))
+    print('> Scanning files in folder \'{}\' and all its sub-directories...'.format(targetFolder))
 
 
-def printCrawlingProgress(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity):
-    print('> Crawling completion : {:02d} % -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity))
+def printScanProgress(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity):
+    print('> {:02d}% -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity))
 
 
-def printEndCrawling(errorCounter, totalTracks, purity):
+def printScanEnd(errorCounter, totalTracks, purity):
     print('  Folder analysis done!')
     print('> {} errors on {} tracks (purity : {} %)'.format(errorCounter, totalTracks, purity))
 

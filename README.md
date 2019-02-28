@@ -19,12 +19,15 @@ This script uses `Python3`, and requires `mutagen` and `PyICU`. Please ensure th
 
 At this point, you must ensure that the folder you are about to test match at least the recommended tree structure of the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention), since other folder structure may results in the script failure. Then in your cloned repository, run:
 
-`$ python3 ./MzkOstrichRemover.py ./path/to/library/folder/` *NB*: absoulte or relative path, whatever..
+`$ python3 ./MzkOstrichRemover.py ./path/to/library/folder/`
+
+*NB*: use `-h` for help, `-v` for a verbose output.
 
 ## Features
 
 ##### v1.0
 - [x] Complete scanning process and error check
+- [x] Verbose output (display track errors as a tree after scan)
 
 ##### v2.0
 - [ ] Specific errors (cover size, album artist field, genre)
@@ -32,5 +35,8 @@ At this point, you must ensure that the folder you are about to test match at le
 - [ ] Custom scan (track, album or file errors only)
 - [ ] Verbose option (with several levels)
 - [ ] Basic web display of JSON results
+
+#### v3.0
+- [ ] Qt interface
 
  You can still learn more about the following milestones and the current tasks on the associated [Trello board](https://trello.com/b/0nVfm0Xz/mzkostrichremover). Contributions welcome!
