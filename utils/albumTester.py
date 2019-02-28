@@ -1,9 +1,11 @@
+# Project imports
 from models.album import Album
 from models.track import Track
 from utils.trackTester import TrackTester
 from utils.errorEnum import ErrorEnum
 
 
+# AlbumTester aim to test all tracks in a folder and group all their errors
 class AlbumTester:
     def __init__(self, files, preservedPath):
         self.preservedPath = preservedPath
@@ -21,6 +23,7 @@ class AlbumTester:
         self._analyseTracks()
 
 
+    # Analyse first the global album errors (compute a total disc/track and global album year)
     def _analyseAlbumInternals(self):
         lockErrors = False
         # Filling internals
@@ -49,6 +52,7 @@ class AlbumTester:
                     self.album.year = -1
 
 
+    # Analyse the album tracks (by creating a TrackTester for each)
     def _analyseTracks(self):
         for fileName in self.files:
             trackTester = self._testFile(fileName, self.preservedPath, self.album)
@@ -56,7 +60,7 @@ class AlbumTester:
                 self.tracks.append(trackTester)
 
 
-    # Manages the MP3 files to test in the pipeline
+    # Manages the MP3/FLAC files to test in the pipeline
     def _testFile(self, fileName, pathList, album):
         audioTagPath = ''
         for folder in pathList: # Build the file path by concatenating folder in the file path
@@ -71,6 +75,7 @@ class AlbumTester:
         return TrackTester(track, album)
 
 
+    # Compute error counter for the album
     def tracksErrorCounter(self):
         errorCounter = 0
         for trackTester in self.tracks:

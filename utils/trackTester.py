@@ -1,9 +1,12 @@
+# Python imports
 import icu
 
+# Project imports
 from utils.errorEnum import ErrorEnum
 from utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray
 
 
+# TrackTester aim to test a track and group all its errors
 class TrackTester:
     def __init__(self, track, album):
         self.track = track
@@ -19,7 +22,6 @@ class TrackTester:
 
     # Tests a Track object to check if it is matching the naming convention
     def _testTrackObject(self):
-        global orphanCounter
         forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25']
         if len(self.track.fileNameList) == 7 and any(s in self.track.fileNameList[6] for s in forbiddenPattern): # When album is a single, we must re-join the album name and the 'Single' suffix
             self.track.fileNameList[5:7] = [' - '.join(self.track.fileNameList[5:7])] # Re-join with a ' - ' separator
@@ -71,7 +73,7 @@ class TrackTester:
     # Testing Category 3 : ID3 tags inconsistencies
     def _testTagsInconsistencies(self):
         # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
-        #self._testForMissingtags()
+        self._testForMissingtags()
         # ErrorCode 12 : Performer does not contains both the artist and the featuring artist
         self._testPerformerComposition()
         # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
@@ -94,6 +96,7 @@ class TrackTester:
             self.errors.append(ErrorEnum.ALBUM_YEAR_VS_TRACK_YEAR)
 
 
+    # Testing Category 2 auxilliary : Test artist regarding the remix artist, or the original artist
     def _testFilenameTrackArtist(self):
         if len(self.track.remix) == 0:
             # ErrorCode 08 : Filename artists doesn't match the track artist tag
@@ -103,6 +106,7 @@ class TrackTester:
             self._testArrayErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_REMIX_ARTIST, self.track.remix, self.track.artists)
 
 
+    # Test tags emptiness
     def _testForMissingtags(self):
         if self.track.title == '':
             self.missingTagsCounter += 1
@@ -122,9 +126,10 @@ class TrackTester:
         if self.track.composers == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Composers')
-        if self.track.producer == '':
-            self.missingTagsCounter += 1
-            self.missingTags.append('Producer')
+        # Soon to be released...
+        # if self.track.producer == '':
+        #     self.missingTagsCounter += 1
+        #     self.missingTags.append('Producer')
         if self.track.trackNumber == '':
             self.missingTagsCounter += 1
             self.missingTags.append('TrackNumber')
@@ -142,7 +147,9 @@ class TrackTester:
             self.errors.append(ErrorEnum.MISSING_TAGS)
 
 
+    # Test if the performer field is accurate regarding the track title (via composedPerformer)
     def _testPerformerComposition(self):
+        # For acented char sorting
         collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
         # If track has featured artists, we append them to the performer tmp string
         # Sorted comparaison to only test value equality. The artists alphabetic order is tested elswhere
@@ -151,7 +158,9 @@ class TrackTester:
             self.errors.append(ErrorEnum.INCONSISTENT_PERFORMER)
 
 
+    # Test ID3 tags order (names must be alpĥabetically sorted, while considering accent properly)
     def _testMissorderedTags(self):
+        # For acented char sorting
         collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
         if sorted(removeSpecialCharFromArray(self.track.artists), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.artists):
             self.missorderedTag.append('Artists')
@@ -184,11 +193,12 @@ class TrackTester:
 
     # Tests a Track on a given topic using an error code as documented in this function
     def _testArrayErrorForErrorCode(self, errorCode, array1, array2):
+        # Raise error if lengths are not matching
         if len(array1) != len(array2):
             self.errorCounter += 1
             self.errors.append(errorCode)
             return
-
+        # Iterate over arrays
         for item1, item2 in zip(array1, array2):
             if item1 != item2:
                 if self._areStringsMatchingWithFoldernameRestrictions(item1, item2) == False:
@@ -197,7 +207,7 @@ class TrackTester:
                     return
 
 
-    # Test if the character that do not match in string are forbidden on some OS. string1 is from the filename, string2 is from the tags
+    # Test if the character that do not match in string are forbidden on some OS. string1 should be the replaced char, string2 should be the original char
     def _areStringsMatchingWithFoldernameRestrictions(self, string1, string2):
         list1 = list(string1)
         list2 = list(string2)

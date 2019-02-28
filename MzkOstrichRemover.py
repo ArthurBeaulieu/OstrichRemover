@@ -1,24 +1,21 @@
 #!/usr/bin/env python3
 
-
+# Python imports
 import os
 import sys
 import json
 import argparse
 
-
+# Project imports
 from models.folderInfo import FolderInfo
 from utils.errorEnum import ErrorEnum
 from utils.albumTester import AlbumTester
 from utils.tools import computePurity
 from utils.uiBuilder import *
 
-
-##  --------  Globals  --------  ##
-
-
+# Globals
 global scriptVersion
-scriptVersion = '0.9.1'
+scriptVersion = '0.9.2'
 
 
 # Script main frame
@@ -34,7 +31,7 @@ def main():
     crawlFolders(args)
 
 
-# Will crawl the folder path given as an argument, and all its sub-directories
+# Will crawl the folder path given in argument, and all its sub-directories
 def crawlFolders(args):
     # Retrieve folder global information
     printRetrieveFolderInfo()

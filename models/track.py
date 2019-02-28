@@ -1,12 +1,11 @@
+# Project imports
 from mutagen.id3 import ID3
 from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
-
-
 #from utils.uiBuilder import printDetailledTrack # Uncomment for debug purpose only (printDetailledTrack() is very verbose)
 
 
-# A Track container class
+# A Track container class with all useful attributes
 class Track:
     def __init__(self, fileType, pathList, fileName, audioTagPath):
         # ID3 tags
@@ -95,7 +94,7 @@ class Track:
         if 'COMPOSER' in self.audioTag:
             self.composers = self.audioTag['COMPOSER'][0]
         if 'PERFORMER' in self.audioTag:
-            self.performers = self.audioTag['PERFORMER'][0].split('; ')            
+            self.performers = self.audioTag['PERFORMER'][0].split('; ')
         if 'ARTIST' in self.audioTag:
             self.artists = self.audioTag['ARTIST'][0].split('; ')
         if 'ALBUM' in self.audioTag:

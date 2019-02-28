@@ -1,5 +1,9 @@
-from utils.errorEnum import ErrorEnum
+# Python imports
 import json
+
+# Project imports
+from utils.errorEnum import ErrorEnum
+
 
 # Converts a given number to a properly formatted file size
 def convertBytes(num):
@@ -9,6 +13,7 @@ def convertBytes(num):
         num /= 1024.0
 
 
+# Check if string begins with a dot
 def prefixDot(charList):
     if charList[0] == '.':
         return True
@@ -16,6 +21,7 @@ def prefixDot(charList):
         return False
 
 
+# Check if string begins with three dots
 def prefixThreeDots(charList):
     if charList[0] == '.' and charList[1] == '.' and charList[2] == '.':
         return True
@@ -23,6 +29,7 @@ def prefixThreeDots(charList):
         return False
 
 
+# Check if string ends with a dot
 def suffixDot(charList):
     if charList[len(charList) - 1] == '.':
         return True
@@ -30,6 +37,7 @@ def suffixDot(charList):
         return False
 
 
+# Check if string ends with three dots
 def suffixThreeDots(charList):
     if charList[len(charList) - 1] == '.' and charList[len(charList) - 2] == '.' and charList[len(charList) - 3] == '.':
         return True
@@ -37,11 +45,13 @@ def suffixThreeDots(charList):
         return False
 
 
+# Compute the purity percentage according to the error enum length and the errors counter
 def computePurity(errorCounter, tracksSample):
     totalPossibleError = tracksSample * len(ErrorEnum)
     return round(100 - round((errorCounter * 100) / totalPossibleError, 2), 2)
 
 
+# Sanitize a given string and replace all forbidden char with a `-`
 def removeSpecialCharFromString(string):
     # Checking first that the differents char are bc of an illegal symbol
     forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|', '\'']
@@ -51,6 +61,7 @@ def removeSpecialCharFromString(string):
     return string
 
 
+# Sanitize items in a given array and replace all forbidden char with a `-`
 def removeSpecialCharFromArray(array):
     forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|', '\'']
     output = []
