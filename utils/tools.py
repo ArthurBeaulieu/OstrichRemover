@@ -1,8 +1,18 @@
 # Python imports
 import json
+import os
 
 # Project imports
 from utils.errorEnum import ErrorEnum
+
+
+# Creates a directory if and only if it doesn't exists yet
+def createDirectory(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    except OSError:
+        print('Something unexpected append when creating {}'.format(directory))
 
 
 # Converts a given number to a properly formatted file size

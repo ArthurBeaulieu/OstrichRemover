@@ -14,6 +14,13 @@ def printCredentials(scriptVersion):
     print('##----------------------------------------##\n')
 
 
+# Displays an error message when the user path is invalid
+def printInvalidPath(path):
+    print('  The path \'{}\' is invalid...'.format(path))
+    print('  It must end with a / or an \\, depending on your system\n')
+    print('> Exiting MzkOstrichRemover.py')
+
+
 # Prints script 'man' page
 def printHelp():
     print('  Script usage')
@@ -33,6 +40,9 @@ def printRootFolderInfo(folderInfo):
     print('> File count   : {}'.format(folderInfo.filesCounter))
     print('> Folder count : {}'.format(folderInfo.foldersCounter))
     print('> Folder size  : {}\n'.format(convertBytes(folderInfo.folderSize)))
+    print('  Library informations')
+    print('> Artists : {} file(s)\n> Albums  : {} file(s)'.format(folderInfo.artistsCounter, folderInfo.albumsCounter))
+    print('> Tracks  : {} file(s)\n> Covers  : {} file(s)\n'.format(folderInfo.tracksCounter, folderInfo.coversCounter))
     print('  Audio files informations')
     print('> FLAC  : {} file(s) ({} %)\n> MP3   : {} file(s) ({} %)'.format(folderInfo.flacCounter, folderInfo.flacPercentage, folderInfo.mp3Counter, folderInfo.mp3Percentage))
     print('> Total : {} file(s)\n'.format(folderInfo.flacCounter + folderInfo.mp3Counter))
@@ -78,6 +88,11 @@ def printScanProgress(percentage, previousLetter, currentLetter, errorCounter, s
 def printScanEnd(errorCounter, totalTracks, purity):
     print('  Folder analysis done!')
     print('> {} errors on {} tracks (purity : {} %)'.format(errorCounter, totalTracks, purity))
+
+
+# Print a line break in console
+def printLineBreak():
+    print('')
 
 
 # -v, --verbose : Crawl albumTesters array and print all errors as a tree

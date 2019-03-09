@@ -11,11 +11,12 @@ from models.folderInfo import FolderInfo
 from utils.errorEnum import ErrorEnum
 from utils.albumTester import AlbumTester
 from utils.tools import computePurity
+from utils.reportBuilder import *
 from utils.uiBuilder import *
 
 # Globals
 global scriptVersion
-scriptVersion = '0.9.2'
+scriptVersion = '0.9.3'
 
 
 # Script main frame
@@ -24,6 +25,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('folder', help='The input folder path to crawl (absolute or relative)')
     ap.add_argument('-v', '--verbose', help='Display errors as a tree after crawling', action='store_true')
+    ap.add_argument('-d', '--dump', help='Dump errors in an output JSON file', action='store_true')
     arg = ap.parse_args()
     args = vars(ap.parse_args())
     # Exec script
@@ -33,6 +35,9 @@ def main():
 
 # Will crawl the folder path given in argument, and all its sub-directories
 def crawlFolders(args):
+    if not args['folder'].endswith('\\') and not args['folder'].endswith('/'):
+        printInvalidPath(args['folder'])
+        sys.exit(-1)
     # Retrieve folder global information
     printRetrieveFolderInfo()
     folderInfo = FolderInfo(args['folder'])
@@ -54,7 +59,7 @@ def crawlFolders(args):
         files = [f for f in files if not f[0] == '.'] # Ignore hidden files
         directories[:] = [d for d in directories if not d[0] == '.'] # ignore hidden directories
         path = root.split(os.sep) # Split root into an array of folders
-        preservedPath = list(path) # Mutagen needs an preserved path when using ID3() or FLAC()
+        preservedPath = list(path) # Mutagen needs a preserved path when using ID3() or FLAC()
         for x in range(rootPathLength - 1): # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
             path.pop(0)
         # Current path is for an album directory : perform tests
@@ -71,7 +76,12 @@ def crawlFolders(args):
                     printScanProgress(percentage, previousLetter, path[0][0], errorCounter, scannedTracks, computePurity(errorCounter, scannedTracks))
                     percentage += step;
                     previousLetter = path[0][0] # path[0] is the Artists name
+    if totalTracks <= 10:                   
+        printLineBreak()
     printScanEnd(errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
+    # Compute and save JSON report
+    if args['dump']:
+        saveReportFile(computeReport(folderInfo, albumTesters, errorCounter, computePurity(errorCounter, scannedTracks)))
     # Verbose report
     if args['verbose']:
         printErroredTracksReport(albumTesters)

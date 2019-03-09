@@ -1,0 +1,218 @@
+html, body {
+  --bg: rgba(52, 52, 52, 0.8);
+  --bg-light-blue: rgba(100, 100, 255, 0.05);
+  --white: rgba(255, 255, 255, 0.9);
+  --red: rgb(255, 100, 100);
+  --green: rgb(50, 225, 50);
+  --overlay: rgba(0, 0, 0, 0.4);
+  --border: rgba(127, 127, 127, 0.15);
+  --border-radius: 5px;
+  --top-height: 50px;
+  --margin: 20px;
+  height: 100%;
+  width: 100%;
+}
+
+nav {
+  background: var(--bg);
+  display: flex;
+  height: var(--top-height);
+  justify-content: space-between;
+  width: 100%;
+}
+
+nav h3 {
+  border-bottom: inherit !important;
+  color: var(--white);
+  height: var(--top-height) !important;
+  line-height: var(--top-height) !important;
+  margin: 0 !important;
+  padding: 0 calc(var(--top-height) / 2) !important;
+  text-align: left;
+}
+
+nav ul {
+  display: inline-flex;
+  list-style: none;
+  margin: 0;
+}
+
+nav ul li {
+  font-weight: bold;
+  line-height: var(--top-height);
+  padding: 0 calc(var(--top-height) / 2) 0 0;
+}
+
+nav a {
+  color: var(--white);
+  text-decoration: none;
+}
+
+nav a:active,
+nav a:focus,
+nav a:hover {
+  color: var(--red);
+}
+
+main {
+  align-items: center;
+  display: flex;
+  height: calc(100% - var(--top-height));
+  justify-content: center;
+  width: 100%;
+}
+
+code {
+  color: var(--red);
+  margin-bottom: 0;
+}
+
+h4 {
+  margin: 0 !important;
+}
+
+.home-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.dnd-container {
+  background-color: var(--bg-light-blue);
+  border: solid 3px var(--border);
+  border-radius: var(--border-radius);
+  height: 60%;
+  margin-top: var(--margin);
+  width: 60%;
+}
+
+.dnd-container::before {
+  content: 'Drag a JSON report file in here...';
+  display: block;
+  font-style: italic;
+  height: auto;
+  text-align: center;
+  transform: translateY(100px);
+  width: 100%;
+}
+
+.report-container {
+  display: none;
+  height: 100%;
+  width: 100%;
+}
+
+.report-container h1 {
+  height: var(--top-height);
+  line-height: var(--top-height);
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.report-container	.row {
+  height: calc(100% - calc(var(--margin) * 3) - var(--top-height) - 4px);
+  max-width: inherit;
+  padding-top: calc(var(--margin) * 2);
+  width: 70%;
+}
+
+.report-container	.col-three {
+  align-self: start;
+  background-color: var(--bg-light-blue);
+  border: solid 3px var(--border);
+  border-radius: var(--border-radius);
+  padding: var(--margin);
+}
+
+.report-container	.col-seven {
+  background-color: var(--bg-light-blue);
+  border: solid 3px var(--border);
+  border-radius: var(--border-radius);
+  height: 100%;
+  margin: 0 0 0 var(--margin);
+  overflow-y: auto;
+  padding: var(--margin);
+  width: calc(70% - var(--margin));
+}
+
+.report-container	.col-seven p {
+  margin-bottom: 0;
+}
+
+.purity-progress {
+  border-radius: var(--border-radius);
+  height: 7px;
+  margin: 0 auto;
+  min-width: 100px;
+  width: 90%;
+}
+
+.pure {
+  border-top-left-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius);
+  background-color: var(--green);
+  float: left;
+  padding: 0px;
+  margin: 0px;
+  width: 0px;
+  height: 100%;
+}
+
+.impure {
+  border-top-right-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+  background-color: var(--red);
+  float: left;
+  padding: 0px;
+  margin: 0px;
+  width: 0px;
+  height: 100%;
+}
+
+.overlay {
+  background-color: var(--overlay);
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+@keyframes rotatePlane {
+  0% {
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+  } 50% {
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+  } 100% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
+}
+
+.overlay::before {
+  content: '';
+  background-color: var(--red);
+  height: calc(var(--margin) * 2);
+  left: calc(50% - calc(var(--margin) / 2));
+  position: absolute;
+  top: 50%;
+  width: calc(var(--margin) * 2);
+  border-radius: var(--border-radius);
+  animation: rotatePlane 1.2s infinite ease-in-out;
+}
+
+.overlay::after {
+  content: 'Loading JSON data...';
+  color: var(--white);
+  font-style: italic;
+  left: 0;
+  text-align: center;
+  position: absolute;
+  top: 55%;
+  width: 100%;
+}
