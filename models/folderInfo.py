@@ -26,12 +26,12 @@ class FolderInfo:
 
     # Reads the user given folder and store a few informations about it
     def _computeFolderInfo(self, folder):
-        self.folder = folder        
+        self.folder = folder
         rootPathLength = len(folder.split(os.sep))
         # Counting file, folder etc, and computed folder info internals
         for folder, dirnames, filenames in sorted(os.walk(folder)):
             filenames = [f for f in filenames if not f[0] == '.'] # Ignore hidden files
-            dirnames[:] = [d for d in dirnames if not d[0] == '.'] # ignore hidden directories            
+            dirnames[:] = [d for d in dirnames if not d[0] == '.'] # ignore hidden directories
             self.filesCounter += len(filenames) # Increment file counter
             self.foldersCounter += len(dirnames) # Increment folder counter
             path = folder.split(os.sep) # Split root into an array of folders
@@ -54,6 +54,7 @@ class FolderInfo:
                     self.pngCounter += 1
                 fp = os.path.join(folder, f)
                 self.folderSize += os.path.getsize(fp) # Increment folder size
+        # Compute totals
         self.tracksCounter = self.flacCounter + self.mp3Counter
         self.coversCounter = self.jpgCounter + self.pngCounter
         # Compute files percentages

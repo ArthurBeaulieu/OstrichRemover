@@ -83,7 +83,10 @@ class TrackTester:
     # Testing Category 4 : Track tags coherence with album metrics
     def _testAlbumValuesCoherence(self):
         # ErrorCode 14 : Computed album total track is not equal to the track total track tag
-        if self.track.totalTrack == '' or int(self.track.totalTrack) != self.album.totalTrack:
+        if type(self.track.totalTrack) is str and not self.track.totalTrack.isdigit():
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.ALBUM_TOTAL_TRACK_VS_TRACK_TOTAL_TRACK)
+        elif self.track.totalTrack == '' or int(self.track.totalTrack) != self.album.totalTrack:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_TOTAL_TRACK_VS_TRACK_TOTAL_TRACK)
         # ErrorCode 15 : Computed album disc track is not equal to the track disc track tag

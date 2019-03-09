@@ -16,7 +16,7 @@ from utils.uiBuilder import *
 
 # Globals
 global scriptVersion
-scriptVersion = '0.9.3'
+scriptVersion = '1.0.0'
 
 
 # Script main frame
@@ -24,8 +24,8 @@ def main():
     # Init argparse arguments
     ap = argparse.ArgumentParser()
     ap.add_argument('folder', help='The input folder path to crawl (absolute or relative)')
+    ap.add_argument('-d', '--dump', help='Dump errors as JSON in ./output folder', action='store_true')
     ap.add_argument('-v', '--verbose', help='Display errors as a tree after crawling', action='store_true')
-    ap.add_argument('-d', '--dump', help='Dump errors in an output JSON file', action='store_true')
     arg = ap.parse_args()
     args = vars(ap.parse_args())
     # Exec script
@@ -76,7 +76,7 @@ def crawlFolders(args):
                     printScanProgress(percentage, previousLetter, path[0][0], errorCounter, scannedTracks, computePurity(errorCounter, scannedTracks))
                     percentage += step;
                     previousLetter = path[0][0] # path[0] is the Artists name
-    if totalTracks <= 10:                   
+    if totalTracks <= 10:
         printLineBreak()
     printScanEnd(errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
     # Compute and save JSON report
