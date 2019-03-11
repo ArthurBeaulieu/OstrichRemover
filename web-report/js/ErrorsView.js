@@ -45,7 +45,7 @@ class ErrorsView {
     // HTML markup
     libDetails.innerHTML = `
       <u><em class="lead">Library details</em></u><br>
-      <b>${f.folders}</b> folder(s) – <b>${f.files}</b> file(s) – <b>${Math.floor(f.size > 1000000 ? f.size / 1000000 : f.size / 1000000000)} ${f.size > 1000000 ? '</b>Mo' : '</b>Go'}<br>
+      <b>${f.folders}</b> folder(s) – <b>${f.files}</b> file(s) – <b>${Math.floor(f.size > 100000000 ? f.size / 1000000000 : f.size / 1000000)} ${f.size > 100000000 ? '</b>Go' : '</b>Mo'}<br>
       <b>${f.artistsCount}</b> artist(s) – <b>${f.albumsCount}</b> albums(s)<br>
       <b>${f.tracksCount}</b> track(s) – <b>${f.coversCount}</b> artwork(s)<br>
     `;

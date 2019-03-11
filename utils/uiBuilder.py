@@ -181,6 +181,9 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     # ErrorCode 18 : The Filename doesn't follow the naming pattern properly
     elif errorCode == 18:
         printTrackErrorInfo(errorCode, computeNamingConventionString(), 'AC-DC - 1978 - Powerage - 105 - AC-DC - Sin City')
+    # ErrorCode 20 : Track has no cover
+    elif errorCode == 20:
+        printTrackErrorInfo(errorCode, t.title, 'Cover is missing from, or not embedded in file.')
 
 
 # Auxilliary, print an error about a given album

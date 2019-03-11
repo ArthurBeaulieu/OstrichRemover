@@ -59,6 +59,12 @@ class ErrorEnum(Enum):
     # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
     MISSORDERED_TAGS = 13
 
+    # ErrorCode 19 : Cover is invalid (not 1000x1000 jpg/png)
+    INVALID_COVER = 19
+
+    # ErrorCode 20 : Track has no cover
+    MISSING_COVER = 20
+
 ## ------------
 # Category 4 : Track tags coherence with album metrics
     # ErrorCode 14 : Computed album total track is not equal to the track total track tag

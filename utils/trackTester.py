@@ -78,12 +78,15 @@ class TrackTester:
         self._testPerformerComposition()
         # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
         self._testMissorderedTags()
+        # ErrorCode 19 : Cover is invalid (not 1000x1000 jpg/png)
+        # ErrorCode 20 : Track has no cover
+        self._testCoverValidity()
 
 
     # Testing Category 4 : Track tags coherence with album metrics
     def _testAlbumValuesCoherence(self):
         # ErrorCode 14 : Computed album total track is not equal to the track total track tag
-        if type(self.track.totalTrack) is str and not self.track.totalTrack.isdigit():
+        if type(self.track.totalTrack) is str and not self.track.totalTrack. isdigit():
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_TOTAL_TRACK_VS_TRACK_TOTAL_TRACK)
         elif self.track.totalTrack == '' or int(self.track.totalTrack) != self.album.totalTrack:
@@ -186,6 +189,14 @@ class TrackTester:
             self.errors.append(ErrorEnum.MISSORDERED_TAGS)
 
 
+    # Test the track cover validity (100x100 jpg or png file)
+    def _testCoverValidity(self):
+        if not self.track.hasCover:
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.MISSING_COVER)
+        #else:
+            #print(self.track.hasCover)
+
     # Tests a Track on a given topic using an error code as documented in this function
     def _testErrorForErrorCode(self, errorCode, string1, string2):
         if string1 != string2:
@@ -214,6 +225,8 @@ class TrackTester:
     def _areStringsMatchingWithFoldernameRestrictions(self, string1, string2):
         list1 = list(string1)
         list2 = list(string2)
+        if len(list1) == 0 or len(list2) == 0:
+            return False
         if len(list1) != len(list2):
             if prefixDot(list1) == True or prefixThreeDots(list1) == True or suffixDot(list1) == True or suffixThreeDots(list1) == True:
                 return True
