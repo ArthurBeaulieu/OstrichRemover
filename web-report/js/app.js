@@ -16,6 +16,7 @@ const loadJSON = (fileInfo, data) => {
   document.body.appendChild(window.overlay);
   // Fill view
   window.setTimeout(() => {
+    document.querySelector('#nav-title').innerHTML += ` ${data.version}`;
     errorsView = new ErrorsView(data, document.querySelector('.report-container'));
   }, 100); // Require to force the redraw of the overlay before filling the errors view
 };

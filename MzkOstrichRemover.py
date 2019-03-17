@@ -81,7 +81,7 @@ def crawlFolders(args):
     printScanEnd(errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
     # Compute and save JSON report
     if args['dump']:
-        saveReportFile(computeReport(folderInfo, albumTesters, errorCounter, computePurity(errorCounter, scannedTracks)))
+        saveReportFile(computeReport(scriptVersion, folderInfo, albumTesters, errorCounter, computePurity(errorCounter, scannedTracks)))
     # Verbose report
     if args['verbose']:
         printErroredTracksReport(albumTesters)
