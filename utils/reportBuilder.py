@@ -114,6 +114,8 @@ def _computeErrors(errorCode):
         output['errorValue'] = "Year is not the same on all physical files of the album"
     if errorCode == 18:
         output['errorValue'] = "The Filename doesn't follow the naming pattern properly"
+    if errorCode == 19:
+        output['errorValue'] = "The cover dimensions are incorrect and should be 1000x1000"
     if errorCode == 20:
         output['errorValue'] = "The cover is missing from the file"
     return output

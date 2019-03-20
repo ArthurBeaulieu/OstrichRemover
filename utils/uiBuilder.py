@@ -181,10 +181,13 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     # ErrorCode 18 : The Filename doesn't follow the naming pattern properly
     elif errorCode == 18:
         printTrackErrorInfo(errorCode, computeNamingConventionString(), 'AC-DC - 1978 - Powerage - 105 - AC-DC - Sin City')
+    # ErrorCode 19 : Cover is invalid (not 1000x1000 jpg/png)
+    elif errorCode == 19:
+        printTrackErrorInfo(errorCode, 'Cover dimensions are incorrect.', 'Embeded image should be 1000x1000.')
     # ErrorCode 20 : Track has no cover
     elif errorCode == 20:
-        printTrackErrorInfo(errorCode, t.title, 'Cover is missing from, or not embedded in file.')
-
+        printTrackErrorInfo(errorCode, 'Cover is missing from file.', 'Please embed an image file in the track.')
+        
 
 # Auxilliary, print an error about a given album
 def _printErroredAlbumsReport_aux(errorCode):
@@ -245,6 +248,9 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 18:
         location1 = 'Expected Pattern       '
         location2 = 'Example                '
+    # ErrorCode 19-20 : Cover errors (19 no cover, 20 incorrect size)
+    elif errorCode == 19 or errorCode == 20:
+        location1 = 'From Cover Tag         '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -297,6 +303,9 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 18 : The Filename doesn't follow the naming pattern properly
     elif errorCode == 18:
         topic = '-- Wrong File Naming'
+    # ErrorCode 19-20 : Cover errors (19 no cover, 20 incorrect size)
+    elif errorCode == 19 or errorCode == 20:
+        topic = '-------- Cover Error'
     return topic
 
 

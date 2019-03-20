@@ -37,5 +37,6 @@ document.querySelector('#clear-view').addEventListener('click', () => {
   document.querySelector('.report-container').style.display = 'none';
   document.querySelector('.report-container').innerHTML = '';
   document.querySelector('#clear-view').blur();
+  document.querySelector('#nav-title').innerHTML = `MzkOstrichRemover`;  
   errorsView = null;
 });

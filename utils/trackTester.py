@@ -1,9 +1,12 @@
 # Python imports
+import os
 import icu
+import PIL
 
 # Project imports
 from utils.errorEnum import ErrorEnum
 from utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray
+from PIL import Image
 
 
 # TrackTester aim to test a track and group all its errors
@@ -189,13 +192,20 @@ class TrackTester:
             self.errors.append(ErrorEnum.MISSORDERED_TAGS)
 
 
-    # Test the track cover validity (100x100 jpg or png file)
+    # Test the track cover validity (1000x1000 jpg or png file)
     def _testCoverValidity(self):
         if not self.track.hasCover:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.MISSING_COVER)
-        #else:
-            #print(self.track.hasCover)
+        else:
+            with open('tmp.jpg', 'wb') as img: # Tmp extraction
+                img.write(self.track.cover)
+                omg = Image.open('tmp.jpg')
+                if omg.size[0] != 1000 and omg.size[1] != 1000:
+                    self.errorCounter += 1
+                    self.errors.append(ErrorEnum.INVALID_COVER)
+            os.remove('tmp.jpg') # GC
+
 
     # Tests a Track on a given topic using an error code as documented in this function
     def _testErrorForErrorCode(self, errorCode, string1, string2):

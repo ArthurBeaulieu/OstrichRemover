@@ -1,9 +1,11 @@
+import PIL
+
 # Project imports
 from mutagen.id3 import ID3
 from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
 #from utils.uiBuilder import printDetailledTrack # Uncomment for debug purpose only (printDetailledTrack() is very verbose)
-
+from PIL import Image
 
 # A Track container class with all useful attributes
 class Track:
@@ -27,6 +29,7 @@ class Track:
         self.feat = []
         self.remix = []
         self.hasCover = False
+        self.cover = {}
         # Filesystem path and name as lists (separator is ` - `)
         self.pathList = pathList
         self.fileType = fileType
@@ -151,14 +154,16 @@ class Track:
 
     # Test the cover existence in the file
     def _containsCover(self):
-        frontPicture = {}
         # Extract image from file
         if self.fileType == 'MP3' and 'APIC:' in self.audioTag:
-            frontPicture = self.audioTag['APIC:'].data
+            self.cover = self.audioTag['APIC:'].data
         elif self.fileType == 'FLAC':
-            frontPicture = self.audioTag.pictures
+            if len(self.audioTag.pictures) > 0:
+                self.cover = self.audioTag.pictures[0].data
+            else:
+                self.cover = self.audioTag.pictures
         # Test cover existence
-        if len(frontPicture) != 0:
+        if len(self.cover) != 0:
             self.hasCover = True
         else:
             self.hasCover = False
