@@ -135,10 +135,12 @@ class TrackTester:
         if self.track.composers == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Composers')
-        # Soon to be released...
-        # if self.track.producer == '':
-        #     self.missingTagsCounter += 1
-        #     self.missingTags.append('Producer')
+        if self.track.producer == '':
+            self.missingTagsCounter += 1
+            self.missingTags.append('Producer')
+        if self.track.label == '':
+            self.missingTagsCounter += 1
+            self.missingTags.append('Label')            
         if self.track.trackNumber == '':
             self.missingTagsCounter += 1
             self.missingTags.append('TrackNumber')

@@ -19,6 +19,7 @@ class Track:
         self.composedPerformer = []
         self.composers = ''
         self.producer = ''
+        self.label = ''
         self.trackNumber = ''
         self.totalTrack = ''
         self.discNumber = ''
@@ -58,6 +59,8 @@ class Track:
             self.year = self.audioTag['TDRC'].text[0].get_text()[:4].rstrip()
         if 'TPUB' in self.audioTag and self.audioTag['TPUB'].text[0] != '':
             self.producer = self.audioTag['TPUB'].text[0].rstrip()
+        if 'XXXX' in self.audioTag and self.audioTag['XXXX'].text[0] != '':
+            self.label = self.audioTag['XXXX'].text[0].rstrip()
         if 'TCOM' in self.audioTag and self.audioTag['TCOM'].text[0] != '':
             self.composers = self.audioTag['TCOM'].text[0]
         if 'TOPE' in self.audioTag and self.audioTag['TOPE'].text[0] != '':
@@ -88,6 +91,8 @@ class Track:
             self.trackNumber = self.audioTag['TRACKNUMBER'][0]
         if 'PRODUCER' in self.audioTag:
             self.producer = self.audioTag['PRODUCER'][0]
+        if 'LABEL' in self.audioTag:
+            self.label = self.audioTag['LABEL'][0]
         if 'DISCNUMBER' in self.audioTag:
             self.discNumber = self.audioTag['DISCNUMBER'][0]
         if 'DISCTOTAL' in self.audioTag:
