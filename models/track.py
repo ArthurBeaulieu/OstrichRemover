@@ -56,7 +56,6 @@ class Track:
             self.artists = self.audioTag['TPE1'].text[0].split('; ')
         if 'TPE2' in self.audioTag:
             self.albumArtist = self.audioTag['TPE2'].text[0].rstrip()
-            print(self.albumArtist)
         if 'TALB' in self.audioTag:
             self.albumTitle = self.audioTag['TALB'].text[0].rstrip()
         if 'TDRC' in self.audioTag and self.audioTag['TDRC'].text[0].get_text() != '':
