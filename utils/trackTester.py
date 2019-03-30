@@ -140,7 +140,7 @@ class TrackTester:
             self.missingTags.append('Producer')
         if self.track.label == '':
             self.missingTagsCounter += 1
-            self.missingTags.append('Label')            
+            self.missingTags.append('Label')
         if self.track.trackNumber == '':
             self.missingTagsCounter += 1
             self.missingTags.append('TrackNumber')

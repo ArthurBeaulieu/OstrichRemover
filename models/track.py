@@ -14,6 +14,7 @@ class Track:
         self.title = ''
         self.artists = []
         self.albumTitle = ''
+        self.albumArtist = ''
         self.year = ''
         self.performers = []
         self.composedPerformer = []
@@ -53,14 +54,17 @@ class Track:
             self.title = self.audioTag['TIT2'].text[0].rstrip()
         if 'TPE1' in self.audioTag:
             self.artists = self.audioTag['TPE1'].text[0].split('; ')
+        if 'TPE2' in self.audioTag:
+            self.albumArtist = self.audioTag['TPE2'].text[0].rstrip()
+            print(self.albumArtist)
         if 'TALB' in self.audioTag:
             self.albumTitle = self.audioTag['TALB'].text[0].rstrip()
         if 'TDRC' in self.audioTag and self.audioTag['TDRC'].text[0].get_text() != '':
             self.year = self.audioTag['TDRC'].text[0].get_text()[:4].rstrip()
         if 'TPUB' in self.audioTag and self.audioTag['TPUB'].text[0] != '':
             self.producer = self.audioTag['TPUB'].text[0].rstrip()
-        if 'XXXX' in self.audioTag and self.audioTag['XXXX'].text[0] != '':
-            self.label = self.audioTag['XXXX'].text[0].rstrip()
+        if 'TCOP' in self.audioTag and self.audioTag['TCOP'].text[0] != '':
+            self.label = self.audioTag['TCOP'].text[0].rstrip()
         if 'TCOM' in self.audioTag and self.audioTag['TCOM'].text[0] != '':
             self.composers = self.audioTag['TCOM'].text[0]
         if 'TOPE' in self.audioTag and self.audioTag['TOPE'].text[0] != '':
@@ -107,6 +111,8 @@ class Track:
             self.artists = self.audioTag['ARTIST'][0].split('; ')
         if 'ALBUM' in self.audioTag:
             self.albumTitle = self.audioTag['ALBUM'][0]
+        if 'ALBUMARTIST' in self.audioTag:
+            self.albumArtist = self.audioTag['ALBUMARTIST'][0]
 
 
     # Compute all class internals that can not be extracted from ID3 tags
