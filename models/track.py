@@ -21,10 +21,10 @@ class Track:
         self.composers = ''
         self.producer = ''
         self.label = ''
-        self.trackNumber = ''
-        self.totalTrack = ''
-        self.discNumber = ''
-        self.totalDisc = ''
+        self.trackNumber = 0
+        self.totalTrack = 0
+        self.discNumber = 0
+        self.totalDisc = 0
         # Computed
         self.audioTagPath = audioTagPath
         self.audioTag = {}
@@ -127,7 +127,7 @@ class Track:
     def _computeFileNameList(self):
         # We split the filename into its differents parts, as mentioned in this method description
         self.fileNameList = self.fileName.split(' - ')
-        forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25']
+        forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25', 'Interlude']
         # Here we handle all specific cases (when ' - ' is not a separator)
         if len(self.fileNameList) > 6:
             if self.fileNameList[3] in forbiddenPattern: # When album is a single, we must re-join the album name and the 'Single' suffix
@@ -138,7 +138,7 @@ class Track:
     def _computeFolderNameList(self):
         # We also split the folder name to make a double check for Year and Album name
         self.folderNameList = self.pathList[len(self.pathList) - 1].split(' - ')
-        forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25']
+        forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25', 'Interlude']
 
         if len(self.folderNameList) == 3:
             if self.folderNameList[2] in forbiddenPattern: # When album is a single, we must re-join the album name and the 'Single' suffix

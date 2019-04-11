@@ -25,7 +25,7 @@ class TrackTester:
 
     # Tests a Track object to check if it is matching the naming convention
     def _testTrackObject(self):
-        forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25']
+        forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25', 'Interlude']
         if len(self.track.fileNameList) == 7 and any(s in self.track.fileNameList[6] for s in forbiddenPattern): # When album is a single, we must re-join the album name and the 'Single' suffix
             self.track.fileNameList[5:7] = [' - '.join(self.track.fileNameList[5:7])] # Re-join with a ' - ' separator
         # ErrorCode 18 : The filename doesn't follow the naming pattern properly
@@ -135,12 +135,12 @@ class TrackTester:
         if self.track.composers == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Composers')
-        if self.track.producer == '':
-            self.missingTagsCounter += 1
-            self.missingTags.append('Producer')
-        if self.track.label == '':
-            self.missingTagsCounter += 1
-            self.missingTags.append('Label')
+        # if self.track.producer == '':
+        #     self.missingTagsCounter += 1
+        #     self.missingTags.append('Producer')
+        # if self.track.label == '':
+        #     self.missingTagsCounter += 1
+        #     self.missingTags.append('Label')
         if self.track.trackNumber == '':
             self.missingTagsCounter += 1
             self.missingTags.append('TrackNumber')
