@@ -10,7 +10,9 @@ from utils.tools import createDirectory
 # Generate an JSON file from the albumTesters array
 def computeReport(version, folderInfo, albumTesters, errorCounter, purity):
     # Creating output dict object
+    now = datetime.datetime.now()
     output = {}
+    output['date'] = '{}-{}-{}'.format(now.year, now.month, now.day)
     output['version'] = version
     output['folderInfo'] = _computeFolderInfo(folderInfo, errorCounter, purity)
     output['artists'] = []
