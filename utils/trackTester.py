@@ -101,7 +101,7 @@ class TrackTester:
         if self.track.totalDisc == '' or int(self.track.totalDisc) != int(self.album.totalDisc):
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_DISC_TRACK_VS_TRACK_DISC_TRACK)
-        # ErrorCode 16 : Computed album yeas is not equal to the track year tag
+        # ErrorCode 16 : Computed album year is not equal to the track year tag
         if self.album.year != -1 and (self.track.year == '' or self.track.year != self.album.year): # If computed is -1, we do not display the error since Err17 is launched on album
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_YEAR_VS_TRACK_YEAR)

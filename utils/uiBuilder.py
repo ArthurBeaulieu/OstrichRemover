@@ -175,7 +175,7 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     # ErrorCode 15 : Computed album disc track is not equal to the track disc track tag
     elif errorCode == 15:
         printTrackErrorInfo(errorCode, t.totalDisc, trackTester.album.totalDisc)
-    # ErrorCode 16 : Computed album yeas is not equal to the track year tag
+    # ErrorCode 16 : Computed album year is not equal to the track year tag
     elif errorCode == 16:
         printTrackErrorInfo(errorCode, t.year, trackTester.album.year)
     # ErrorCode 18 : The Filename doesn't follow the naming pattern properly
@@ -240,7 +240,7 @@ def printTrackErrorInfo(errorCode, string1, string2):
         location1 = 'Missordered Tags       '
     # ErrorCode 14 : Computed album total track is not equal to the track total track tag
     # ErrorCode 15 : Computed album disc track is not equal to the track disc track tag
-    # ErrorCode 16 : Computed album yeas is not equal to the track year tag
+    # ErrorCode 16 : Computed album year is not equal to the track year tag
     elif errorCode == 14 or errorCode == 15 or errorCode == 16:
         location1 = 'From Track Tags        '
         location2 = 'From Computed Album    '

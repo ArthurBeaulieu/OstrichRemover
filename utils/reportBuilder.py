@@ -111,7 +111,7 @@ def _computeErrors(errorCode):
     if errorCode == 15:
         output['errorValue'] = "Computed album disc track is not equal to the track disc track tag"
     if errorCode == 16:
-        output['errorValue'] = "Computed album yeas is not equal to the track year tag"
+        output['errorValue'] = "Computed album year is not equal to the track year tag"
     if errorCode == 17:
         output['errorValue'] = "Year is not the same on all physical files of the album"
     if errorCode == 18:
