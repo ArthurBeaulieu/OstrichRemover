@@ -48,6 +48,9 @@ class ErrorEnum(Enum):
     # ErrorCode 10 : Filename title doesn't match the track title tag
     FILENAME_TITLE_VS_TITLE_TAG = 10
 
+    # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
+    FOLDERNAME_RELEASE_ARTISTS_VS_ALBUM_ARTIST_TAG = 21
+
 ## ------------
 # Category 3 : ID3 tags inconsistencies
     # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track

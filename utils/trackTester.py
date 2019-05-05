@@ -71,6 +71,8 @@ class TrackTester:
         self._testFilenameTrackArtist()
         # ErrorCode 10 : Filename title doesn't match the track title tag
         self._testErrorForErrorCode(ErrorEnum.FILENAME_TITLE_VS_TITLE_TAG, self.track.fileNameList[5].rsplit('.', 1)[0], self.track.title)
+        # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
+        self._testErrorForErrorCode(ErrorEnum.FOLDERNAME_RELEASE_ARTISTS_VS_ALBUM_ARTIST_TAG, self.track.fileNameList[0], self.track.albumArtist)
 
 
     # Testing Category 3 : ID3 tags inconsistencies
@@ -126,6 +128,9 @@ class TrackTester:
         if self.track.albumTitle == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Album')
+        if self.track.albumArtist == '':
+            self.missingTagsCounter += 1
+            self.missingTags.append('Album Artist')
         if self.track.year == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Year')

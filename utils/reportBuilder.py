@@ -120,6 +120,8 @@ def _computeErrors(errorCode):
         output['errorValue'] = "The cover dimensions are incorrect and should be 1000x1000"
     if errorCode == 20:
         output['errorValue'] = "The cover is missing from the file"
+    if errorCode == 21:
+        output['errorValue'] = "Foldername release artist is not equal to the track album artist tag"
     return output
 
 

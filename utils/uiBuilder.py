@@ -187,7 +187,10 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     # ErrorCode 20 : Track has no cover
     elif errorCode == 20:
         printTrackErrorInfo(errorCode, 'Cover is missing from file.', 'Please embed an image file in the track.')
-        
+    # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
+    elif errorCode == 21:
+        printTrackErrorInfo(errorCode, t.fileNameList[0], t.albumArtist)
+
 
 # Auxilliary, print an error about a given album
 def _printErroredAlbumsReport_aux(errorCode):
@@ -217,7 +220,8 @@ def printTrackErrorInfo(errorCode, string1, string2):
         location2 = 'From Track Tags        '
     # ErrorCode 04 : Foldername year doesn't math the track year tag
     # ErrorCode 06 : Foldername album doesn't match the track album
-    elif errorCode == 4 or errorCode == 6:
+    # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
+    elif errorCode == 4 or errorCode == 6 or errorCode == 21:
         location1 = 'From Foldername        '
         location2 = 'From Track Tags        '
     # ErrorCode 09 : Title remix artist doesn't match the filename artist
@@ -306,6 +310,9 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 19-20 : Cover errors (19 no cover, 20 incorrect size)
     elif errorCode == 19 or errorCode == 20:
         topic = '-------- Cover Error'
+    # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
+    elif errorCode == 21:
+        topic = '------- Album Artist'
     return topic
 
 
