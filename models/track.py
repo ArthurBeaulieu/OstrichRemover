@@ -68,6 +68,8 @@ class Track:
             self.composers = self.audioTag['TCOM'].text[0]
         if 'TOPE' in self.audioTag and self.audioTag['TOPE'].text[0] != '':
             self.performers = self.audioTag['TOPE'].text[0].rstrip().split('; ')
+        #if 'TLAN' in self.audioTag:
+            # WIP for language in track
         if 'TRCK' in self.audioTag and self.audioTag['TRCK'].text[0] != '':
             if '/' in self.audioTag['TRCK'].text[0]:
                 tags = self.audioTag['TRCK'].text[0].rstrip().split('/')
@@ -112,6 +114,8 @@ class Track:
             self.albumTitle = self.audioTag['ALBUM'][0]
         if 'ALBUMARTIST' in self.audioTag:
             self.albumArtist = self.audioTag['ALBUMARTIST'][0]
+        #if 'LANGUAGE' in self.audioTag:
+            # WIP for language in track
 
 
     # Compute all class internals that can not be extracted from ID3 tags
