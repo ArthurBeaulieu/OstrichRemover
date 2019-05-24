@@ -87,47 +87,51 @@ class ErrorsView {
     for (let i = 0; i < this._data.artists.length; ++i) {
       window.requestAnimationFrame(() => {
         this._elements.artists.appendChild(this._buildArtist(this._data.artists[i]));
-        const lineBreak = document.createElement('BR');
-        this._elements.artists.appendChild(lineBreak);
       });
     }
   }
 
 
   _buildArtist(a) {
+    // Display artist header
     const fragment = document.createDocumentFragment();
     const artistName = document.createElement('P');
     artistName.className = 'lead';
-    artistName.innerHTML = a.name;
+    artistName.innerHTML = `${a.name} – <i>${a.albums.length} release${(a.albums.length > 1) ? `s</i>` : `</i>`}`;
     fragment.appendChild(artistName);
-
-    for (let j = 0; j < a.albums.length; ++j) {
+    // Display album header method created to display the album name when an error is found
+    const displayAlbumHeader = (album, frg) => {
       const albumTitle = document.createElement('P');
-      albumTitle.innerHTML = `|&nbsp;&nbsp;+&nbsp;${a.albums[j].title}`;
-      fragment.appendChild(albumTitle);
-
+      albumTitle.innerHTML = `|&nbsp;&nbsp;+&nbsp;${album.title}`;
+      frg.appendChild(albumTitle);
+    };
+    // Iterate over artist albums
+    for (let j = 0; j < a.albums.length; ++j) {
+      // Display album errors
       if (a.albums[j].errors.length > 0) {
+        displayAlbumHeader(a.albums[j], fragment);
         const albumErrors = document.createElement('P');
         albumErrors.innerHTML = `|&nbsp;&nbsp;|&nbsp;&nbsp;<em><u>Album errors :</u></em>`;
         fragment.appendChild(albumErrors);
-
+        // Iterate over album errors
         for (let k = 0; k < a.albums[j].errors.length; ++k) {
           const albumError = document.createElement('P');
           albumError.innerHTML = `|&nbsp;&nbsp;|&nbsp;&nbsp;+&nbsp;<code>Error ${a.albums[j].errors[k].errorCode}</code> : ${a.albums[j].errors[k].errorValue}`;
           fragment.appendChild(albumError);
         }
       }
-
+      // Testing album tracks if existing
       if (a.albums[j].tracks.length > 0) {
+        displayAlbumHeader(a.albums[j], fragment);
         const trackErrors = document.createElement('P');
         trackErrors.innerHTML = `|&nbsp;&nbsp;|&nbsp;&nbsp;<em><u>Track errors :</u></em>`;
         fragment.appendChild(trackErrors);
-
+        // Iterate over album tracks
         for (let l = 0; l < a.albums[j].tracks.length; ++l) {
           const trackTitle = document.createElement('P');
           trackTitle.innerHTML = `|&nbsp;&nbsp;|&nbsp;&nbsp;+&nbsp;<b>${a.albums[j].tracks[l].title}</b>`;
           fragment.appendChild(trackTitle);
-
+          // Iterate over track errors
           for (let m = 0; m < a.albums[j].tracks[l].errors.length; ++m) {
             const trackError = document.createElement('P');
             trackError.innerHTML = `|&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;+&nbsp;<code>Error ${a.albums[j].tracks[l].errors[m].errorCode}</code> : ${a.albums[j].tracks[l].errors[m].errorValue}`;
