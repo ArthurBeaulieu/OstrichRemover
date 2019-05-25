@@ -181,7 +181,7 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     # ErrorCode 18 : The Filename doesn't follow the naming pattern properly
     elif errorCode == 18:
         printTrackErrorInfo(errorCode, computeNamingConventionString(), 'AC-DC - 1978 - Powerage - 105 - AC-DC - Sin City')
-    # ErrorCode 19 : Cover is invalid (not 1000x1000 jpg/png)
+    # ErrorCode 19 : Cover is not a 1000x1000 jpg image
     elif errorCode == 19:
         printTrackErrorInfo(errorCode, 'Cover dimensions are incorrect.', 'Embeded image should be 1000x1000.')
     # ErrorCode 20 : Track has no cover
@@ -192,7 +192,19 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
         printTrackErrorInfo(errorCode, t.fileNameList[0], t.albumArtist)
     # ErrorCode 22 : Cover format is not optimized (not jpg)
     elif errorCode == 22:
-        printTrackErrorInfo(errorCode, 'Expected mimetype for cover is image/jpeg', 'Cover has mimetype {}'.format(t.coverType))
+        printTrackErrorInfo(errorCode, 'image/jpeg', t.coverType)
+    # ErrorCode 23 : BPM is not an integer
+    elif errorCode == 23:
+        printTrackErrorInfo(errorCode, 'BPM must be an integer', t.bpm)
+    # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
+    elif errorCode == 24:
+        printTrackErrorInfo(errorCode, t.year, '[ 1900 ; Today.year ]')
+    # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+    elif errorCode == 25:
+        printTrackErrorInfo(errorCode, t.lang, 'XXX -> replaced with the country trigram describe by OTAN')
+    # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
+    elif errorCode == 26:
+        printTrackErrorInfo(errorCode, t.lang, 'Check existing values at https://en.wikipedia.org/wiki/List_of_NATO_country_codes')
 
 
 # Auxilliary, print an error about a given album
@@ -262,6 +274,19 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 22:
         location1 = 'Expected cover mimetype'
         location2 = 'Cover mimetype         '
+    # ErrorCode 23 : BPM is not an integer
+    elif errorCode == 23:
+        location1 = 'Expected type          '
+        location2 = 'From Track Tag         '
+    # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
+    elif errorCode == 24:
+        location1 = 'From Track Tag         '
+        location2 = 'Expected bounds        '
+    # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+    # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
+    elif errorCode == 25 or errorCode == 26:
+        location1 = 'From Track Tag         '
+        location2 = 'Expected value         '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -275,7 +300,8 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 01 : Filename year doesn't match the album foldername year
     # ErrorCode 03 : Filename year doesn't math the track year tag
     # ErrorCode 04 : Foldername year doesn't math the track year tag
-    elif errorCode == 1 or errorCode == 3 or errorCode == 4:
+    # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
+    elif errorCode == 1 or errorCode == 3 or errorCode == 4 or errorCode == 24:
         topic = '--------------- Year'
     # ErrorCode 02 : Filename album doesn't match the album foldername
     # ErrorCode 05 : Filename album doesn't match the track album
@@ -323,6 +349,13 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 22 : Cover format is not optimized (not jpg)
     elif errorCode == 22:
         topic = '------- Cover format'
+    # ErrorCode 23 : BPM is not an integer
+    elif errorCode == 23:
+        topic = '---------------- BPM'
+    # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+    # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
+    elif errorCode == 25 or errorCode == 26:
+        topic = '----------- Language'
     return topic
 
 

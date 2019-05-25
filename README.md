@@ -1,10 +1,10 @@
 # MzkOstrichRemover
 
-![](https://badgen.net/badge/version/1.0.3/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.1.0/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 This script is a tool specially made to test a folder against the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention). It handles both the folder tree structure and the files themselves. It is highly recommended to read the naming convention before going any further, as explanations are raw.
 
-*MzkOstrichRemover* can detect **23 errors** per file (so far). Those errors are grouped in four categories that are detailed [in the wiki](https://github.com/ManaZeak/MzkOstrichRemover/wiki/Tracked-Errors), respectively:
+*MzkOstrichRemover* can detect **27 errors** per file (so far). Those errors are grouped in four categories that are detailed [in the wiki](https://github.com/ManaZeak/MzkOstrichRemover/wiki/Tracked-Errors), respectively:
 
 - *Category 1* – File system naming inconsistencies ;  
 - *Category 2* – File system naming against ID3 tags ;  
@@ -34,7 +34,7 @@ At this point, you must ensure that the folder you are about to test match at le
 - [x] Basic web view for JSON dumps
 
 ##### v2.0
-- [ ] Specific errors (~~cover size~~, ~~album artist field~~, genre, producer, bpm)
+- [ ] Specific errors (~~cover size~~, ~~album artist field~~, genre, ~~producer~~, ~~bpm~~)
 - [ ] Custom scan (track, album or file errors only)
 - [ ] Verbose option (with several levels)
 - [ ] Qt interface

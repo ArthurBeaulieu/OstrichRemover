@@ -1,12 +1,17 @@
 # Python imports
 import os
 import icu
+import datetime
 import PIL
 
 # Project imports
 from utils.errorEnum import ErrorEnum
 from utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray
 from PIL import Image
+
+# https://en.wikipedia.org/wiki/List_of_NATO_country_codes
+global countryList
+countryList = ['ATG','AFG','DZA','AZE','ALB','ARM','AND','AGO','ARG','AUS','AUT','BHR','BRB','BWA','BEL','BHS','BGD','BLZ','BIH','BOL','MMR','BEN','BLR','SLB','BRA','BTN','BGR','BRN','BDI','CAN','KHM','TCD','LKA','COG','COD','CHN','CHL','CMR','COM','COL','CRI','CAF','CUB','CPV','CYP','CZE','DNK','DJI','DMA','DOM','ECU','EGY','GNQ','EST','ERI','SLV','ETH','FIN','FJI','FRA','FYR','GMB','GAB','DEU','GEO','GHA','GRD','GRC','GTM','GIN','GUY','HTI','HND','HRV','HUN','ISL','IDN','IRL','IND','IRN','ISR','ITA','CIV','IRQ','JPN','JAM','JOR','KEN','KGZ','PRK','KIR','KOR','KWT','KAZ','LAO','LBN','LVA','LTU','LBR','LIE','LSO','LUX','LBY','MDG','FSM','MDA','MNG','MWI','MLI','MCO','MAR','MUS','MRT','MNP','MHL','MLT','ODM','MDV','MEX','MYS','MOZ','NER','VUT','NGA','NLD','NOR','NPL','NRU','SUR','NIC','NZL','PRY','PER','PAK','POL','PAN','PRT','PNG','GNB','PLW','QAT','ROU','PHL','PRI','RUS','RWA','SAU','KNA','SYC','ZAF','SEN','SVN','SVK','SLE','SMR','SGP','SOM','ESP','LCA','SDN','SWE','SYR','CHE','ARE','TTO','TLS','THA','TJK','TON','TGO','STP','TUN','TUV','TWN','TKM','TZN','UGA','GBR','UKR','USA','BFA','URY','UZB','VCT','VEN','VNM','VAT','NAM','WSM','SWZ','YEM','ZMB','ZWE']
 
 
 # TrackTester aim to test a track and group all its errors
@@ -83,10 +88,16 @@ class TrackTester:
         self._testPerformerComposition()
         # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
         self._testMissorderedTags()
-        # ErrorCode 19 : Cover is invalid (not 1000x1000 jpg/png)
+        # ErrorCode 19 : Cover is not a 1000x1000 jpg image
         # ErrorCode 20 : Track has no cover
         # ErrorCode 22 : Cover format is not optimized (not jpg)
         self._testCoverValidity()
+        # ErrorCode 23 : BPM is not an integer
+        # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
+        self._testIntegerFieldsValidity()
+        # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+        # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
+        self._testLanguageTag()
 
 
     # Testing Category 4 : Track tags coherence with album metrics
@@ -141,12 +152,15 @@ class TrackTester:
         if self.track.composers == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Composers')
-        # if self.track.producer == '':
-        #     self.missingTagsCounter += 1
-        #     self.missingTags.append('Producer')
-        # if self.track.label == '':
-        #     self.missingTagsCounter += 1
-        #     self.missingTags.append('Label')
+        if self.track.producer == '':
+            self.missingTagsCounter += 1
+            self.missingTags.append('Producer')
+        if self.track.label == '':
+            self.missingTagsCounter += 1
+            self.missingTags.append('Label')
+        if self.track.lang == '':
+            self.missingTagsCounter += 1
+            self.missingTags.append('Language')
         if self.track.trackNumber == '':
             self.missingTagsCounter += 1
             self.missingTags.append('TrackNumber')
@@ -217,6 +231,26 @@ class TrackTester:
                         self.errorCounter += 1
                         self.errors.append(ErrorEnum.INVALID_COVER)
                 os.remove('tmp.jpg') # GC
+
+
+    # Test ID3 fields to check if they are indeed integer (floating are forbidden in those)
+    def _testIntegerFieldsValidity(self):
+        if '.' in self.track.bpm or ',' in self.track.bpm:
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.FLOATING_BPM)
+        if int(self.track.year) < 1900 or int(self.track.year) > datetime.datetime.now().year:
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.UNLOGIC_YEAR)
+
+
+    # Test the lang tag to check its compliance with NATO country trigrams
+    def _testLanguageTag(self):
+        if len(self.track.lang) != 3 or self.track.lang.isupper() == False:
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.INVALID_LANG)
+        elif not self.track.lang in countryList:
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.UNEXISTING_LANG)
 
 
     # Tests a Track on a given topic using an error code as documented in this function

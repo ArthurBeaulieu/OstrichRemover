@@ -135,7 +135,7 @@ def _computeErrors(errorCode):
     # ErrorCode 18 : The Filename doesn't follow the naming pattern properly
     if errorCode == 18:
         output['errorValue'] = "The Filename doesn't follow the naming pattern properly"
-    # ErrorCode 19 : Cover is invalid (not 1000x1000 jpg/png)
+    # ErrorCode 19 : Cover is not a 1000x1000 jpg image
     if errorCode == 19:
         output['errorValue'] = "The cover dimensions are incorrect and should be 1000x1000"
     # ErrorCode 20 : Track has no cover
@@ -147,10 +147,22 @@ def _computeErrors(errorCode):
     # ErrorCode 22 : Cover format is not optimized (not jpg)
     if errorCode == 22:
         output['errorValue'] = "The cover should be a jpg file for file size matters"
+    # ErrorCode 23 : BPM is not an integer
+    if errorCode == 23:
+        output['errorValue'] = "The BPM value is not an integer"
+    # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
+    if errorCode == 24:
+        output['errorValue'] = "Year tag can't preceed 1900 or succeed today's year"
+    # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+    if errorCode == 25:
+        output['errorValue'] = "Invalid country trigram. Use OTAN country notation with 3 capital letters"
+    # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
+    if errorCode == 26:
+        output['errorValue'] = "The lang tag value doesn't exist in the list given by NATO"
     return output
 
 
-# Save the output file
+# Save the output fileYear tag can't preceed 1900 or succeed today's year
 def saveReportFile(report):
     createDirectory('output')
     fileName = "MzkOstrichRemover-{}".format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))

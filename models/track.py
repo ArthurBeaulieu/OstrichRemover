@@ -25,6 +25,8 @@ class Track:
         self.totalTrack = 0
         self.discNumber = 0
         self.totalDisc = 0
+        self.bpm = ''
+        self.lang = ''
         # Computed
         self.audioTagPath = audioTagPath
         self.audioTag = {}
@@ -69,8 +71,8 @@ class Track:
             self.composers = self.audioTag['TCOM'].text[0]
         if 'TOPE' in self.audioTag and self.audioTag['TOPE'].text[0] != '':
             self.performers = self.audioTag['TOPE'].text[0].rstrip().split('; ')
-        #if 'TLAN' in self.audioTag:
-            # WIP for language in track
+        if 'TLAN' in self.audioTag:
+            self.lang = self.audioTag['TLAN'].text[0].rstrip()
         if 'TRCK' in self.audioTag and self.audioTag['TRCK'].text[0] != '':
             if '/' in self.audioTag['TRCK'].text[0]:
                 tags = self.audioTag['TRCK'].text[0].rstrip().split('/')
@@ -85,6 +87,8 @@ class Track:
                 self.totalDisc = tags[1]
             else:
                 self.totalDisc = -1
+        if 'TBPM' in self.audioTag and self.audioTag['TBPM'].text[0] != '':
+            self.bpm = self.audioTag['TBPM'].text[0].rstrip()
 
 
     # Read the flac track Vorbis tags and extract all interresting values into a Track object
@@ -115,8 +119,10 @@ class Track:
             self.albumTitle = self.audioTag['ALBUM'][0]
         if 'ALBUMARTIST' in self.audioTag:
             self.albumArtist = self.audioTag['ALBUMARTIST'][0]
-        #if 'LANGUAGE' in self.audioTag:
-            # WIP for language in track
+        if 'BPM' in self.audioTag:
+            self.bpm = self.audioTag['BPM'][0]
+        if 'LANGUAGE' in self.audioTag:
+            self.lang = self.audioTag['LANGUAGE'][0]
 
 
     # Compute all class internals that can not be extracted from ID3 tags
@@ -172,7 +178,7 @@ class Track:
         # Extract image from file
         if self.fileType == 'MP3' and 'APIC:' in self.audioTag:
             self.cover = self.audioTag['APIC:'].data
-            self.coverType = self.audioTag['APIC:'].mime            
+            self.coverType = self.audioTag['APIC:'].mime
         elif self.fileType == 'FLAC':
             if len(self.audioTag.pictures) > 0:
                 self.cover = self.audioTag.pictures[0].data

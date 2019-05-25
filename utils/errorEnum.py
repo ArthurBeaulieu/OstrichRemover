@@ -62,7 +62,7 @@ class ErrorEnum(Enum):
     # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
     MISSORDERED_TAGS = 13
 
-    # ErrorCode 19 : Cover is invalid (not 1000x1000 jpg/png)
+    # ErrorCode 19 : Cover is not a 1000x1000 jpg image
     INVALID_COVER = 19
 
     # ErrorCode 20 : Track has no cover
@@ -70,6 +70,18 @@ class ErrorEnum(Enum):
 
     # ErrorCode 22 : Cover format is not optimized (not jpg)
     UNOPTIMAL_COVER = 22
+
+    # ErrorCode 23 : BPM is not an integer
+    FLOATING_BPM = 23
+
+    # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
+    UNLOGIC_YEAR = 24
+
+    # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+    INVALID_LANG = 25
+
+    # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
+    UNEXISTING_LANG = 26
 
 ## ------------
 # Category 4 : Track tags coherence with album metrics

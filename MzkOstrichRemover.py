@@ -16,7 +16,7 @@ from utils.uiBuilder import *
 
 # Globals
 global scriptVersion
-scriptVersion = '1.0.3'
+scriptVersion = '1.1.0'
 
 
 # Script main frame
