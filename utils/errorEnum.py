@@ -68,6 +68,9 @@ class ErrorEnum(Enum):
     # ErrorCode 20 : Track has no cover
     MISSING_COVER = 20
 
+    # ErrorCode 22 : Cover format is not optimized (not jpg)
+    UNOPTIMAL_COVER = 22
+
 ## ------------
 # Category 4 : Track tags coherence with album metrics
     # ErrorCode 14 : Computed album total track is not equal to the track total track tag

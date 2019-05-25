@@ -32,6 +32,7 @@ class Track:
         self.remix = []
         self.hasCover = False
         self.cover = {}
+        self.coverType = ''
         # Filesystem path and name as lists (separator is ` - `)
         self.pathList = pathList
         self.fileType = fileType
@@ -171,9 +172,11 @@ class Track:
         # Extract image from file
         if self.fileType == 'MP3' and 'APIC:' in self.audioTag:
             self.cover = self.audioTag['APIC:'].data
+            self.coverType = self.audioTag['APIC:'].mime            
         elif self.fileType == 'FLAC':
             if len(self.audioTag.pictures) > 0:
                 self.cover = self.audioTag.pictures[0].data
+                self.coverType = self.audioTag.pictures[0].mime
             else:
                 self.cover = self.audioTag.pictures
         # Test cover existence

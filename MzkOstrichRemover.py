@@ -76,7 +76,8 @@ def crawlFolders(args):
                     printScanProgress(percentage, previousLetter, path[0][0], errorCounter, scannedTracks, computePurity(errorCounter, scannedTracks))
                     percentage += step;
                     previousLetter = path[0][0] # path[0] is the Artists name
-    if totalTracks <= 10:
+    # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
+    if totalTracks > 10:
         printLineBreak()
     printScanEnd(errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
     # Compute and save JSON report

@@ -76,7 +76,7 @@ def printDetailledTrack(track):
 # Prints the scan begin message
 def printScanStart(targetFolder, totalTracks):
     print('  Folder scan : {} track(s) to test'.format(totalTracks))
-    print('> Scanning files in folder \'{}\' and all its sub-directories...'.format(targetFolder))
+    print('> Scanning files in folder \'{}\' and all its sub-directories...\n'.format(targetFolder))
 
 
 # Prints the scan progression
@@ -190,6 +190,9 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
     elif errorCode == 21:
         printTrackErrorInfo(errorCode, t.fileNameList[0], t.albumArtist)
+    # ErrorCode 22 : Cover format is not optimized (not jpg)
+    elif errorCode == 22:
+        printTrackErrorInfo(errorCode, 'Expected mimetype for cover is image/jpeg', 'Cover has mimetype {}'.format(t.coverType))
 
 
 # Auxilliary, print an error about a given album
@@ -255,6 +258,10 @@ def printTrackErrorInfo(errorCode, string1, string2):
     # ErrorCode 19-20 : Cover errors (19 no cover, 20 incorrect size)
     elif errorCode == 19 or errorCode == 20:
         location1 = 'From Cover Tag         '
+    # ErrorCode 22 : Cover format is not optimized (not jpg)
+    elif errorCode == 22:
+        location1 = 'Expected cover mimetype'
+        location2 = 'Cover mimetype         '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -313,6 +320,9 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
     elif errorCode == 21:
         topic = '------- Album Artist'
+    # ErrorCode 22 : Cover format is not optimized (not jpg)
+    elif errorCode == 22:
+        topic = '------- Cover format'
     return topic
 
 

@@ -78,50 +78,75 @@ def _computeErrors(errorCode):
         'errorCode': errorCode,
         'errorValue': ''
     }
+    # ErrorCode 00 : Filename release artists doesn't match the artist foldername
     if errorCode == 0:
         output['errorValue'] = "Filename release artists doesn't match the artist foldername"
+    # ErrorCode 01 : Filename year doesn't match the album foldername year
     if errorCode == 1:
         output['errorValue'] = "Filename year doesn't match the album foldername year"
+    # ErrorCode 02 : Filename album doesn't match the album foldername
     if errorCode == 2:
         output['errorValue'] = "Filename album doesn't match the album foldername"
+    # ErrorCode 03 : Filename year doesn't math the track year tag
     if errorCode == 3:
         output['errorValue'] = "Filename year doesn't math the track year tag"
+    # ErrorCode 04 : Foldername year doesn't math the track year tag
     if errorCode == 4:
         output['errorValue'] = "Foldername year doesn't math the track year tag"
+    # ErrorCode 05 : Filename album doesn't match the track album
     if errorCode == 5:
         output['errorValue'] = "Filename album doesn't match the track album"
+    # ErrorCode 06 : Foldername album doesn't match the track album
     if errorCode == 6:
         output['errorValue'] = "Foldername album doesn't match the track album"
+    # ErrorCode 07 : Filename disc+track number doesn't match the track disc+track number
     if errorCode == 7:
         output['errorValue'] = "Filename disc+track number doesn't match the track disc+track number"
+    # ErrorCode 08 : Filename artists doesn't match the track artist tag
     if errorCode == 8:
         output['errorValue'] = "Filename artists doesn't match the track artist tag"
+    # ErrorCode 09 : Title remix artist doesn't match the track artist
     if errorCode == 9:
         output['errorValue'] = "Title remix artist doesn't match the filename artist"
+    # ErrorCode 10 : Filename title doesn't match the track title tag
     if errorCode == 10:
         output['errorValue'] = "Filename title doesn't match the track title tag"
+    # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
     if errorCode == 11:
         output['errorValue'] = "Some tag requested by the naming convention aren't filled in track"
+    # ErrorCode 12 : Performer does not contains both the artist and the featuring artist
     if errorCode == 12:
         output['errorValue'] = "Performer does not contains both the artist and the featuring artist"
+    # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
     if errorCode == 13:
         output['errorValue'] = "Performer does not contains both the artist and the featuring artist"
+    # ErrorCode 14 : Computed album total track is not equal to the track total track tag
     if errorCode == 14:
         output['errorValue'] = "Computed album total track is not equal to the track total track tag"
+    # ErrorCode 15 : Computed album disc track is not equal to the track disc track tag
     if errorCode == 15:
         output['errorValue'] = "Computed album disc track is not equal to the track disc track tag"
+    # ErrorCode 16 : Computed album year is not equal to the track year tag
     if errorCode == 16:
         output['errorValue'] = "Computed album year is not equal to the track year tag"
+    # ErrorCode 17 : Year is not the same on all physical files of the album
     if errorCode == 17:
         output['errorValue'] = "Year is not the same on all physical files of the album"
+    # ErrorCode 18 : The Filename doesn't follow the naming pattern properly
     if errorCode == 18:
         output['errorValue'] = "The Filename doesn't follow the naming pattern properly"
+    # ErrorCode 19 : Cover is invalid (not 1000x1000 jpg/png)
     if errorCode == 19:
         output['errorValue'] = "The cover dimensions are incorrect and should be 1000x1000"
+    # ErrorCode 20 : Track has no cover
     if errorCode == 20:
         output['errorValue'] = "The cover is missing from the file"
+    # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
     if errorCode == 21:
         output['errorValue'] = "Foldername release artist is not equal to the track album artist tag"
+    # ErrorCode 22 : Cover format is not optimized (not jpg)
+    if errorCode == 22:
+        output['errorValue'] = "The cover should be a jpg file for file size matters"
     return output
 
 
