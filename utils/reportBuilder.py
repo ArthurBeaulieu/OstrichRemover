@@ -153,7 +153,7 @@ def _computeErrors(errorCode):
     # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
     if errorCode == 24:
         output['errorValue'] = "Year tag can't preceed 1900 or succeed today's year"
-    # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+    # ErrorCode 25 : Invalid country value. Use NATO country notation with 3 capital letters
     if errorCode == 25:
         output['errorValue'] = "Invalid country trigram. Use OTAN country notation with 3 capital letters"
     # ErrorCode 26 : Unexisting country trigram. Check existing NATO values

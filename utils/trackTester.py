@@ -95,7 +95,7 @@ class TrackTester:
         # ErrorCode 23 : BPM is not an integer
         # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
         self._testIntegerFieldsValidity()
-        # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+        # ErrorCode 25 : Invalid country value. Use NATO country notation with 3 capital letters
         # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
         self._testLanguageTag()
 

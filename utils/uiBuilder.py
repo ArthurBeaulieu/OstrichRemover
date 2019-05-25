@@ -199,7 +199,7 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
     elif errorCode == 24:
         printTrackErrorInfo(errorCode, t.year, '[ 1900 ; Today.year ]')
-    # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+    # ErrorCode 25 : Invalid country value. Use NATO country notation with 3 capital letters
     elif errorCode == 25:
         printTrackErrorInfo(errorCode, t.lang, 'XXX -> replaced with the country trigram describe by OTAN')
     # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
@@ -282,7 +282,7 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 24:
         location1 = 'From Track Tag         '
         location2 = 'Expected bounds        '
-    # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+    # ErrorCode 25 : Invalid country value. Use NATO country notation with 3 capital letters
     # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
     elif errorCode == 25 or errorCode == 26:
         location1 = 'From Track Tag         '
@@ -352,7 +352,7 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 23 : BPM is not an integer
     elif errorCode == 23:
         topic = '---------------- BPM'
-    # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+    # ErrorCode 25 : Invalid country value. Use NATO country notation with 3 capital letters
     # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
     elif errorCode == 25 or errorCode == 26:
         topic = '----------- Language'

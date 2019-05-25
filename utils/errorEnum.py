@@ -77,7 +77,7 @@ class ErrorEnum(Enum):
     # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
     UNLOGIC_YEAR = 24
 
-    # ErrorCode 25 : Invalid country trigram. Use NATO country notation with 3 capital letters
+    # ErrorCode 25 : Invalid country value. Use NATO country notation with 3 capital letters
     INVALID_LANG = 25
 
     # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
