@@ -72,7 +72,7 @@ class Track:
         if 'TOPE' in self.audioTag and self.audioTag['TOPE'].text[0] != '':
             self.performers = self.audioTag['TOPE'].text[0].rstrip().split('; ')
         if 'TLAN' in self.audioTag:
-            self.lang = self.audioTag['TLAN'].text[0].rstrip()
+            self.lang = self.audioTag['TLAN'].text[0].rstrip().split('; ')
         if 'TRCK' in self.audioTag and self.audioTag['TRCK'].text[0] != '':
             if '/' in self.audioTag['TRCK'].text[0]:
                 tags = self.audioTag['TRCK'].text[0].rstrip().split('/')
@@ -122,7 +122,7 @@ class Track:
         if 'BPM' in self.audioTag:
             self.bpm = self.audioTag['BPM'][0]
         if 'LANGUAGE' in self.audioTag:
-            self.lang = self.audioTag['LANGUAGE'][0]
+            self.lang = self.audioTag['LANGUAGE'][0].split('; ')
 
 
     # Compute all class internals that can not be extracted from ID3 tags

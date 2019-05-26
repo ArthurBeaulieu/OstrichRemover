@@ -245,12 +245,13 @@ class TrackTester:
 
     # Test the lang tag to check its compliance with NATO country trigrams
     def _testLanguageTag(self):
-        if len(self.track.lang) != 3 or self.track.lang.isupper() == False:
-            self.errorCounter += 1
-            self.errors.append(ErrorEnum.INVALID_LANG)
-        elif not self.track.lang in countryList:
-            self.errorCounter += 1
-            self.errors.append(ErrorEnum.UNEXISTING_LANG)
+        for lang in self.track.lang: # Parse lang list
+            if len(lang) != 3 or lang.isupper() == False: # Value is not formatted correctly
+                self.errorCounter += 1
+                self.errors.append(ErrorEnum.INVALID_LANG)
+            elif not lang in countryList: # Check trigram validity against NATO codes
+                self.errorCounter += 1
+                self.errors.append(ErrorEnum.UNEXISTING_LANG)
 
 
     # Tests a Track on a given topic using an error code as documented in this function
