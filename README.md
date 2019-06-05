@@ -15,9 +15,9 @@ During the scan, the script computes a purity grade, that takes into account the
 
 ## Get started
 
-This script uses `Python3`, and requires `mutagen` and `PyICU`. Please ensure these are installed, otherwise run:
+This script uses `Python3`, and requires `mutagen`, `Pillow` (that replaced Python Image Library) and `PyICU`. Please ensure these are installed, otherwise run:
 
-`# pip install mutagen PyICU`
+`# pip install mutagen Pillow PyICU`
 
 At this point, you must ensure that the folder you are about to test match at least the recommended tree structure of the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention), since other folder structure may results in the script failure. Then in your cloned repository, run:
 
