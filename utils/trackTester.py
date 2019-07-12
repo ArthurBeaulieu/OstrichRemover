@@ -2,16 +2,13 @@
 import os
 import icu
 import datetime
-import PIL
 
 # Project imports
+from references.refCountry import RefCountry
+from references.refForbiddenChar import RefForbiddenChar
 from utils.errorEnum import ErrorEnum
 from utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray
 from PIL import Image
-
-# https://en.wikipedia.org/wiki/List_of_NATO_country_codes
-global countryList
-countryList = ['ATG','AFG','DZA','AZE','ALB','ARM','AND','AGO','ARG','AUS','AUT','BHR','BRB','BWA','BEL','BHS','BGD','BLZ','BIH','BOL','MMR','BEN','BLR','SLB','BRA','BTN','BGR','BRN','BDI','CAN','KHM','TCD','LKA','COG','COD','CHN','CHL','CMR','COM','COL','CRI','CAF','CUB','CPV','CYP','CZE','DNK','DJI','DMA','DOM','ECU','EGY','GNQ','EST','ERI','SLV','ETH','FIN','FJI','FRA','FYR','GMB','GAB','DEU','GEO','GHA','GRD','GRC','GTM','GIN','GUY','HTI','HND','HRV','HUN','ISL','IDN','IRL','IND','IRN','ISR','ITA','CIV','IRQ','JPN','JAM','JOR','KEN','KGZ','PRK','KIR','KOR','KWT','KAZ','LAO','LBN','LVA','LTU','LBR','LIE','LSO','LUX','LBY','MDG','FSM','MDA','MNG','MWI','MLI','MCO','MAR','MUS','MRT','MNP','MHL','MLT','ODM','MDV','MEX','MYS','MOZ','NER','VUT','NGA','NLD','NOR','NPL','NRU','SUR','NIC','NZL','PRY','PER','PAK','POL','PAN','PRT','PNG','GNB','PLW','QAT','ROU','PHL','PRI','RUS','RWA','SAU','KNA','SYC','ZAF','SEN','SVN','SVK','SLE','SMR','SGP','SOM','ESP','LCA','SDN','SWE','SYR','CHE','ARE','TTO','TLS','THA','TJK','TON','TGO','STP','TUN','TUV','TUR', 'TWN','TKM','TZN','UGA','GBR','UKR','USA','BFA','URY','UZB','VCT','VEN','VNM','VAT','NAM','WSM','SWZ','YEM','ZMB','ZWE']
 
 
 # TrackTester aim to test a track and group all its errors
@@ -27,14 +24,15 @@ class TrackTester:
         self.missorderedTagsCounter = 0
         self._testTrackObject()
 
-
     # Tests a Track object to check if it is matching the naming convention
     def _testTrackObject(self):
         forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25', 'Interlude']
-        if len(self.track.fileNameList) == 7 and any(s in self.track.fileNameList[6] for s in forbiddenPattern): # When album is a single, we must re-join the album name and the 'Single' suffix
-            self.track.fileNameList[5:7] = [' - '.join(self.track.fileNameList[5:7])] # Re-join with a ' - ' separator
+        # When album is a single, we must re-join the album name and the 'Single' suffix
+        if len(self.track.fileNameList) == 7 and any(s in self.track.fileNameList[6] for s in forbiddenPattern):
+            self.track.fileNameList[5:7] = [' - '.join(self.track.fileNameList[5:7])]  # Re-join with a ' - ' separator
         # ErrorCode 18 : The filename doesn't follow the naming pattern properly
-        if len(self.track.fileNameList) != 6: # TypeError : Invalid file name (doesn't comply with the naming convention)
+        if len(self.track.fileNameList) != 6:
+            # TypeError : Invalid file name (doesn't comply with the naming convention)
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INCONSISTENT_FILENAME)
             return
@@ -47,43 +45,49 @@ class TrackTester:
         # Category 4 : Track tags coherence with album metrics
         self._testAlbumValuesCoherence()
 
-
     # Testing Category 1 : Filesystem naming inconsistencies (see ErrorEnum.py)
     def _testFileSystemNaming(self):
         # ErrorCode 00 : Filename release artists doesn't match the artist foldername
-        self._testErrorForErrorCode(ErrorEnum.FILENAME_RELEASE_ARTIST_VS_ARTIST_FOLDERNAME, self.track.fileNameList[0], self.track.pathList[len(self.track.pathList) - 2])
+        self._testErrorForErrorCode(ErrorEnum.FILENAME_RELEASE_ARTIST_VS_ARTIST_FOLDER_NAME, self.track.fileNameList[0],
+                                    self.track.pathList[len(self.track.pathList) - 2])
         # ErrorCode 01 : Filename year doesn't match the album foldername year
-        self._testErrorForErrorCode(ErrorEnum.FILENAME_YEAR_VS_ALBUM_FOLDERNAME_YEAR, self.track.fileNameList[1], self.track.folderNameList[0])
+        self._testErrorForErrorCode(ErrorEnum.FILENAME_YEAR_VS_ALBUM_FOLDER_NAME_YEAR, self.track.fileNameList[1],
+                                    self.track.folderNameList[0])
         # ErrorCode 02 : Filename album doesn't match the album foldername
-        self._testErrorForErrorCode(ErrorEnum.FILENAME_ALBUM_VS_ALBUM_FOLDERNAME, self.track.fileNameList[2], self.track.folderNameList[1])
-
+        self._testErrorForErrorCode(ErrorEnum.FILENAME_ALBUM_VS_ALBUM_FOLDER_NAME, self.track.fileNameList[2],
+                                    self.track.folderNameList[1])
 
     # Testing Category 2 : Filesystem naming vs ID3 tags inconsistencies (see ErrorEnum.py)
     def _testFileSystemNamingAgainstTags(self):
         # ErrorCode 03 : Filename year doesn't math the track year tag
         self._testErrorForErrorCode(ErrorEnum.FILENAME_YEAR_VS_YEAR_TAG, self.track.fileNameList[1], self.track.year)
         # ErrorCode 04 : Foldername year doesn't math the track year tag
-        self._testErrorForErrorCode(ErrorEnum.FOLDERNAME_YEAR_VS_YEAR_TAG, self.track.folderNameList[0], self.track.year)
+        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_YEAR_VS_YEAR_TAG, self.track.folderNameList[0],
+                                    self.track.year)
         # ErrorCode 05 : Filename album doesn't match the track album
-        self._testErrorForErrorCode(ErrorEnum.FILENAME_ALBUM_VS_ALBUM_TAG, self.track.fileNameList[2], self.track.albumTitle)
+        self._testErrorForErrorCode(ErrorEnum.FILENAME_ALBUM_VS_ALBUM_TAG, self.track.fileNameList[2],
+                                    self.track.albumTitle)
         # ErrorCode 06 : Foldername album doesn't match the track album
-        self._testErrorForErrorCode(ErrorEnum.FOLDERNAME_ALBUM_VS_ALBUM_TAG, self.track.folderNameList[1], self.track.albumTitle)
+        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_ALBUM_VS_ALBUM_TAG, self.track.folderNameList[1],
+                                    self.track.albumTitle)
         # ErrorCode 07 : Filename disc+track number doesn't match the track disc+track number
         discTrackConcat = '{}{:02d}'.format(self.track.discNumber, int(self.track.trackNumber))
-        self._testErrorForErrorCode(ErrorEnum.FILENAME_DISC_TRACK_NO_VS_DISC_TRACK_NO_TAG, self.track.fileNameList[3], discTrackConcat)
+        self._testErrorForErrorCode(ErrorEnum.FILENAME_DISC_TRACK_NO_VS_DISC_TRACK_NO_TAG, self.track.fileNameList[3],
+                                    discTrackConcat)
         # ErrorCode 08 : Filename artists doesn't match the track artist tag
         # ErrorCode 09 : Title remix artist doesn't match the filename artist
         self._testFilenameTrackArtist()
         # ErrorCode 10 : Filename title doesn't match the track title tag
-        self._testErrorForErrorCode(ErrorEnum.FILENAME_TITLE_VS_TITLE_TAG, self.track.fileNameList[5].rsplit('.', 1)[0], self.track.title)
+        self._testErrorForErrorCode(ErrorEnum.FILENAME_TITLE_VS_TITLE_TAG, self.track.fileNameList[5].rsplit('.', 1)[0],
+                                    self.track.title)
         # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
-        self._testErrorForErrorCode(ErrorEnum.FOLDERNAME_RELEASE_ARTISTS_VS_ALBUM_ARTIST_TAG, self.track.fileNameList[0], self.track.albumArtist)
-
+        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_RELEASE_ARTISTS_VS_ALBUM_ARTIST_TAG,
+                                    self.track.fileNameList[0], self.track.albumArtist)
 
     # Testing Category 3 : ID3 tags inconsistencies
     def _testTagsInconsistencies(self):
         # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
-        self._testForMissingtags()
+        self._testForMissingTags()
         # ErrorCode 12 : Performer does not contains both the artist and the featuring artist
         self._testPerformerComposition()
         # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
@@ -99,11 +103,10 @@ class TrackTester:
         # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
         self._testLanguageTag()
 
-
     # Testing Category 4 : Track tags coherence with album metrics
     def _testAlbumValuesCoherence(self):
         # ErrorCode 14 : Computed album total track is not equal to the track total track tag
-        if type(self.track.totalTrack) is str and not self.track.totalTrack. isdigit():
+        if type(self.track.totalTrack) is str and not self.track.totalTrack.isdigit():
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_TOTAL_TRACK_VS_TRACK_TOTAL_TRACK)
         elif self.track.totalTrack == '' or int(self.track.totalTrack) != self.album.totalTrack:
@@ -114,23 +117,26 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_DISC_TRACK_VS_TRACK_DISC_TRACK)
         # ErrorCode 16 : Computed album year is not equal to the track year tag
-        if self.album.year != -1 and (self.track.year == '' or self.track.year != self.album.year): # If computed is -1, we do not display the error since Err17 is launched on album
+        if self.album.year != -1 and (
+                # If computed is -1, we do not display the error since Err17 is launched on album
+                self.track.year == '' or self.track.year != self.album.year):
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_YEAR_VS_TRACK_YEAR)
 
-
-    # Testing Category 2 auxilliary : Test artist regarding the remix artist, or the original artist
+    # Testing Category 2 auxiliary : Test artist regarding the remix artist, or the original artist
     def _testFilenameTrackArtist(self):
         if len(self.track.remix) == 0:
             # ErrorCode 08 : Filename artists doesn't match the track artist tag
-            self._testArrayErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_ARTIST_TAG, self.track.fileNameList[4].split(', '), self.track.artists)
+            self._testArrayErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_ARTIST_TAG,
+                                             self.track.fileNameList[4].split(', '), self.track.artists)
         else:
-            # ErrorCode 09 : Title remix artist doesn't match the filename artist, we put remix first bc it comes from filename, and could contain a forbidden char
-            self._testArrayErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_REMIX_ARTIST, self.track.remix, self.track.artists)
-
+            # ErrorCode 09 : Title remix artist doesn't match the filename artist,
+            # we put remix first bc it comes from filename, and could contain a forbidden char
+            self._testArrayErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_REMIX_ARTIST, self.track.remix,
+                                             self.track.artists)
 
     # Test tags emptiness
-    def _testForMissingtags(self):
+    def _testForMissingTags(self):
         if self.track.title == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Title')
@@ -177,42 +183,46 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.MISSING_TAGS)
 
-
     # Test if the performer field is accurate regarding the track title (via composedPerformer)
     def _testPerformerComposition(self):
         # For acented char sorting
         collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
         # If track has featured artists, we append them to the performer tmp string
         # Sorted comparaison to only test value equality. The artists alphabetic order is tested elswhere
-        if len(self.track.performers) != len(self.track.composedPerformer) or sorted(removeSpecialCharFromArray(self.track.performers), key=collator.getSortKey) != sorted(removeSpecialCharFromArray(self.track.composedPerformer), key=collator.getSortKey):
+        if len(self.track.performers) != len(self.track.composedPerformer) or sorted(
+                removeSpecialCharFromArray(self.track.performers), key=collator.getSortKey) != sorted(
+            removeSpecialCharFromArray(self.track.composedPerformer), key=collator.getSortKey):
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INCONSISTENT_PERFORMER)
-
 
     # Test ID3 tags order (names must be alpĥabetically sorted, while considering accent properly)
     def _testMissorderedTags(self):
         # For acented char sorting
         collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
-        if sorted(removeSpecialCharFromArray(self.track.artists), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.artists):
+        if sorted(removeSpecialCharFromArray(self.track.artists),
+                  key=collator.getSortKey) != removeSpecialCharFromArray(self.track.artists):
             self.missorderedTag.append('Artists')
             self.missorderedTagsCounter += 1
         if self.track.remix == '':
-            if sorted(removeSpecialCharFromArray(self.track.artists), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.fileNameList[4].split(', ')):
+            if sorted(removeSpecialCharFromArray(self.track.artists),
+                      key=collator.getSortKey) != removeSpecialCharFromArray(self.track.fileNameList[4].split(', ')):
                 self.missorderedTag.append('Artists')
                 self.missorderedTagsCounter += 1
-        if sorted(removeSpecialCharFromArray(self.track.performers), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.performers):
+        if sorted(removeSpecialCharFromArray(self.track.performers),
+                  key=collator.getSortKey) != removeSpecialCharFromArray(self.track.performers):
             self.missorderedTag.append('Performers')
             self.missorderedTagsCounter += 1
-        if sorted(removeSpecialCharFromArray(self.track.feat), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.feat):
+        if sorted(removeSpecialCharFromArray(self.track.feat), key=collator.getSortKey) != removeSpecialCharFromArray(
+                self.track.feat):
             self.missorderedTag.append('Featuring')
             self.missorderedTagsCounter += 1
-        if sorted(removeSpecialCharFromArray(self.track.remix), key=collator.getSortKey) != removeSpecialCharFromArray(self.track.remix):
+        if sorted(removeSpecialCharFromArray(self.track.remix), key=collator.getSortKey) != removeSpecialCharFromArray(
+                self.track.remix):
             self.missorderedTag.append('Remixer')
             self.missorderedTagsCounter += 1
         if self.missorderedTagsCounter > 0:
             self.errorCounter += 1
-            self.errors.append(ErrorEnum.MISSORDERED_TAGS)
-
+            self.errors.append(ErrorEnum.MISS_ORDERED_TAGS)
 
     # Test the track cover validity (1000x1000 jpg or png file)
     def _testCoverValidity(self):
@@ -222,16 +232,15 @@ class TrackTester:
         else:
             if self.track.coverType == 'image/png':
                 self.errorCounter += 1
-                self.errors.append(ErrorEnum.UNOPTIMAL_COVER)
+                self.errors.append(ErrorEnum.NOT_OPTIMAL_COVER)
             else:
-                with open('tmp.jpg', 'wb') as img: # Tmp extraction
+                with open('tmp.jpg', 'wb') as img:  # Tmp extraction
                     img.write(self.track.cover)
                     omg = Image.open('tmp.jpg')
                     if omg.size[0] != 1000 and omg.size[1] != 1000:
                         self.errorCounter += 1
                         self.errors.append(ErrorEnum.INVALID_COVER)
-                os.remove('tmp.jpg') # GC
-
+                os.remove('tmp.jpg')  # GC
 
     # Test ID3 fields to check if they are indeed integer (floating are forbidden in those)
     def _testIntegerFieldsValidity(self):
@@ -242,25 +251,22 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.UNLOGIC_YEAR)
 
-
     # Test the lang tag to check its compliance with NATO country trigrams
     def _testLanguageTag(self):
-        for lang in self.track.lang: # Parse lang list
-            if len(lang) != 3 or lang.isupper() == False: # Value is not formatted correctly
+        for lang in self.track.lang:  # Parse lang list
+            if len(lang) != 3 or lang.isupper() is False:  # Value is not formatted correctly
                 self.errorCounter += 1
                 self.errors.append(ErrorEnum.INVALID_LANG)
-            elif not lang in countryList: # Check trigram validity against NATO codes
+            elif not lang in RefCountry.countryList:  # Check trigram validity against NATO codes
                 self.errorCounter += 1
-                self.errors.append(ErrorEnum.UNEXISTING_LANG)
-
+                self.errors.append(ErrorEnum.NONEXISTENT_LANG)
 
     # Tests a Track on a given topic using an error code as documented in this function
     def _testErrorForErrorCode(self, errorCode, string1, string2):
         if string1 != string2:
-            if self._areStringsMatchingWithFoldernameRestrictions(string1, string2) == False:
+            if self._areStringsMatchingWithFoldernameRestrictions(string1, string2) is False:
                 self.errorCounter += 1
                 self.errors.append(errorCode)
-
 
     # Tests a Track on a given topic using an error code as documented in this function
     def _testArrayErrorForErrorCode(self, errorCode, array1, array2):
@@ -277,26 +283,28 @@ class TrackTester:
                     self.errors.append(errorCode)
                     return
 
-
-    # Test if the character that do not match in string are forbidden on some OS. string1 should be the replaced char, string2 should be the original char
-    def _areStringsMatchingWithFoldernameRestrictions(self, string1, string2):
+    @staticmethod
+    # Test if the character that do not match in string are forbidden on some OS.
+    # string1 should be the replaced char, string2 should be the original char
+    def _areStringsMatchingWithFoldernameRestrictions(string1, string2):
         list1 = list(string1)
         list2 = list(string2)
         if len(list1) == 0 or len(list2) == 0:
             return False
         if len(list1) != len(list2):
-            if prefixDot(list1) == True or prefixThreeDots(list1) == True or suffixDot(list1) == True or suffixThreeDots(list1) == True:
+            if prefixDot(list1) is True or prefixThreeDots(list1) is True \
+                    or suffixDot(list1) is True or suffixThreeDots(list1) is True:
                 return True
-            if prefixDot(list2) == True or prefixThreeDots(list2) == True or suffixDot(list2) == True or suffixThreeDots(list2) == True:
+            if prefixDot(list2) is True or prefixThreeDots(list2) is True \
+                    or suffixDot(list2) is True or suffixThreeDots(list2) is True:
                 return True
             else:
                 return False
         else:
             # Checking first that the differents char are bc of an illegal symbol
-            forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|', '\'']
             for x in range(0, len(list1)):
-                if list1[x] != list2[x]:
-                    if list1[x] == '-': # Forbidden char must have been replaced with a -, return False otherwise (char are differents for no valuable reasons)
-                        if list2[x] not in forbiddenChars:
-                            return False
+                # Forbidden char must have been replaced with a -,
+                # return False otherwise (char are different for no valuable reasons)
+                if list1[x] != list2[x] and list1[x] == '-' and list2[x] not in RefForbiddenChar.forbiddenChars:
+                    return False
             return True

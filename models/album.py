@@ -1,5 +1,5 @@
 # An Album container class with all useful attributes
-class Album:
+class Album(object):
     def __init__(self, filesIterable):
         self.filesIterable = filesIterable
         self.folderNameList = [] # %year%, %albumTitle%

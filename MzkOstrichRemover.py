@@ -3,12 +3,10 @@
 # Python imports
 import os
 import sys
-import json
 import argparse
 
 # Project imports
 from models.folderInfo import FolderInfo
-from utils.errorEnum import ErrorEnum
 from utils.albumTester import AlbumTester
 from utils.tools import computePurity
 from utils.reportBuilder import *
@@ -52,16 +50,23 @@ def crawlFolders(args):
     # Scan progression utils
     step = 10
     percentage = step
-    previousLetter = '1' # ordered folder/file parsing begins with numbers
+    previousLetter = '1'  # ordered folder/file parsing begins with numbers
     # Start scan
     printScanStart(args['folder'], totalTracks)
-    for root, directories, files in sorted(os.walk(args['folder'])): # Sort directories so they are handled in the alphabetical order
-        files = [f for f in files if not f[0] == '.'] # Ignore hidden files
-        directories[:] = [d for d in directories if not d[0] == '.'] # ignore hidden directories
-        path = root.split(os.sep) # Split root into an array of folders
-        preservedPath = list(path) # Mutagen needs a preserved path when using ID3() or FLAC()
-        for x in range(rootPathLength - 1): # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
+    # Sort directories so they are handled in the alphabetical order
+    for root, directories, files in sorted(os.walk(args['folder'])):
+        files = [f for f in files if not f[0] == '.']  # Ignore hidden files
+        directories[:] = [d for d in directories if not d[0] == '.']  # ignore hidden directories
+
+        # Split root into an array of folders
+        path = root.split(os.sep)
+        # Mutagen needs a preserved path when using ID3() or FLAC()
+        preservedPath = list(path)
+
+        # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
+        for x in range(rootPathLength - 1):
             path.pop(0)
+
         # Current path is for an album directory : perform tests
         if len(path) == 2 and path[1] != '':
             albumTester = AlbumTester(files, preservedPath)
@@ -69,20 +74,23 @@ def crawlFolders(args):
             errorCounter += albumTester.errorCounter
             errorCounter += albumTester.tracksErrorCounter()
             albumTesters.append(albumTester)
+
             # Display a progress every step %
             scannedPercentage = (scannedTracks * 100) / totalTracks
             if totalTracks > 10 and scannedPercentage >= step:
                 if (scannedTracks * 100) / totalTracks > percentage and percentage < 100:
-                    printScanProgress(percentage, previousLetter, path[0][0], errorCounter, scannedTracks, computePurity(errorCounter, scannedTracks))
-                    percentage += step;
-                    previousLetter = path[0][0] # path[0] is the Artists name
+                    printScanProgress(percentage, previousLetter, path[0][0], errorCounter, scannedTracks,
+                                      computePurity(errorCounter, scannedTracks))
+                    percentage += step
+                    previousLetter = path[0][0]  # path[0] is the Artists name
     # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
     if totalTracks > 10:
         printLineBreak()
     printScanEnd(errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
     # Compute and save JSON report
     if args['dump']:
-        saveReportFile(computeReport(scriptVersion, folderInfo, albumTesters, errorCounter, computePurity(errorCounter, scannedTracks)))
+        saveReportFile(computeReport(scriptVersion, folderInfo, albumTesters, errorCounter,
+                                     computePurity(errorCounter, scannedTracks)))
     # Verbose report
     if args['verbose']:
         printErroredTracksReport(albumTesters)

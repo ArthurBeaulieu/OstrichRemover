@@ -51,7 +51,8 @@ def printRootFolderInfo(folderInfo):
     print('> Total : {} file(s)\n'.format(folderInfo.pngCounter + folderInfo.jpgCounter))
 
 
-# Prints a detailled view of a given track. Very verbose, use carefully with big libraries (unless you're ok with the shell dying in the field!)
+# Prints a detailled view of a given track. Very verbose, use carefully with big libraries
+# (unless you're ok with the shell dying in the field!)
 def printDetailledTrack(track):
     print('ID3 Title : {}'.format(track.title))
     print('ID3 Artists : {}'.format(track.artists))
@@ -81,7 +82,9 @@ def printScanStart(targetFolder, totalTracks):
 
 # Prints the scan progression
 def printScanProgress(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity):
-    print('> {:02d}% -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity))
+    print('> {:02d}% -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage, previousLetter,
+                                                                                        currentLetter, errorCounter,
+                                                                                        scannedTracks, purity))
 
 
 # Print the scand end message
@@ -101,10 +104,12 @@ def printErroredTracksReport(albumTesters):
     currentArtist = ''
     for albumTester in albumTesters:
         albumPathList = albumTester.preservedPath
-        if currentArtist != albumPathList[len(albumPathList) - 2]: # Current Artist has changed : update UI w/ new parsed artist
+        # Current Artist has changed : update UI w/ new parsed artist
+        if currentArtist != albumPathList[len(albumPathList) - 2]:
             print('+ {}'.format(albumPathList[len(albumPathList) - 2]))
             currentArtist = albumPathList[len(albumPathList) - 2]
-        print('| + {}'.format(albumPathList[len(albumPathList) - 1])) # Print current album name
+        # Print current album name
+        print('| + {}'.format(albumPathList[len(albumPathList) - 1]))
         for error in albumTester.errors:
             print('| | + Errors that are album wide:')
             print('| | |----------------------------')
@@ -112,7 +117,7 @@ def printErroredTracksReport(albumTesters):
         trackErrorWarning = False
         for trackTester in albumTester.tracks:
             if trackTester.errorCounter > 0:
-                if trackErrorWarning == False:
+                if trackErrorWarning is False:
                     trackErrorWarning = True
                     print('| | + Errors that are track wide:')
                     print('| | |----------------------------')

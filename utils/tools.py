@@ -1,5 +1,4 @@
 # Python imports
-import json
 import os
 
 # Project imports

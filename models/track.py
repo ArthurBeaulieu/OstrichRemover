@@ -1,14 +1,11 @@
-import PIL
-
 # Project imports
 from mutagen.id3 import ID3
-from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
-#from utils.uiBuilder import printDetailledTrack # Uncomment for debug purpose only (printDetailledTrack() is very verbose)
-from PIL import Image
+
+# from utils.uiBuilder import printDetailledTrack # Uncomment for debug purpose only (printDetailledTrack() is very verbose)
 
 # A Track container class with all useful attributes
-class Track:
+class Track(object):
     def __init__(self, fileType, pathList, fileName, audioTagPath):
         # ID3 tags
         self.title = ''
@@ -38,9 +35,10 @@ class Track:
         # Filesystem path and name as lists (separator is ` - `)
         self.pathList = pathList
         self.fileType = fileType
-        self.fileName = fileName # Filename as a string
-        self.fileNameList = [] # %releaseArtists% - %year% - %albumTitle% - %discNumber%%trackNumber% - %artists% - %title%
-        self.folderNameList = [] # %year% - %albumTitle%
+        self.fileName = fileName  # Filename as a string
+        # %releaseArtists% - %year% - %albumTitle% - %discNumber%%trackNumber% - %artists% - %title%
+        self.fileNameList = []
+        self.folderNameList = []  # %year% - %albumTitle%
         # Self fill
         if fileType == 'MP3':
             self.audioTag = ID3(audioTagPath)
@@ -49,7 +47,6 @@ class Track:
             self.audioTag = FLAC(audioTagPath)
             self._fillFromFLAC()
         self._computeInternals()
-
 
     # Read the mp3 track ID3 tags and extract all interresting values into a Track object
     def _fillFromMP3(self):
@@ -90,7 +87,6 @@ class Track:
         if 'TBPM' in self.audioTag and self.audioTag['TBPM'].text[0] != '':
             self.bpm = self.audioTag['TBPM'].text[0].rstrip()
 
-
     # Read the flac track Vorbis tags and extract all interresting values into a Track object
     def _fillFromFLAC(self):
         if 'TITLE' in self.audioTag:
@@ -124,7 +120,6 @@ class Track:
         if 'LANGUAGE' in self.audioTag:
             self.lang = self.audioTag['LANGUAGE'][0].split('; ')
 
-
     # Compute all class internals that can not be extracted from ID3 tags
     def _computeInternals(self):
         self._computeFileNameList()
@@ -133,17 +128,16 @@ class Track:
         self._computeRemixer()
         self._containsCover()
 
-
-    # Splits the filename into its components (%releaseArtists% - %year% - %albumTitle% - %discNumber%%trackNumber% - %artists% - %title%)
+    # Splits the filename into its components
+    # (%releaseArtists% - %year% - %albumTitle% - %discNumber%%trackNumber% - %artists% - %title%)
     def _computeFileNameList(self):
         # We split the filename into its differents parts, as mentioned in this method description
         self.fileNameList = self.fileName.split(' - ')
         forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25', 'Interlude']
         # Here we handle all specific cases (when ' - ' is not a separator)
-        if len(self.fileNameList) > 6:
-            if self.fileNameList[3] in forbiddenPattern: # When album is a single, we must re-join the album name and the 'Single' suffix
-                self.fileNameList[2:4] = [' - '.join(self.fileNameList[2:4])] # Re-join with a ' - ' separator
-
+        if len(self.fileNameList) > 6 and self.fileNameList[3] in forbiddenPattern:
+            # When album is a single, we must re-join the album name and the 'Single' suffix
+            self.fileNameList[2:4] = [' - '.join(self.fileNameList[2:4])]  # Re-join with a ' - ' separator
 
     # Splits the folderame into its components (%year% - %albumTitle%)
     def _computeFolderNameList(self):
@@ -151,27 +145,29 @@ class Track:
         self.folderNameList = self.pathList[len(self.pathList) - 1].split(' - ')
         forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25', 'Interlude']
 
-        if len(self.folderNameList) == 3:
-            if self.folderNameList[2] in forbiddenPattern: # When album is a single, we must re-join the album name and the 'Single' suffix
-                self.folderNameList[1:3] = [' - '.join(self.folderNameList[1:3])] # Re-join with a ' - ' separator
-
+        if len(self.folderNameList) == 3 and self.folderNameList[2] in forbiddenPattern:
+            # When album is a single, we must re-join the album name and the 'Single' suffix
+            self.folderNameList[1:3] = [' - '.join(self.folderNameList[1:3])]  # Re-join with a ' - ' separator
 
     # Extract the featured artist(s) name(s) from the track fileName
     def _computeFeaturing(self):
         if self.fileName.find('(feat.') != -1:
-            startIndex = self.fileName.rfind('(feat.', 0, len(self.fileName)) # TODO handle matching brace -> in cas (feat. Zob(Thom))
-            self.feat = self.fileName[startIndex+7:self.fileName.find(')', startIndex)].split(', ') # +7 is to remove the `(feat. ` string from feat artist
+            startIndex = self.fileName.rfind('(feat.', 0, len(self.fileName))
+            # TODO handle matching brace -> in cas (feat. Zob(Thom))
+            self.feat = self.fileName[startIndex + 7: self.fileName.find(')', startIndex)].split(', ')
+            # +7 is to remove the `(feat. ` string from feat artist
             if len(self.feat) > 0 and self.feat[0] != '':
                 self.composedPerformer = [*self.feat, *self.artists]
                 return
-        self.composedPerformer = self.artists # No featuring so performer should be equal to artist
-
+        self.composedPerformer = self.artists  # No featuring so performer should be equal to artist
 
     # Extract the track remix artist name from the track fileName
     def _computeRemixer(self):
         if self.fileName.find(' Remix)') != -1:
-            self.remix = self.fileName[self.fileName.rfind('(', 0, len(self.fileName))+1:self.fileName.rfind(' Remix)')].split(', ') # +1 is to remove the opening parenthesis
-
+            self.remix = self.fileName[
+                         # +1 is to remove the opening parenthesis
+                         self.fileName.rfind('(', 0, len(self.fileName)) + 1:self.fileName.rfind(' Remix)')
+                         ].split(', ')
 
     # Test the cover existence in the file
     def _containsCover(self):
