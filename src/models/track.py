@@ -199,7 +199,7 @@ class Track(object):
         self._buildPerformersList()
         self._addCoverToFile(album)
         if self.fileType == 'FLAC':
-            if self.fileNameList[5] is not None and len(self.fileNameList) == 5:
+            if len(self.fileNameList) == 6 and self.fileNameList[5] is not None:
                 self._setInternalTag('TITLE', self.fileNameList[5][:-5])
             if album.year is not None:
                 self._setInternalTag('DATE', str(album.year))
@@ -213,11 +213,11 @@ class Track(object):
                 self._setInternalTag('TRACKNUMBER', str(self.fileNameList[3][2:]))
             if album.totalTrack is not None:
                 self._setInternalTag('TOTALTRACKS', str(album.totalTrack))
-            if self.folderNameList[1] is not None and len(self.folderNameList) == 2:
+            if len(self.folderNameList) == 2 and self.folderNameList[1] is not None:
                 self._setInternalTag('ALBUM', self.folderNameList[1])
             if album.totalDisc is not None:
                 self._setInternalTag('TOTALDISCS', str(album.totalDisc))
-            if self.fileNameList[3] is not None and len(self.fileNameList) == 5:
+            if len(self.fileNameList) == 6 and self.fileNameList[3] is not None:
                 self._setInternalTag('DISCNUMBER', str(self.fileNameList[3][:1]))
             self.audioTag.save(self.audioTagPath)
         elif self.fileType == 'MP3':
@@ -256,29 +256,33 @@ class Track(object):
 
 
     def _addCoverToFile(self, album):
-        path = ''
-        for folder in self.pathList:  # Build the file path by concatenating folder in the file path
-            path += '{}/'.format(folder)
-        path += album.coverName
+        if self.hasCover == False or (self.audioTag.pictures[0].height != 1000 and self.audioTag.pictures[0].width != 1000):
+            if self.hasCover == True:
+                self.audioTag.clear_pictures()
 
-        with open(path, "rb") as img:
-            data = img.read()
+            path = ''
+            for folder in self.pathList:  # Build the file path by concatenating folder in the file path
+                path += '{}/'.format(folder)
+            path += album.coverName
 
-        im = PIL.Image.open(path)
-        width, height = im.size
+            with open(path, "rb") as img:
+                data = img.read()
 
-        picture = Picture()
-        picture.data = data
-        picture.type = 3 # COVER_FRONT
-        picture.desc = '' # No description
-        picture.mime = mimetypes.guess_type(path)[0]
-        picture.width = width
-        picture.height = height
-        picture.depth = mode_to_bpp[im.mode]
+            im = PIL.Image.open(path)
+            width, height = im.size
 
-        picture_data = picture.write()
-        encoded_data = base64.b64encode(picture_data)
-        vcomment_value = encoded_data.decode("ascii")
+            picture = Picture()
+            picture.data = data
+            picture.type = 3 # COVER_FRONT
+            picture.desc = '' # No description
+            picture.mime = mimetypes.guess_type(path)[0]
+            picture.width = width
+            picture.height = height
+            picture.depth = mode_to_bpp[im.mode]
 
-        self.audioTag["metadata_block_picture"] = [vcomment_value]
-        self.audioTag.save()
+            picture_data = picture.write()
+            encoded_data = base64.b64encode(picture_data)
+            vcomment_value = encoded_data.decode("ascii")
+
+            self.audioTag['metadata_block_picture'] = [vcomment_value]
+            self.audioTag.save()

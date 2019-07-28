@@ -43,18 +43,18 @@ def printRetrieveFolderInfo():
 def printRootFolderInfo(folderInfo):
     print('  Files and folders information')
     print('> Folder name  : {}'.format(folderInfo.folder))
-    print('> File count   : {}'.format(folderInfo.filesCounter))
-    print('> Folder count : {}'.format(folderInfo.foldersCounter))
+    print('> File count   : {:5d}'.format(folderInfo.filesCounter))
+    print('> Folder count : {:5d}'.format(folderInfo.foldersCounter))
     print('> Folder size  : {}\n'.format(convertBytes(folderInfo.folderSize)))
     print('  Library informations')
-    print('> Artist(s) : {}\n> Album(s)  : {}'.format(folderInfo.artistsCounter, folderInfo.albumsCounter))
-    print('> Track(s)  : {}\n> Cover(s)  : {}\n'.format(folderInfo.tracksCounter, folderInfo.coversCounter))
+    print('> Artist(s) : {:6d}\n> Album(s)  : {:6d}'.format(folderInfo.artistsCounter, folderInfo.albumsCounter))
+    print('> Track(s)  : {:6d}\n> Cover(s)  : {:6d}\n'.format(folderInfo.tracksCounter, folderInfo.coversCounter))
     print('  Audio files informations')
-    print('> FLAC  : {} file(s) ({} %)\n> MP3   : {} file(s) ({} %)'.format(folderInfo.flacCounter, folderInfo.flacPercentage, folderInfo.mp3Counter, folderInfo.mp3Percentage))
-    print('> Total : {} file(s)\n'.format(folderInfo.flacCounter + folderInfo.mp3Counter))
+    print('> FLAC  : {:6d} file(s) ({} %)\n> MP3   : {:6d} file(s) ({} %)'.format(folderInfo.flacCounter, folderInfo.flacPercentage, folderInfo.mp3Counter, folderInfo.mp3Percentage))
+    print('> Total : {:6d} file(s)\n'.format(folderInfo.flacCounter + folderInfo.mp3Counter))
     print('  Artworks informations')
-    print('> PNG   : {} file(s) ({} %)\n> JPG   : {} file(s) ({} %)'.format(folderInfo.pngCounter, folderInfo.pngPercentage, folderInfo.jpgCounter, folderInfo.jpgPercentage))
-    print('> Total : {} file(s)\n'.format(folderInfo.pngCounter + folderInfo.jpgCounter))
+    print('> PNG   : {:6d} file(s) ({} %)\n> JPG   : {:6d} file(s) ({} %)'.format(folderInfo.pngCounter, folderInfo.pngPercentage, folderInfo.jpgCounter, folderInfo.jpgPercentage))
+    print('> Total : {:6d} file(s)\n'.format(folderInfo.pngCounter + folderInfo.jpgCounter))
 
 
 # Prints a detailled view of a given track. Very verbose, use carefully with big libraries
@@ -88,9 +88,8 @@ def printScanStart(targetFolder, totalTracks):
 
 # Prints the scan progression
 def printScanProgress(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity):
-    print('> {:02d}% -- from {} to {} -- {} errors on {} tracks (purity : {} %)'.format(percentage, previousLetter,
-                                                                                        currentLetter, errorCounter,
-                                                                                        scannedTracks, purity))
+    print('> {:02d}% -- from {} to {} -- {:6d} tracks (purity of {} %) with {} errors'.format(percentage, previousLetter,
+                                                                                        currentLetter, scannedTracks, purity, errorCounter))
 
 
 # Print the scand end message
@@ -107,7 +106,7 @@ def printFillStart(targetFolder, totalTracks):
 
 # Prints the scan progression
 def printFillProgress(percentage, filledTracks):
-    print('> {:02d}% -- {} tracks had their tags filled'.format(percentage, filledTracks))
+    print('> {:02d}% -- {:6d} tracks had their tags filled'.format(percentage, filledTracks))
 
 
 # Print the scand end message
