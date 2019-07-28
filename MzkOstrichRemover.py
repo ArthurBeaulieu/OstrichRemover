@@ -6,15 +6,16 @@ import sys
 import argparse
 
 # Project imports
-from models.folderInfo import FolderInfo
-from utils.albumTester import AlbumTester
-from utils.tools import computePurity
-from utils.reportBuilder import *
-from utils.uiBuilder import *
+from src.models.folderInfo import FolderInfo
+from src.scan.albumTester import AlbumTester
+from src.fill.albumFiller import AlbumFiller
+from src.utils.tools import computePurity
+from src.utils.reportBuilder import *
+from src.utils.uiBuilder import *
 
 # Globals
 global scriptVersion
-scriptVersion = '1.1.0'
+scriptVersion = '1.1.2'
 
 
 # Script main frame
@@ -22,20 +23,31 @@ def main():
     # Init argparse arguments
     ap = argparse.ArgumentParser()
     ap.add_argument('folder', help='The input folder path to crawl (absolute or relative)')
+    ap.add_argument('-s', '--scan', help='Scan a folder to test it against naming convention', action='store_true')
+    ap.add_argument('-f', '--fill', help='Prefill tags with folder name and file name information', action='store_true')
     ap.add_argument('-d', '--dump', help='Dump errors as JSON in ./output folder', action='store_true')
     ap.add_argument('-v', '--verbose', help='Display errors as a tree after crawling', action='store_true')
     arg = ap.parse_args()
     args = vars(ap.parse_args())
-    # Exec script
-    printCredentials(scriptVersion)
-    crawlFolders(args)
-
-
-# Will crawl the folder path given in argument, and all its sub-directories
-def crawlFolders(args):
+    # Preventing path from missing its trailing slash (or backslash for win compatibility)
     if not args['folder'].endswith('\\') and not args['folder'].endswith('/'):
         printInvalidPath(args['folder'])
         sys.exit(-1)
+    # Exec script
+    printCredentials(scriptVersion)
+    # Perform a scan for the given folder against the naming convention
+    if args['scan']:
+        scanFolder(args)
+    # Pre-fill folder's track tags with information held in folder name and file name
+    elif args['fill']:
+        fillTags(args)
+    # Otherwise print an error message (missing arguments)
+    else:
+        printMissingArguments()
+
+
+# Will crawl the folder path given in argument, and all its sub-directories
+def scanFolder(args):
     # Retrieve folder global information
     printRetrieveFolderInfo()
     folderInfo = FolderInfo(args['folder'])
@@ -55,8 +67,8 @@ def crawlFolders(args):
     printScanStart(args['folder'], totalTracks)
     # Sort directories so they are handled in the alphabetical order
     for root, directories, files in sorted(os.walk(args['folder'])):
-        files = [f for f in files if not f[0] == '.']  # Ignore hidden files
-        directories[:] = [d for d in directories if not d[0] == '.']  # ignore hidden directories
+        files = [f for f in files if not f[0] == '.'] # Ignore hidden files
+        directories[:] = [d for d in directories if not d[0] == '.'] # ignore hidden directories
 
         # Split root into an array of folders
         path = root.split(os.sep)
@@ -95,6 +107,52 @@ def crawlFolders(args):
     if args['verbose']:
         printErroredTracksReport(albumTesters)
 
+
+# Will pre-fill the tags for tracks in the given folder
+def fillTags(args):
+    # Retrieve folder global information
+    printRetrieveFolderInfo()
+    folderInfo = FolderInfo(args['folder'])
+    printRootFolderInfo(folderInfo)
+    # Fill internals
+    filledTracks = 0
+    totalTracks = folderInfo.flacCounter + folderInfo.mp3Counter
+    # Start Fill
+    printFillStart(args['folder'], totalTracks)
+    rootPathLength = len(args['folder'].split(os.sep))
+    albumFillers = []
+    # Fill progression utils
+    step = 10
+    percentage = step
+    # Sort directories so they are handled in the alphabetical order
+    for root, directories, files in sorted(os.walk(args['folder'])):
+        files = [f for f in files if not f[0] == '.'] # Ignore hidden files
+        directories[:] = [d for d in directories if not d[0] == '.'] # ignore hidden directories
+
+        # Split root into an array of folders
+        path = root.split(os.sep)
+        # Mutagen needs a preserved path when using ID3() or FLAC()
+        preservedPath = list(path)
+
+        # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
+        for x in range(rootPathLength - 1):
+            path.pop(0)
+
+        # Current path is for an album directory : perform tests
+        if len(path) == 2 and path[1] != '':
+            albumFiller = AlbumFiller(files, preservedPath)
+            albumFillers.append(albumFiller)
+            filledTracks += albumFiller.album.totalTrack
+        # Display a progress every step %
+        fillPercentage = (filledTracks * 100) / totalTracks
+        if totalTracks > 10 and fillPercentage >= step:
+            if (filledTracks * 100) / totalTracks > percentage and percentage < 100:
+                printFillProgress(percentage, filledTracks)
+                percentage += step
+    # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
+    if totalTracks > 10:
+        printLineBreak()
+    printFillEnd(filledTracks);
 
 # Script start point
 if __name__ == '__main__':
