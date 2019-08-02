@@ -235,8 +235,11 @@ class Track(object):
 
     def _buildArtistsList(self):
         outputList = []
+
         if len(self.remix) == 0:
-            outputList.append(self.fileNameList[4])
+            artists = self.fileNameList[4].split(', ')
+            for artist in artists:
+                outputList.append(artist)
         else:
             outputList = list(set(outputList + self.remix))
         outputList.sort()
@@ -246,7 +249,9 @@ class Track(object):
     def _buildPerformersList(self):
         outputList = []
         if len(self.remix) == 0:
-            outputList.append(self.fileNameList[4])
+            performers = self.fileNameList[4].split(', ')
+            for performer in performers:
+                outputList.append(performer)
         else:
             outputList = list(set(outputList + self.remix))
         if len(self.feat) > 0:
