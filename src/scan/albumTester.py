@@ -25,7 +25,8 @@ class AlbumTester:
     # Analyse first the global album errors (compute a total disc/track and global album year)
     def _analyseAlbumInternals(self):
         lockErrors = False
-        self.album.albumTitle = self.preservedPath[len(self.preservedPath) - 1].split(' - ')[1]
+        # Determine album title from path (if not properly named, will raise an error later on)
+        self.album.albumTitle = self.preservedPath[len(self.preservedPath) - 1][7:] # Remove 7 first char of path (year and ' - ' separator)
         # Filling internals
         for fileName in self.album.filesIterable:
             if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-4:] == 'FLAC' or fileName[-4:] == 'flac':

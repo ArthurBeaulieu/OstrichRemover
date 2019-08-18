@@ -308,10 +308,16 @@ class TrackTester:
             else:
                 return False
         else:
+            hasError = False
             # Checking first that the differents char are bc of an illegal symbol
             for x in range(0, len(list1)):
                 # Forbidden char must have been replaced with a -,
                 # return False otherwise (char are different for no valuable reasons)
-                if list1[x] != list2[x] or (list1[x] == '-' and list2[x] not in RefForbiddenChar.forbiddenChars):
-                    return False # Immediatly return since at least one character isn't properly replaced
-            return True
+                if list1[x] != list2[x]:
+                    if list1[x] != '-' or (list1[x] == '-' and list2[x] not in RefForbiddenChar.forbiddenChars):
+                        hasError = True
+                    #return False # Immediatly return since at least one character isn't properly replaced
+            if hasError is True:
+                return False
+            else:
+                return True
