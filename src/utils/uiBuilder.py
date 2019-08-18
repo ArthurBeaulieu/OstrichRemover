@@ -91,7 +91,6 @@ def printScanProgress(percentage, previousLetter, currentLetter, errorCounter, s
     print('> {:02d}% -- from {} to {} -- {:6d} tracks (purity of {} %) with {} errors'.format(percentage, previousLetter,
                                                                                         currentLetter, scannedTracks, purity, errorCounter))
 
-
 # Print the scand end message
 def printScanEnd(errorCounter, totalTracks, purity):
     print('  Folder analysis done!')
@@ -113,6 +112,23 @@ def printFillProgress(percentage, filledTracks):
 def printFillEnd(filledTracks):
     print('  Tag filling is done!')
     print('> {} tracks had their tags filled'.format(filledTracks))
+
+
+# Prints the scan begin message
+def printCleanStart(targetFolder, totalTracks):
+    print('  Folder scan : {} track(s) to clean'.format(totalTracks))
+    print('> Removing tags in folder \'{}\' and all its sub-directories...\n'.format(targetFolder))
+
+
+# Prints the scan progression
+def printCleanProgress(percentage, cleanedTracks):
+    print('> {:02d}% -- {:6d} tracks had their tags removed'.format(percentage, cleanedTracks))
+
+
+# Print the scand end message
+def printCleanEnd(cleanedTracks):
+    print('  Tag cleaning is done!')
+    print('> {} tracks had their tags cleaned'.format(cleanedTracks))
 
 
 # Print a line break in console

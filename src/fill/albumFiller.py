@@ -8,7 +8,7 @@ class AlbumFiller:
         self.files = files
         self.album = Album(files)
         self._analyseAlbumInternals()
-        self._analyseTracks()        
+        self._analyseTracks()
 
 
     # Analyse first the global album errors (compute a total disc/track and global album year)
@@ -33,7 +33,7 @@ class AlbumFiller:
                     self.album.year = fileNameList[1]
             if fileName[-3:] == 'JPG' or fileName[-3:] == 'jpg' or fileName[-3:] == 'PNG' or fileName[-3:] == 'png':
               self.album.hasCover = True
-              self.album.coverName = fileName                 
+              self.album.coverName = fileName
         # Tracking errors
         for fileName in self.album.filesIterable:
             if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-4:] == 'FLAC' or fileName[-4:] == 'flac':
@@ -44,7 +44,7 @@ class AlbumFiller:
                     self.album.year = 0
 
 
-    # Analyse the album tracks (by creating a TrackFiller for each)
+    # Analyse the album tracks
     def _analyseTracks(self):
         for fileName in self.files:
             self._fillFile(fileName, self.preservedPath, self.album)
@@ -64,4 +64,3 @@ class AlbumFiller:
         else:
             return None
         track.setInternalTags(self.album)
-        

@@ -49,6 +49,12 @@ In any case, if the filled track name doesn't fit the convention, it will be not
 
 `$ ./MzkOstrichRemover.py -f ./path/to/library/folder/`
 
+### Clean (`-c` or `--clean`)
+
+The script will crawl the folder you gave as an argument, to clean all existing track metadata. It is mainly crafted to prepare tracks to be filled later on, to avoid ambiguous tags to remain (for example TOTALTRACK, TOTALTRACKS, TRACKTOTAL...). To do so, run:
+
+`$ ./MzkOstrichRemover.py -c ./path/to/library/folder/`
+
 ## Features
 
 ##### v1.0

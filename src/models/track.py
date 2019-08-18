@@ -193,6 +193,27 @@ class Track(object):
         else:
             self.hasCover = False
 
+
+    def clearInternalTags(self, album):
+        self.audioTag['TITLE'] = '';
+        self.audioTag['DATE'] = '';
+        self.audioTag['ALBUM'] = '';
+        self.audioTag['ARTIST'] = '';
+        self.audioTag['ALBUMARTIST'] = '';
+        self.audioTag['PERFORMER'] = '';
+        self.audioTag['TRACKNUMBER'] = '';
+        self.audioTag['DISCNUMBER'] = '';
+        self.audioTag['TRACKTOTAL'] = '';
+        self.audioTag['TOTALTRACK'] = '';
+        self.audioTag['TOTALTRACKS'] = '';
+        self.audioTag['DISCTOTAL'] = '';
+        self.audioTag['TOTALDISC'] = '';
+        self.audioTag['TOTALDISCS'] = '';
+        self.audioTag.clear_pictures()
+        self.audioTag.save(self.audioTagPath)
+
+
+
     # Compute all class internals that can not be extracted from ID3 tags
     def setInternalTags(self, album):
         self._buildArtistsList()
@@ -209,14 +230,14 @@ class Track(object):
                 self._setInternalTag('ALBUMARTIST', album.albumArtist)
             if self.performers is not None:
                 self._setInternalTag('PERFORMER', '; '.join(self.performers))
-            if self.fileNameList[3] is not None:
+            if len(self.fileNameList) == 6 and self.fileNameList[3] is not None:
                 self._setInternalTag('TRACKNUMBER', str(self.fileNameList[3][2:]))
             if album.totalTrack is not None:
-                self._setInternalTag('TOTALTRACKS', str(album.totalTrack))
+                self._setInternalTag('TRACKTOTAL', str(album.totalTrack))
             if len(self.folderNameList) == 2 and self.folderNameList[1] is not None:
                 self._setInternalTag('ALBUM', self.folderNameList[1])
             if album.totalDisc is not None:
-                self._setInternalTag('TOTALDISCS', str(album.totalDisc))
+                self._setInternalTag('DISCTOTAL', str(album.totalDisc))
             if len(self.fileNameList) == 6 and self.fileNameList[3] is not None:
                 self._setInternalTag('DISCNUMBER', str(self.fileNameList[3][:1]))
             self.audioTag.save(self.audioTagPath)
@@ -269,7 +290,6 @@ class Track(object):
             for folder in self.pathList:  # Build the file path by concatenating folder in the file path
                 path += '{}/'.format(folder)
             path += album.coverName
-
             with open(path, "rb") as img:
                 data = img.read()
 
@@ -279,15 +299,11 @@ class Track(object):
             picture = Picture()
             picture.data = data
             picture.type = 3 # COVER_FRONT
-            picture.desc = '' # No description
+            picture.desc = path.rsplit('/', 1)[-1] # Add picture name as a description
             picture.mime = mimetypes.guess_type(path)[0]
             picture.width = width
             picture.height = height
             picture.depth = mode_to_bpp[im.mode]
 
-            picture_data = picture.write()
-            encoded_data = base64.b64encode(picture_data)
-            vcomment_value = encoded_data.decode("ascii")
-
-            self.audioTag['metadata_block_picture'] = [vcomment_value]
+            self.audioTag.add_picture(picture);
             self.audioTag.save()
