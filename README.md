@@ -1,6 +1,6 @@
 # MzkOstrichRemover
 
-![](https://badgen.net/badge/version/1.1.3/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.2.0/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 This script is a tool specially made to test a folder against the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention). It handles both the folder tree structure and the files themselves. It is highly recommended to read the naming convention before going any further, as explanations are raw. It was designed to work in two fields, verifying and tagging. Using arguments, you can use it the way you want.
 
@@ -10,7 +10,7 @@ This script uses `Python3`, and requires `mutagen`, `Pillow` (that replaced Pyth
 
 `# pip install -r requierements.txt`
 
-When all requierements are installed, you can launch *MzkOstrichRemover* in two modes :
+When all requierements are installed, you can launch *MzkOstrichRemover* in three modes :
 
 ### Scan (`-s` or `--scan`)
 
@@ -55,6 +55,8 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 
 `$ ./MzkOstrichRemover.py -c ./path/to/library/folder/`
 
+---
+
 ## Features
 
 ##### v1.0
@@ -65,6 +67,7 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 
 ##### v2.0
 - [x] Fill tag from filename mode
+- [x] Clean tags of given folder
 - [ ] Specific errors (~~cover size~~, ~~album artist field~~, genre, ~~producer~~, ~~bpm~~)
 - [ ] Custom scan (track, album or file errors only)
 - [ ] Verbose option (with several levels)
