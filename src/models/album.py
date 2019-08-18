@@ -3,6 +3,7 @@ class Album(object):
     def __init__(self, filesIterable):
         self.filesIterable = filesIterable
         self.folderNameList = [] # %year%, %albumTitle%
+        self.albumTitle = ''
         self.albumArtist = ''
         self.totalTrack = 0
         self.totalDisc = '1'

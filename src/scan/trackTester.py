@@ -68,7 +68,7 @@ class TrackTester:
         self._testErrorForErrorCode(ErrorEnum.FILENAME_ALBUM_VS_ALBUM_TAG, self.track.fileNameList[2],
                                     self.track.albumTitle)
         # ErrorCode 06 : Foldername album doesn't match the track album
-        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_ALBUM_VS_ALBUM_TAG, self.track.folderNameList[1],
+        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_ALBUM_VS_ALBUM_TAG, self.album.albumTitle,
                                     self.track.albumTitle)
         # ErrorCode 07 : Filename disc+track number doesn't match the track disc+track number
         discTrackConcat = '{}{:02d}'.format(self.track.discNumber, int(self.track.trackNumber))
@@ -312,6 +312,6 @@ class TrackTester:
             for x in range(0, len(list1)):
                 # Forbidden char must have been replaced with a -,
                 # return False otherwise (char are different for no valuable reasons)
-                if list1[x] != list2[x] and list1[x] == '-' and list2[x] not in RefForbiddenChar.forbiddenChars:
-                    return False
+                if list1[x] != list2[x] or (list1[x] == '-' and list2[x] not in RefForbiddenChar.forbiddenChars):
+                    return False # Immediatly return since at least one character isn't properly replaced
             return True
