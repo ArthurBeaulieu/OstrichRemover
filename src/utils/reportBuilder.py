@@ -8,12 +8,13 @@ from src.utils.tools import createDirectory
 
 
 # Generate an JSON file from the albumTesters array
-def computeReport(version, folderInfo, albumTesters, errorCounter, purity):
+def computeReport(version, duration, folderInfo, albumTesters, errorCounter, purity):
     # Creating output dict object
     now = datetime.datetime.now()
     output = {
         'date': "{}-{}-{}".format(now.year, now.month, now.day),
         'version': version,
+        'elapsedSeconds': duration,
         'folderInfo': _computeFolderInfo(folderInfo, errorCounter, purity),
         'artists': []
     }

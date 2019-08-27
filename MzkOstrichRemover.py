@@ -4,6 +4,8 @@
 import os
 import sys
 import argparse
+import time
+import datetime
 
 # Project imports
 from src.models.folderInfo import FolderInfo
@@ -16,7 +18,7 @@ from src.utils.uiBuilder import *
 
 # Globals
 global scriptVersion
-scriptVersion = '1.2.0'
+scriptVersion = '1.2.1'
 
 
 # Script main frame
@@ -70,6 +72,7 @@ def scanFolder(args):
     previousLetter = '1'  # ordered folder/file parsing begins with numbers
     # Start scan
     printScanStart(args['folder'], totalTracks)
+    startTime = time.time()
     # Sort directories so they are handled in the alphabetical order
     for root, directories, files in sorted(os.walk(args['folder'])):
         files = [f for f in files if not f[0] == '.'] # Ignore hidden files
@@ -103,14 +106,15 @@ def scanFolder(args):
     # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
     if totalTracks > 10:
         printLineBreak()
-    printScanEnd(errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
+    duration = round(time.time() - startTime, 2)
+    printScanEnd(duration, errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
     # Compute and save JSON report
     if args['dump']:
-        saveReportFile(computeReport(scriptVersion, folderInfo, albumTesters, errorCounter,
+        saveReportFile(computeReport(scriptVersion, duration, folderInfo, albumTesters, errorCounter,
                                      computePurity(errorCounter, scannedTracks)))
     # Verbose report
     if args['verbose']:
-        printErroredTracksReport(albumTesters)
+        printErroredTracksReport(albumTesters, endTime - startTime)
 
 
 # Will pre-fill the tags for tracks in the given folder
@@ -129,6 +133,7 @@ def fillTags(args):
     # Fill progression utils
     step = 10
     percentage = step
+    startTime = time.time()
     # Sort directories so they are handled in the alphabetical order
     for root, directories, files in sorted(os.walk(args['folder'])):
         files = [f for f in files if not f[0] == '.'] # Ignore hidden files
@@ -157,7 +162,8 @@ def fillTags(args):
     # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
     if totalTracks > 10:
         printLineBreak()
-    printFillEnd(filledTracks)
+    duration = round(time.time() - startTime, 2)
+    printFillEnd(duration, filledTracks)
 
 
 def cleanTags(args):
@@ -175,6 +181,7 @@ def cleanTags(args):
     # Fill progression utils
     step = 10
     percentage = step
+    startTime = time.time()
     # Sort directories so they are handled in the alphabetical order
     for root, directories, files in sorted(os.walk(args['folder'])):
         files = [f for f in files if not f[0] == '.'] # Ignore hidden files
@@ -203,7 +210,8 @@ def cleanTags(args):
     # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
     if totalTracks > 10:
         printLineBreak()
-    printCleanEnd(cleanedTracks)
+    duration = round(time.time() - startTime, 2)
+    printCleanEnd(duration, cleanedTracks)
 
 
 # Script start point

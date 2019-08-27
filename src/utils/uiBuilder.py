@@ -92,8 +92,8 @@ def printScanProgress(percentage, previousLetter, currentLetter, errorCounter, s
                                                                                         currentLetter, scannedTracks, purity, errorCounter))
 
 # Print the scand end message
-def printScanEnd(errorCounter, totalTracks, purity):
-    print('  Folder analysis done!')
+def printScanEnd(duration, errorCounter, totalTracks, purity):
+    print('  Folder analysis done! It took {} seconds to perform the scan'.format(duration))
     print('> {} errors on {} tracks (purity : {} %)'.format(errorCounter, totalTracks, purity))
 
 
@@ -109,8 +109,8 @@ def printFillProgress(percentage, filledTracks):
 
 
 # Print the scand end message
-def printFillEnd(filledTracks):
-    print('  Tag filling is done!')
+def printFillEnd(duration, filledTracks):
+    print('  Tag filling is done! It took {} seconds to perform the fill'.format(duration))
     print('> {} tracks had their tags filled'.format(filledTracks))
 
 
@@ -126,8 +126,8 @@ def printCleanProgress(percentage, cleanedTracks):
 
 
 # Print the scand end message
-def printCleanEnd(cleanedTracks):
-    print('  Tag cleaning is done!')
+def printCleanEnd(duration, cleanedTracks):
+    print('  Tag cleaning is done! It took {} seconds to perform the clean'.format(duration))
     print('> {} tracks had their tags cleaned'.format(cleanedTracks))
 
 
