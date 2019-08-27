@@ -31,7 +31,7 @@ class AlbumFiller:
                     self.album.totalDisc = fileNameList[len(fileNameList) - 3][:-2]
                 if len(fileNameList) == 6 and self.album.year == 0:
                     self.album.year = fileNameList[1]
-            if fileName[-3:] == 'JPG' or fileName[-3:] == 'jpg' or fileName[-3:] == 'PNG' or fileName[-3:] == 'png':
+            if fileName[-3:] == 'JPG' or fileName[-3:] == 'jpg' or fileName[-3:] == 'JPEG' or fileName[-3:] == 'jpeg' or fileName[-3:] == 'PNG' or fileName[-3:] == 'png':
               self.album.hasCover = True
               self.album.coverName = fileName
         # Tracking errors
