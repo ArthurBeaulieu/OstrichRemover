@@ -216,10 +216,10 @@ class Track(object):
 
     # Compute all class internals that can not be extracted from ID3 tags
     def setInternalTags(self, album):
-        self._buildArtistsList()
-        self._buildPerformersList()
-        self._addCoverToFile(album)
         if self.fileType == 'FLAC':
+            self._buildArtistsList()
+            self._buildPerformersList()
+            self._addCoverToFile(album)
             if len(self.fileNameList) == 6 and self.fileNameList[5] is not None:
                 self._setInternalTag('TITLE', self.fileNameList[5][:-5])
             if album.year is not None:
@@ -231,7 +231,7 @@ class Track(object):
             if self.performers is not None:
                 self._setInternalTag('PERFORMER', '; '.join(self.performers))
             if len(self.fileNameList) == 6 and self.fileNameList[3] is not None:
-                self._setInternalTag('TRACKNUMBER', str(self.fileNameList[3][2:]))
+                self._setInternalTag('TRACKNUMBER', str(self.fileNameList[3][1:]).lstrip('0'))
             if album.totalTrack is not None:
                 self._setInternalTag('TRACKTOTAL', str(album.totalTrack))
             if len(self.folderNameList) == 2 and self.folderNameList[1] is not None:
@@ -239,7 +239,7 @@ class Track(object):
             if album.totalDisc is not None:
                 self._setInternalTag('DISCTOTAL', str(album.totalDisc))
             if len(self.fileNameList) == 6 and self.fileNameList[3] is not None:
-                self._setInternalTag('DISCNUMBER', str(self.fileNameList[3][:1]))
+                self._setInternalTag('DISCNUMBER', str(self.fileNameList[3][0]))
             self.audioTag.save(self.audioTagPath)
         elif self.fileType == 'MP3':
             # TODO
