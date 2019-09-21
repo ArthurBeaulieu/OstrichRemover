@@ -68,7 +68,7 @@ class TrackTester:
         self._testErrorForErrorCode(ErrorEnum.FILENAME_ALBUM_VS_ALBUM_TAG, self.track.fileNameList[2],
                                     self.track.albumTitle)
         # ErrorCode 06 : Foldername album doesn't match the track album
-        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_ALBUM_VS_ALBUM_TAG, self.album.albumTitle,
+        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_ALBUM_VS_ALBUM_TAG, self.track.folderNameList[1],
                                     self.track.albumTitle)
         # ErrorCode 07 : Filename disc+track number doesn't match the track disc+track number
         discTrackConcat = '{}{:02d}'.format(self.track.discNumber, int(self.track.trackNumber))

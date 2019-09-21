@@ -114,7 +114,7 @@ def scanFolder(args):
                                      computePurity(errorCounter, scannedTracks)))
     # Verbose report
     if args['verbose']:
-        printErroredTracksReport(albumTesters, endTime - startTime)
+        printErroredTracksReport(albumTesters)
 
 
 # Will pre-fill the tags for tracks in the given folder
