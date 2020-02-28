@@ -265,7 +265,7 @@ class Track(object):
     # - Label tag if publisher tag was previously filled (according to this convention, the label is stored in publisher (TPUB) for mp3 files)
     def _fillTagsFromPreviouslyExistingTag(self):
         if self.fileType == 'FLAC':
-            if self.audioTag['PUBLISHER'] != ['']:
+            if 'PUBLISHER' in self.audioTag and self.audioTag['PUBLISHER'] != ['']:
                 self._setInternalTag('LABEL', self.audioTag['PUBLISHER'][0])
                 self.audioTag['PUBLISHER'] = ''
 
