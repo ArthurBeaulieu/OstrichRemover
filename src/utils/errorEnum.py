@@ -152,13 +152,19 @@ class ErrorEnum(Enum):
     # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
     NONEXISTENT_LANG = {
         'errorCode': 26,
-        'errorValue': "The lang tag value doesn't exist in the list given by NATO"
+        'errorValue': "The lang tag value doesn't exists in the list given by NATO"
     }
 
     # ErrorCode 27 : Inconsistent genre tag
     INCONSISTENT_GENRE = {
         'errorCode': 27,
-        'errorValue': "The genre tag valus is not correctly formed"
+        'errorValue': "The genre tag value is not correctly formed"
+    }
+
+    # ErrorCode 27 : Inconsistent genre tag
+    UNEXISTING_GENRE = {
+        'errorCode': 28,
+        'errorValue': "The genre tag value doesn't match any of supported genres and styles"
     }
 
     ## ------------

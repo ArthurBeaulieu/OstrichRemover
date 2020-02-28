@@ -2,11 +2,13 @@
 import os
 import icu
 import datetime
-
-# Project imports
+# References imports
 from src.references.refCountry import RefCountry
 from src.references.refForbiddenChar import RefForbiddenChar
+from src.references.refGenre import RefGenre
+# Enum imports
 from src.utils.errorEnum import ErrorEnum
+# Utils imports
 from src.utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray
 from PIL import Image
 
@@ -90,8 +92,6 @@ class TrackTester:
         self._testForMissingTags()
         # ErrorCode 12 : Performer does not contains both the artist and the featuring artist
         self._testPerformerComposition()
-        # ErrorCode 27 : Unconsistent genre tag
-        self._testGenreComposition()
         # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
         self._testMissorderedTags()
         # ErrorCode 19 : Cover is not a 1000x1000 jpg image
@@ -104,6 +104,9 @@ class TrackTester:
         # ErrorCode 25 : Invalid country value. Use NATO country notation with 3 capital letters
         # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
         self._testLanguageTag()
+        # ErrorCode 27 : Unconsistent genre tag
+        # ErrorCode 28 : Genre missing from convention list
+        self._testGenreComposition()
 
     # Testing Category 4 : Track tags coherence with album metrics
     def _testAlbumValuesCoherence(self):
@@ -160,12 +163,12 @@ class TrackTester:
         if self.track.composers == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Composers')
-        # if self.track.producer == '':
-        #     self.missingTagsCounter += 1
-        #     self.missingTags.append('Producer')
-        # if self.track.label == '':
-        #     self.missingTagsCounter += 1
-        #     self.missingTags.append('Label')
+        if self.track.producer == '':
+            self.missingTagsCounter += 1
+            self.missingTags.append('Producer')
+        if self.track.label == '':
+            self.missingTagsCounter += 1
+            self.missingTags.append('Label')
         if self.track.lang == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Language')
@@ -197,11 +200,15 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INCONSISTENT_PERFORMER)
 
+    # Test the genre tag : correctly formed and existing in supported genre and styles
     def _testGenreComposition(self):
         for genre in self.track.genres:
             if ';' in genre or '|' in genre or genre != genre.strip(): # Those char are strictly forbidden for mzk db behavior
                 self.errorCounter += 1
                 self.errors.append(ErrorEnum.INCONSISTENT_GENRE)
+            if genre not in RefGenre.genres:
+                self.errorCounter += 1
+                self.errors.append(ErrorEnum.UNEXISTING_GENRE)
 
     # Test ID3 tags order (names must be alpĥabetically sorted, while considering accent properly)
     def _testMissorderedTags(self):
@@ -232,7 +239,7 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.MISS_ORDERED_TAGS)
 
-    # Test the track cover validity (1000x1000 jpg or png file)
+    # Test the track cover validity (1000x1000 jpg file)
     def _testCoverValidity(self):
         if not self.track.hasCover:
             self.errorCounter += 1
@@ -324,7 +331,6 @@ class TrackTester:
                 if list1[x] != list2[x]:
                     if list1[x] != '-' or (list1[x] == '-' and list2[x] not in RefForbiddenChar.forbiddenChars):
                         hasError = True
-                    #return False # Immediatly return since at least one character isn't properly replaced
             if hasError is True:
                 return False
             else:

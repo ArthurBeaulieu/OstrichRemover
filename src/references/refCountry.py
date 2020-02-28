@@ -1,6 +1,6 @@
 class RefCountry(object):
 
-    # https://en.wikipedia.org/wiki/List_of_NATO_country_codes
+    # https://en.wikipedia.org/wiki/List_of_NATO_country_codes + BZH (29 rpz)
     countryList = ['ATG', 'AFG', 'DZA', 'AZE', 'ALB', 'ARM', 'AND', 'AGO', 'ARG', 'AUS', 'AUT', 'BHR', 'BRB', 'BWA',
                    'BEL', 'BHS', 'BGD', 'BLZ', 'BIH', 'BOL', 'MMR', 'BEN', 'BLR', 'SLB', 'BRA', 'BTN', 'BGR', 'BRN',
                    'BDI', 'CAN', 'KHM', 'TCD', 'LKA', 'COG', 'COD', 'CHN', 'CHL', 'CMR', 'COM', 'COL', 'CRI', 'CAF',
@@ -14,4 +14,4 @@ class RefCountry(object):
                    'QAT', 'ROU', 'PHL', 'PRI', 'RUS', 'RWA', 'SAU', 'KNA', 'SYC', 'ZAF', 'SEN', 'SVN', 'SVK', 'SLE',
                    'SMR', 'SGP', 'SOM', 'ESP', 'LCA', 'SDN', 'SWE', 'SYR', 'CHE', 'ARE', 'TTO', 'TLS', 'THA', 'TJK',
                    'TON', 'TGO', 'STP', 'TUN', 'TUV', 'TUR', 'TWN', 'TKM', 'TZN', 'UGA', 'GBR', 'UKR', 'USA', 'BFA',
-                   'URY', 'UZB', 'VCT', 'VEN', 'VNM', 'VAT', 'NAM', 'WSM', 'SWZ', 'YEM', 'ZMB', 'ZWE']
+                   'URY', 'UZB', 'VCT', 'VEN', 'VNM', 'VAT', 'NAM', 'WSM', 'SWZ', 'YEM', 'ZMB', 'ZWE', 'BZH']
