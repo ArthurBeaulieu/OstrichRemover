@@ -90,6 +90,8 @@ class TrackTester:
         self._testForMissingTags()
         # ErrorCode 12 : Performer does not contains both the artist and the featuring artist
         self._testPerformerComposition()
+        # ErrorCode 27 : Unconsistent genre tag
+        self._testGenreComposition()
         # ErrorCode 13 : Performer does not contains both the artist and the featuring artist
         self._testMissorderedTags()
         # ErrorCode 19 : Cover is not a 1000x1000 jpg image
@@ -190,10 +192,16 @@ class TrackTester:
         # If track has featured artists, we append them to the performer tmp string
         # Sorted comparaison to only test value equality. The artists alphabetic order is tested elswhere
         if len(self.track.performers) != len(self.track.composedPerformer) or sorted(
-                removeSpecialCharFromArray(self.track.performers), key=collator.getSortKey) != sorted(
+            removeSpecialCharFromArray(self.track.performers), key=collator.getSortKey) != sorted(
             removeSpecialCharFromArray(self.track.composedPerformer), key=collator.getSortKey):
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INCONSISTENT_PERFORMER)
+
+    def _testGenreComposition(self):
+        for genre in self.track.genres:
+            if ';' in genre or '|' in genre or genre != genre.strip(): # Those char are strictly forbidden for mzk db behavior
+                self.errorCounter += 1
+                self.errors.append(ErrorEnum.INCONSISTENT_GENRE)
 
     # Test ID3 tags order (names must be alpĥabetically sorted, while considering accent properly)
     def _testMissorderedTags(self):
@@ -236,8 +244,8 @@ class TrackTester:
             else:
                 with open('tmp.jpg', 'wb') as img:  # Tmp extraction
                     img.write(self.track.cover)
-                    omg = Image.open('tmp.jpg')
-                    if omg.size[0] != 1000 and omg.size[1] != 1000:
+                with Image.open('tmp.jpg') as img:
+                    if img.size[0] != 1000 and img.size[1] != 1000:
                         self.errorCounter += 1
                         self.errors.append(ErrorEnum.INVALID_COVER)
                 os.remove('tmp.jpg')  # GC

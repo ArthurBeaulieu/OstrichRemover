@@ -155,6 +155,12 @@ class ErrorEnum(Enum):
         'errorValue': "The lang tag value doesn't exist in the list given by NATO"
     }
 
+    # ErrorCode 27 : Inconsistent genre tag
+    INCONSISTENT_GENRE = {
+        'errorCode': 27,
+        'errorValue': "The genre tag valus is not correctly formed"
+    }
+
     ## ------------
     # Category 4 : Track tags coherence with album metrics
     # ErrorCode 14 : Computed album total track is not equal to the track total track tag

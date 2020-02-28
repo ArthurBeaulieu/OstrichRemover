@@ -1,6 +1,6 @@
 # MzkOstrichRemover
 
-![](https://badgen.net/badge/version/1.2.2/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.2.3/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 This script is a tool specially made to test a folder against the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention). It handles both the folder tree structure and the files themselves. It is highly recommended to read the naming convention before going any further, as explanations are raw. It was designed to work in two fields, verifying and tagging. Using arguments, you can use it the way you want.
 
@@ -14,7 +14,7 @@ When all requierements are installed, you can launch *MzkOstrichRemover* in thre
 
 ### Scan (`-s` or `--scan`)
 
-The script will crawl the folder you gave as an argument and will report you any error it found in your file naming/tagging. If specified with a `-d` of `--dump` flag, errors can be outputed in a JSON file, to be further reviewed in the `web-reporte/index.html` file. *MzkOstrichRemover* can detect **27 errors** per file (so far). Those errors are grouped in four categories that are detailed [in the wiki](https://github.com/ManaZeak/MzkOstrichRemover/wiki/Tracked-Errors), respectively:
+The script will crawl the folder you gave as an argument and will report you any error it found in your file naming/tagging. If specified with a `-d` of `--dump` flag, errors can be outputed in a JSON file, to be further reviewed in the `web-reporte/index.html` file. *MzkOstrichRemover* can detect **28 errors** per file (so far). Those errors are grouped in four categories that are detailed [in the wiki](https://github.com/ManaZeak/MzkOstrichRemover/wiki/Tracked-Errors), respectively:
 
 - *Category 1* – File system naming inconsistencies ;  
 - *Category 2* – File system naming against ID3 tags ;  
