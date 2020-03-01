@@ -3,10 +3,11 @@ from src.models.album import Album
 from src.models.track import Track
 
 class AlbumFiller:
-    def __init__(self, files, preservedPath):
+    def __init__(self, files, preservedPath, verbose):
         self.preservedPath = preservedPath
         self.files = files
         self.album = Album(files)
+        self.verbose = verbose
         self._analyseAlbumInternals()
         self._analyseTracks()
 
@@ -27,11 +28,17 @@ class AlbumFiller:
                     # When album is a single, we must re-join the album name and the 'Single' suffix
                     fileNameList[2:4] = [' - '.join(fileNameList[2:4])]  # Re-join with a ' - ' separator
                 # Fill internals
-                if len(fileNameList) == 6 and int(fileNameList[len(fileNameList) - 3][:-2]) > int(self.album.totalDisc):
-                    self.album.totalDisc = fileNameList[len(fileNameList) - 3][:-2]
-                if len(fileNameList) == 6 and self.album.year == 0:
-                    self.album.year = fileNameList[1]
-            if fileName[-3:] == 'JPG' or fileName[-3:] == 'jpg' or fileName[-3:] == 'JPEG' or fileName[-3:] == 'jpeg' or fileName[-3:] == 'PNG' or fileName[-3:] == 'png':
+                if len(fileNameList) == 6:
+                    if int(fileNameList[len(fileNameList) - 3][:-2]) > int(self.album.totalDisc):
+                        self.album.totalDisc = fileNameList[len(fileNameList) - 3][:-2]
+                    if self.album.year == 0:
+                        self.album.year = fileNameList[1]
+                    if self.verbose == True:
+                        print('Track {}: {}\n\tRelease artist: {}\n\tAlbum: {}'.format(fileNameList[3], fileNameList[5][:-5], fileNameList[0], fileNameList[2]))
+                else:
+                    if self.verbose == True:
+                        print("ERROR for track : {}\n\tThe file isn't named according to the naming convention.".format(fileName))
+            if fileName[-3:] == 'JPG' or fileName[-3:] == 'jpg' or fileName[-4:] == 'JPEG' or fileName[-4:] == 'jpeg' or fileName[-3:] == 'PNG' or fileName[-3:] == 'png':
               self.album.hasCover = True
               self.album.coverName = fileName
         # Tracking errors

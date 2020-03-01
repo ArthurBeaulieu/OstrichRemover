@@ -251,10 +251,12 @@ class TrackTester:
             else:
                 with open('tmp.jpg', 'wb') as img:  # Tmp extraction
                     img.write(self.track.cover)
+                    img.close()
                 with Image.open('tmp.jpg') as img:
                     if img.size[0] != 1000 and img.size[1] != 1000:
                         self.errorCounter += 1
                         self.errors.append(ErrorEnum.INVALID_COVER)
+                img.close()
                 os.remove('tmp.jpg')  # GC
 
     # Test ID3 fields to check if they are indeed integer (floating are forbidden in those)

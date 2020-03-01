@@ -161,7 +161,7 @@ class ErrorEnum(Enum):
         'errorValue': "The genre tag value is not correctly formed"
     }
 
-    # ErrorCode 27 : Inconsistent genre tag
+    # ErrorCode 28 : Unexisting genre tag
     UNEXISTING_GENRE = {
         'errorCode': 28,
         'errorValue': "The genre tag value doesn't match any of supported genres and styles"

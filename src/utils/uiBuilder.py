@@ -161,7 +161,7 @@ def printErroredTracksReport(albumTesters):
                     print('| | |----------------------------')
                 print('| | + {}'.format(trackTester.track.fileName))
                 for error in trackTester.errors:
-                    _printErroredTracksReport_aux(error.value, trackTester, albumTester)
+                    _printErroredTracksReport_aux(error.value['errorCode'], trackTester, albumTester)
 
 
 # Auxilliary, print an error about a given track
@@ -248,6 +248,12 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
     elif errorCode == 26:
         printTrackErrorInfo(errorCode, t.lang, 'Check existing values at https://en.wikipedia.org/wiki/List_of_NATO_country_codes')
+    # ErrorCode 27 : Inconsistent genre tag
+    elif errorCode == 27:
+        printTrackErrorInfo(errorCode, t.genres, 'Invalid genre structure')
+    # ErrorCode 28 : Unexisting genre tag
+    elif errorCode == 28:
+        printTrackErrorInfo(errorCode, t.genres, 'Invalid genre value')
 
 
 # Auxilliary, print an error about a given album
@@ -330,6 +336,11 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 25 or errorCode == 26:
         location1 = 'From Track Tag         '
         location2 = 'Expected value         '
+    # ErrorCode 27 : Inconsistent genre tag
+    # ErrorCode 28 : Unexisting genre tag
+    elif errorCode == 27 or errorCode == 28:
+        location1 = 'From Track Tags        '
+        location2 = 'From Computed Album    '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -399,6 +410,10 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
     elif errorCode == 25 or errorCode == 26:
         topic = '----------- Language'
+    # ErrorCode 27 : Inconsistent genre tag
+    # ErrorCode 28 : Unexisting genre tag
+    elif errorCode == 27 or errorCode == 28:
+        topic = '-------------- Genre'
     return topic
 
 

@@ -18,7 +18,7 @@ from src.utils.uiBuilder import *
 
 # Globals
 global scriptVersion
-scriptVersion = '1.2.4'
+scriptVersion = '1.2.5'
 
 
 # Script main frame
@@ -51,6 +51,9 @@ def main():
     # Otherwise print an error message (missing arguments)
     else:
         printMissingArguments()
+    # Clean the tmp.jpg image that could resides from fill or scan
+    if os.path.exists('tmp.jpg'):
+        os.remove('tmp.jpg')  # GC
 
 
 # Will crawl the folder path given in argument, and all its sub-directories
@@ -97,14 +100,14 @@ def scanFolder(args):
 
             # Display a progress every step %
             scannedPercentage = (scannedTracks * 100) / totalTracks
-            if totalTracks > 10 and scannedPercentage >= step:
+            if totalTracks > 10 and scannedPercentage >= step  and scannedTracks < totalTracks:
                 if (scannedTracks * 100) / totalTracks > percentage and percentage < 100:
                     printScanProgress(percentage, previousLetter, path[0][0], errorCounter, scannedTracks,
                                       computePurity(errorCounter, scannedTracks))
                     percentage += step
                     previousLetter = path[0][0]  # path[0] is the Artists name
     # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
-    if totalTracks > 10:
+    if totalTracks > 10 and percentage != 10:
         printLineBreak()
     duration = round(time.time() - startTime, 2)
     printScanEnd(duration, errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
@@ -138,29 +141,26 @@ def fillTags(args):
     for root, directories, files in sorted(os.walk(args['folder'])):
         files = [f for f in files if not f[0] == '.'] # Ignore hidden files
         directories[:] = [d for d in directories if not d[0] == '.'] # ignore hidden directories
-
         # Split root into an array of folders
         path = root.split(os.sep)
         # Mutagen needs a preserved path when using ID3() or FLAC()
         preservedPath = list(path)
-
         # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
         for x in range(rootPathLength - 1):
             path.pop(0)
-
         # Current path is for an album directory : perform tests
         if len(path) == 2 and path[1] != '':
-            albumFiller = AlbumFiller(files, preservedPath)
+            albumFiller = AlbumFiller(files, preservedPath, args['verbose'])
             albumFillers.append(albumFiller)
             filledTracks += albumFiller.album.totalTrack
         # Display a progress every step %
         fillPercentage = (filledTracks * 100) / totalTracks
-        if totalTracks > 10 and fillPercentage >= step:
+        if totalTracks > 10 and fillPercentage >= step and filledTracks < totalTracks:
             if (filledTracks * 100) / totalTracks > percentage and percentage < 100:
                 printFillProgress(percentage, filledTracks)
                 percentage += step
     # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
-    if totalTracks > 10:
+    if totalTracks > 10 and percentage != 10: # If more than 10 tracks and percentage have been displayed (if % = 10, it is its init value)
         printLineBreak()
     duration = round(time.time() - startTime, 2)
     printFillEnd(duration, filledTracks)
@@ -186,16 +186,13 @@ def cleanTags(args):
     for root, directories, files in sorted(os.walk(args['folder'])):
         files = [f for f in files if not f[0] == '.'] # Ignore hidden files
         directories[:] = [d for d in directories if not d[0] == '.'] # ignore hidden directories
-
         # Split root into an array of folders
         path = root.split(os.sep)
         # Mutagen needs a preserved path when using ID3() or FLAC()
         preservedPath = list(path)
-
         # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
         for x in range(rootPathLength - 1):
             path.pop(0)
-
         # Current path is for an album directory : perform tests
         if len(path) == 2 and path[1] != '':
             albumCleaner = AlbumCleaner(files, preservedPath)
