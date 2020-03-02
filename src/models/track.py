@@ -233,12 +233,13 @@ class Track(object):
     # Compute all class internals that can not be extracted from ID3 tags
     def setInternalTags(self, album):
         if self.fileType == 'FLAC':
-            self._buildArtistsList()
-            self._buildPerformersList()
-            self._addCoverToFile(album)
-            # Append tag by tag o the track
-            if len(self.fileNameList) == 6 and self.fileNameList[5] is not None:
-                self._setInternalTag('TITLE', self.fileNameList[5][:-5])
+            if len(self.fileNameList) == 6: # Avoid range exception
+                self._buildArtistsList()
+                self._buildPerformersList()
+                self._addCoverToFile(album)
+                # Append tag by tag o the track
+                if self.fileNameList[5] is not None:
+                    self._setInternalTag('TITLE', self.fileNameList[5][:-5])
             if album.year is not None:
                 self._setInternalTag('DATE', str(album.year))
             if self.artists is not None:
