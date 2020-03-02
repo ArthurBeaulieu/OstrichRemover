@@ -26,6 +26,7 @@ class TrackTester:
         self.missorderedTagsCounter = 0
         self._testTrackObject()
 
+
     # Tests a Track object to check if it is matching the naming convention
     def _testTrackObject(self):
         forbiddenPattern = ['Single', 'Intro', 'ÉPILOGUE', '25', 'Interlude']
@@ -46,6 +47,7 @@ class TrackTester:
         self._testTagsInconsistencies()
         # Category 4 : Track tags coherence with album metrics
         self._testAlbumValuesCoherence()
+
 
     # Testing Category 1 : Filesystem naming inconsistencies (see ErrorEnum.py)
     def _testFileSystemNaming(self):
@@ -86,6 +88,7 @@ class TrackTester:
         self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_RELEASE_ARTISTS_VS_ALBUM_ARTIST_TAG,
                                     self.track.fileNameList[0], self.track.albumArtist)
 
+
     # Testing Category 3 : ID3 tags inconsistencies
     def _testTagsInconsistencies(self):
         # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track
@@ -108,6 +111,7 @@ class TrackTester:
         # ErrorCode 28 : Genre missing from convention list
         self._testGenreComposition()
 
+
     # Testing Category 4 : Track tags coherence with album metrics
     def _testAlbumValuesCoherence(self):
         # ErrorCode 14 : Computed album total track is not equal to the track total track tag
@@ -128,6 +132,7 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.ALBUM_YEAR_VS_TRACK_YEAR)
 
+
     # Testing Category 2 auxiliary : Test artist regarding the remix artist, or the original artist
     def _testFilenameTrackArtist(self):
         if len(self.track.remix) == 0:
@@ -139,6 +144,7 @@ class TrackTester:
             # we put remix first bc it comes from filename, and could contain a forbidden char
             self._testArrayErrorForErrorCode(ErrorEnum.FILENAME_ARTIST_VS_REMIX_ARTIST, self.track.remix,
                                              self.track.artists)
+
 
     # Test tags emptiness
     def _testForMissingTags(self):
@@ -188,6 +194,7 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.MISSING_TAGS)
 
+
     # Test if the performer field is accurate regarding the track title (via composedPerformer)
     def _testPerformerComposition(self):
         # For acented char sorting
@@ -200,6 +207,7 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INCONSISTENT_PERFORMER)
 
+
     # Test the genre tag : correctly formed and existing in supported genre and styles
     def _testGenreComposition(self):
         for genre in self.track.genres:
@@ -209,6 +217,7 @@ class TrackTester:
             if genre not in RefGenre.genres:
                 self.errorCounter += 1
                 self.errors.append(ErrorEnum.UNEXISTING_GENRE)
+
 
     # Test ID3 tags order (names must be alpĥabetically sorted, while considering accent properly)
     def _testMissorderedTags(self):
@@ -239,6 +248,7 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.MISS_ORDERED_TAGS)
 
+
     # Test the track cover validity (1000x1000 jpg file)
     def _testCoverValidity(self):
         if not self.track.hasCover:
@@ -259,6 +269,7 @@ class TrackTester:
                 img.close()
                 os.remove('tmp.jpg')  # GC
 
+
     # Test ID3 fields to check if they are indeed integer (floating are forbidden in those)
     def _testIntegerFieldsValidity(self):
         # Prevents any test if year is an empty tag
@@ -275,6 +286,7 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.UNLOGIC_YEAR)
 
+
     # Test the lang tag to check its compliance with NATO country trigrams
     def _testLanguageTag(self):
         for lang in self.track.lang:  # Parse lang list
@@ -285,12 +297,14 @@ class TrackTester:
                 self.errorCounter += 1
                 self.errors.append(ErrorEnum.NONEXISTENT_LANG)
 
+
     # Tests a Track on a given topic using an error code as documented in this function
     def _testErrorForErrorCode(self, errorCode, string1, string2):
         if string1 != string2:
             if self._areStringsMatchingWithFoldernameRestrictions(string1, string2) is False:
                 self.errorCounter += 1
                 self.errors.append(errorCode)
+
 
     # Tests a Track on a given topic using an error code as documented in this function
     def _testArrayErrorForErrorCode(self, errorCode, array1, array2):
@@ -306,6 +320,7 @@ class TrackTester:
                     self.errorCounter += 1
                     self.errors.append(errorCode)
                     return
+
 
     @staticmethod
     # Test if the character that do not match in string are forbidden on some OS.

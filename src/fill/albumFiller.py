@@ -3,11 +3,12 @@ from src.models.album import Album
 from src.models.track import Track
 
 class AlbumFiller:
-    def __init__(self, files, preservedPath, verbose):
+    def __init__(self, files, preservedPath, verbose, logErrors):
         self.preservedPath = preservedPath
         self.files = files
         self.album = Album(files)
         self.verbose = verbose
+        self.logErrors = logErrors
         self._analyseAlbumInternals()
         self._analyseTracks()
 
@@ -36,8 +37,8 @@ class AlbumFiller:
                     if self.verbose == True:
                         print('Track {}: {}\n\tRelease artist: {}\n\tAlbum: {}'.format(fileNameList[3], fileNameList[5][:-5], fileNameList[0], fileNameList[2]))
                 else:
-                    if self.verbose == True:
-                        print("ERROR for track : {}\n\tThe file isn't named according to the naming convention.".format(fileName))
+                    if self.verbose == True or self.logErrors == True:
+                        print("ERROR for track : {}\n\tThe file isn't named according to the naming convention.\n".format(fileName))
             if fileName[-3:] == 'JPG' or fileName[-3:] == 'jpg' or fileName[-4:] == 'JPEG' or fileName[-4:] == 'jpeg' or fileName[-3:] == 'PNG' or fileName[-3:] == 'png':
               self.album.hasCover = True
               self.album.coverName = fileName

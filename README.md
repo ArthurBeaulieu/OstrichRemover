@@ -1,6 +1,6 @@
 # MzkOstrichRemover
 
-![](https://badgen.net/badge/version/1.2.5/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.2.6/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 ##### Like your audio files to be correctly tagged ? *MzkOstrichRemover* might help you !
 
@@ -39,7 +39,8 @@ The script computes a purity grade, that takes into account the total number of 
 ### Fill (`-f` or `--fill`)
 
 Available options :
-- `-v` or `--verbose` for a verbose output.
+- `-v` or `--verbose` for a verbose output ;
+- `-e` or `--errors` to only display errors that occured.
 
 The script will also crawl the folder you gave as an argument, but this time it will fill the file tags, using the filename. This script usage assumes that you have already properly named the file in the tested folder. According to the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention),  it will automatically fill the following tags:
 
@@ -83,7 +84,6 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 - [x] Clean tags of given folder
 - [x] Specific errors (~~cover size~~, ~~album artist field~~, ~~genre~~, ~~producer~~, ~~bpm~~)
 - [ ] Verbose option (with several levels)
-- [ ] Custom scan (track, album or file errors only)
 - [ ] Qt interface
 
  You can still learn more about the following milestones and the current tasks on the associated [Trello board](https://trello.com/b/0nVfm0Xz/mzkostrichremover). Contributions and ideas welcome!

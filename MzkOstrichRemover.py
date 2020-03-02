@@ -6,7 +6,6 @@ import sys
 import argparse
 import time
 import datetime
-
 # Project imports
 from src.models.folderInfo import FolderInfo
 from src.scan.albumTester import AlbumTester
@@ -15,10 +14,9 @@ from src.clean.albumCleaner import AlbumCleaner
 from src.utils.tools import computePurity
 from src.utils.reportBuilder import *
 from src.utils.uiBuilder import *
-
 # Globals
 global scriptVersion
-scriptVersion = '1.2.5'
+scriptVersion = '1.2.6'
 
 
 # Script main frame
@@ -30,7 +28,8 @@ def main():
     ap.add_argument('-f', '--fill', help='Prefill tags with folder name and file name information', action='store_true')
     ap.add_argument('-c', '--clean', help='Clean all previously setted tags, and ambiguous ones', action='store_true')
     ap.add_argument('-d', '--dump', help='Dump errors as JSON in ./output folder', action='store_true')
-    ap.add_argument('-v', '--verbose', help='Display errors as a tree after crawling', action='store_true')
+    ap.add_argument('-v', '--verbose', help='Log detailled progress when running', action='store_true')
+    ap.add_argument('-e', '--errors', help='Log errors only during run', action='store_true')
     arg = ap.parse_args()
     args = vars(ap.parse_args())
     # Preventing path from missing its trailing slash (or backslash for win compatibility)
@@ -80,16 +79,13 @@ def scanFolder(args):
     for root, directories, files in sorted(os.walk(args['folder'])):
         files = [f for f in files if not f[0] == '.'] # Ignore hidden files
         directories[:] = [d for d in directories if not d[0] == '.'] # ignore hidden directories
-
         # Split root into an array of folders
         path = root.split(os.sep)
         # Mutagen needs a preserved path when using ID3() or FLAC()
         preservedPath = list(path)
-
         # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
         for x in range(rootPathLength - 1):
             path.pop(0)
-
         # Current path is for an album directory : perform tests
         if len(path) == 2 and path[1] != '':
             albumTester = AlbumTester(files, preservedPath)
@@ -97,7 +93,6 @@ def scanFolder(args):
             errorCounter += albumTester.errorCounter
             errorCounter += albumTester.tracksErrorCounter()
             albumTesters.append(albumTester)
-
             # Display a progress every step %
             scannedPercentage = (scannedTracks * 100) / totalTracks
             if totalTracks > 10 and scannedPercentage >= step  and scannedTracks < totalTracks:
@@ -150,7 +145,7 @@ def fillTags(args):
             path.pop(0)
         # Current path is for an album directory : perform tests
         if len(path) == 2 and path[1] != '':
-            albumFiller = AlbumFiller(files, preservedPath, args['verbose'])
+            albumFiller = AlbumFiller(files, preservedPath, args['verbose'], args['errors'])
             albumFillers.append(albumFiller)
             filledTracks += albumFiller.album.totalTrack
         # Display a progress every step %
@@ -166,6 +161,7 @@ def fillTags(args):
     printFillEnd(duration, filledTracks)
 
 
+# This method will clear ever tags in audio files for the scanned folder
 def cleanTags(args):
     # Retrieve folder global information
     printRetrieveFolderInfo()

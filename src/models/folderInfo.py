@@ -23,6 +23,7 @@ class FolderInfo(object):
         self.jpgPercentage = 0
         self._computeFolderInfo(folderPath)
 
+
     # Reads the user given folder and store a few informations about it
     def _computeFolderInfo(self, folder):
         self.folder = folder
@@ -52,8 +53,8 @@ class FolderInfo(object):
                     self.jpgCounter += 1
                 elif f[-4:] == '.png' or f[-4:] == '.PNG':
                     self.pngCounter += 1
-                fp = os.path.join(folder, f)
-                self.folderSize += os.path.getsize(fp)  # Increment folder size
+                filePath = os.path.join(folder, f)
+                self.folderSize += os.path.getsize(filePath)  # Increment folder size
         # Compute totals
         self.tracksCounter = self.flacCounter + self.mp3Counter
         self.coversCounter = self.jpgCounter + self.pngCounter

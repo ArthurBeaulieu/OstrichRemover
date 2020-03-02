@@ -3,6 +3,7 @@ import os
 
 # Project imports
 from src.utils.errorEnum import ErrorEnum
+from src.references.refForbiddenChar import RefForbiddenChar
 
 
 # Creates a directory if and only if it doesn't exists yet
@@ -63,21 +64,19 @@ def computePurity(errorCounter, tracksSample):
 # Sanitize a given string and replace all forbidden char with a `-`
 def removeSpecialCharFromString(string):
     # Checking first that the differents char are bc of an illegal symbol
-    forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|', '\'']
     for x in range(0, len(string)):
-        if string[x] in forbiddenChars:
+        if string[x] in RefForbiddenChar.forbiddenChars:
             string[x] = '-'
     return string
 
 
 # Sanitize items in a given array and replace all forbidden char with a `-`
 def removeSpecialCharFromArray(array):
-    forbiddenChars = ['*', '/', '\\', ':', ';', '?', '<', '>', '\"', '|', '\'']
     output = []
     for item in array:
         string = ''
         for x in range(0, len(item)):
-            if item[x] in forbiddenChars:
+            if item[x] in RefForbiddenChar.forbiddenChars:
                 string += '-'
             else:
                 string += item[x]

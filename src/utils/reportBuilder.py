@@ -75,7 +75,7 @@ def _computeFolderInfo(folderInfo, errorCounter, purity):
     }
     return output
 
-# Save the output fileYear tag can't preceed 1900 or succeed today's year
+# Save the output json file
 def saveReportFile(report):
     createDirectory('output')
     fileName = "MzkOstrichRemover-{}".format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))

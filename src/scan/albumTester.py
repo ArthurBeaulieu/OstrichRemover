@@ -22,6 +22,7 @@ class AlbumTester:
         self._analyseAlbumInternals()
         self._analyseTracks()
 
+
     # Analyse first the global album errors (compute a total disc/track and global album year)
     def _analyseAlbumInternals(self):
         lockErrors = False
@@ -53,12 +54,14 @@ class AlbumTester:
                     self.errors.append(ErrorEnum.FILES_ALBUM_YEAR_NOT_EQUAL)
                     self.album.year = -1
 
+
     # Analyse the album tracks (by creating a TrackTester for each)
     def _analyseTracks(self):
         for fileName in self.files:
             trackTester = self._testFile(fileName, self.preservedPath, self.album)
             if trackTester is not None:
                 self.tracks.append(trackTester)
+
 
     @staticmethod
     # Manages the MP3/FLAC files to test in the pipeline
@@ -75,6 +78,7 @@ class AlbumTester:
         else:
             return None
         return TrackTester(track, album)
+
 
     # Compute error counter for the album
     def tracksErrorCounter(self):
