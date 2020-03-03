@@ -30,8 +30,12 @@ class AlbumFiller:
                     fileNameList[2:4] = [' - '.join(fileNameList[2:4])]  # Re-join with a ' - ' separator
                 # Fill internals
                 if len(fileNameList) == 6:
-                    if int(fileNameList[len(fileNameList) - 3][:-2]) > int(self.album.totalDisc):
-                        self.album.totalDisc = fileNameList[len(fileNameList) - 3][:-2]
+                    try:
+                        if int(fileNameList[len(fileNameList) - 3][:-2]) > int(self.album.totalDisc):
+                            self.album.totalDisc = fileNameList[len(fileNameList) - 3][:-2]
+                    except:
+                        if self.verbose == True or self.logErrors == True:
+                            print("ERROR for track : {}\n\tThe file isn't named according to the naming convention.\n".format(fileName))
                     if self.album.year == 0:
                         self.album.year = fileNameList[1]
                     if self.verbose == True:
