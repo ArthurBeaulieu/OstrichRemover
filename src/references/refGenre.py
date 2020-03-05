@@ -47,7 +47,7 @@ class RefGenre(object):
               'Reggaestep', 'Riddim', 'Rock', 'Rockabilly', "Rock'n'Roll", 'Rocksteady',
               'Roots Reggae', 'Shoegaze', 'Ska', 'Ska Punk', 'Slowcore', 'Slow Rock',
               'Smooth Jazz', 'Soft Rock', 'Soul', 'Southern Rock', 'Southern Soul', 'Space Rock',
-              'Speedcore', 'Speed Garage', 'Speed Metal', 'Stoner Rock', 'Sunhine Pop',
+              'Speedcore', 'Speed Garage', 'Speed Metal', 'Stoner Rock', 'Sunshine Pop',
               'Surf Rock', 'Swing', 'Symphonic Metal', 'Symphonic Rock', 'Synthpop', 'Synthwave',
               'Tech House', 'Techno', 'Texas Blues', 'Thrash Metal', 'Tradional Pop',
               'Trance', 'Trap', 'Tribal', 'Tribal House', 'Tribecore', 'Trip-Hop',
