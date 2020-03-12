@@ -14,7 +14,7 @@ This script uses `Python3`, and requires `mutagen`, `Pillow` (that replaced Pyth
 
 `# pip install -r requierements.txt`
 
-When all requierements are installed, you can launch *MzkOstrichRemover* in three modes :
+When all requierements are installed, you can launch *MzkOstrichRemover* in four modes :
 
 ### Scan (`-s` or `--scan`)
 
