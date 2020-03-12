@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 # Python imports
 import os
 import sys
@@ -11,12 +12,13 @@ from src.models.folderInfo import FolderInfo
 from src.scan.albumTester import AlbumTester
 from src.fill.albumFiller import AlbumFiller
 from src.clean.albumCleaner import AlbumCleaner
+from src.analyze.metaAnalyzer import MetaAnalyzer
 from src.utils.tools import computePurity
 from src.utils.reportBuilder import *
 from src.utils.uiBuilder import *
 # Globals
 global scriptVersion
-scriptVersion = '1.2.6'
+scriptVersion = '1.2.7'
 
 
 # Script main frame
@@ -30,7 +32,7 @@ def main():
     ap.add_argument('-d', '--dump', help='Dump errors as JSON in ./output folder', action='store_true')
     ap.add_argument('-v', '--verbose', help='Log detailled progress when running', action='store_true')
     ap.add_argument('-e', '--errors', help='Log errors only during run', action='store_true')
-    arg = ap.parse_args()
+    ap.add_argument('-a', '--analyze', help='Analyze a folder of JSON dumps to make a meta analysis', action='store_true')
     args = vars(ap.parse_args())
     # Preventing path from missing its trailing slash (or backslash for win compatibility)
     if not args['folder'].endswith('\\') and not args['folder'].endswith('/'):
@@ -47,12 +49,15 @@ def main():
     # Clean all previously setted tags (to prepare a track to be properly filled)
     elif args['clean']:
         cleanTags(args)
+    # Make a meta analyzis of previously made scan to compile values
+    elif args['analyze']:
+        metaAnalyzis(args)
     # Otherwise print an error message (missing arguments)
     else:
         printMissingArguments()
     # Clean the tmp.jpg image that could resides from fill or scan
     if os.path.exists('tmp.jpg'):
-        os.remove('tmp.jpg')  # GC
+        os.remove('tmp.jpg') # GC
 
 
 # Will crawl the folder path given in argument, and all its sub-directories
@@ -71,7 +76,7 @@ def scanFolder(args):
     # Scan progression utils
     step = 10
     percentage = step
-    previousLetter = '1'  # ordered folder/file parsing begins with numbers
+    previousLetter = '1' # Ordered folder/file parsing begins with numbers
     # Start scan
     printScanStart(args['folder'], totalTracks)
     startTime = time.time()
@@ -108,8 +113,8 @@ def scanFolder(args):
     printScanEnd(duration, errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
     # Compute and save JSON report
     if args['dump']:
-        saveReportFile(computeReport(scriptVersion, duration, folderInfo, albumTesters, errorCounter,
-                                     computePurity(errorCounter, scannedTracks)))
+        saveReportFile(computeFillReport(scriptVersion, duration, folderInfo, albumTesters, errorCounter,
+                                     computePurity(errorCounter, scannedTracks)), 'dump')
     # Verbose report
     if args['verbose']:
         printErroredTracksReport(albumTesters)
@@ -159,6 +164,22 @@ def fillTags(args):
         printLineBreak()
     duration = round(time.time() - startTime, 2)
     printFillEnd(duration, filledTracks)
+
+
+# Will make a JSON file with compiled results from input path that contains JSON dumps (from --dump)
+def metaAnalyzis(args):
+    # Get JSON files in arg folder
+    jsonFiles = [ file for file in os.listdir(args['folder']) if file.endswith('.json') ]
+    # Start analyze
+    printAnalyzeStart(args['folder'], len(jsonFiles))
+    startTime = time.time()
+    # Generate MetaAnalyzer object from this JSON list
+    metaAnalyzer = MetaAnalyzer(sorted(jsonFiles), args['folder'])
+    duration = round(time.time() - startTime, 2)
+    printAnalyzeEnd(duration, len(jsonFiles));
+    # Compute and save JSON report
+    if args['dump']:
+        saveReportFile(computeMetaAnalyzeReport(scriptVersion, duration, metaAnalyzer), 'meta-analyze')
 
 
 # This method will clear ever tags in audio files for the scanned folder

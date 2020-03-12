@@ -8,7 +8,7 @@ from src.utils.tools import createDirectory
 
 
 # Generate an JSON file from the albumTesters array
-def computeReport(version, duration, folderInfo, albumTesters, errorCounter, purity):
+def computeFillReport(version, duration, folderInfo, albumTesters, errorCounter, purity):
     # Creating output dict object
     now = datetime.datetime.now()
     output = {
@@ -50,6 +50,20 @@ def computeReport(version, duration, folderInfo, albumTesters, errorCounter, pur
     return output
 
 
+# Generate an JSON file from the metaAnalyzer class
+def computeMetaAnalyzeReport(version, duration, metaAnalyzer):
+    # Creating output dict object
+    now = datetime.datetime.now()    
+    output = {
+        'date': "{}-{}-{}".format(now.year, now.month, now.day),
+        'version': version,
+        'elapsedSeconds': duration,
+        'metaAnalyze': metaAnalyzer.metaAnalyzis,
+        'dumps': metaAnalyzer.dumps
+    }
+    return output
+
+
 # Convert the folderInfo object into a returned dict
 def _computeFolderInfo(folderInfo, errorCounter, purity):
     output = {
@@ -75,9 +89,10 @@ def _computeFolderInfo(folderInfo, errorCounter, purity):
     }
     return output
 
+
 # Save the output json file
-def saveReportFile(report):
-    createDirectory('output')
+def saveReportFile(report, directory):
+    createDirectory(directory)
     fileName = "MzkOstrichRemover-{}".format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
-    with open('output/{}.json'.format(fileName), 'w') as file:
+    with open('{}/{}.json'.format(directory, fileName), 'w') as file:
         json.dump(report, file, indent=2)

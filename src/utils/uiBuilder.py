@@ -57,8 +57,7 @@ def printRootFolderInfo(folderInfo):
     print('> Total : {:6d} file(s)\n'.format(folderInfo.pngCounter + folderInfo.jpgCounter))
 
 
-# Prints a detailled view of a given track. Very verbose, use carefully with big libraries
-# (unless you're ok with the shell dying in the field!)
+# Prints a detailled view of a given track. Very verbose, use carefully with big libraries (unless you're ok with the shell dying in the field!)
 def printDetailledTrack(track):
     print('ID3 Title : {}'.format(track.title))
     print('ID3 Artists : {}'.format(track.artists))
@@ -90,6 +89,7 @@ def printScanStart(targetFolder, totalTracks):
 def printScanProgress(percentage, previousLetter, currentLetter, errorCounter, scannedTracks, purity):
     print('> {:02d}% -- from {} to {} -- {:6d} tracks (purity of {} %) with {} errors'.format(percentage, previousLetter,
                                                                                         currentLetter, scannedTracks, purity, errorCounter))
+
 
 # Print the scand end message
 def printScanEnd(duration, errorCounter, totalTracks, purity):
@@ -129,6 +129,18 @@ def printCleanProgress(percentage, cleanedTracks):
 def printCleanEnd(duration, cleanedTracks):
     print('  Tag cleaning is done! It took {} seconds to perform the clean'.format(duration))
     print('> {} tracks had their tags cleaned'.format(cleanedTracks))
+
+
+# Prints the scan begin message
+def printAnalyzeStart(targetFolder, totalFiles):
+    print('  Folder analyzis : {} file(s) to analyze'.format(totalFiles))
+    print('> Analyzing JSON files in folder \'{}\'\n'.format(targetFolder))
+
+
+# Print the scand end message
+def printAnalyzeEnd(duration, analyzedFiles):
+    print('  Folder analyzis is done! It took {} seconds to perform the analyzis'.format(duration))
+    print('> {} json(s) have been analyzed'.format(analyzedFiles))    
 
 
 # Print a line break in console

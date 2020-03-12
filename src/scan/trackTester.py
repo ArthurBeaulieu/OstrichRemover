@@ -190,6 +190,9 @@ class TrackTester:
         if self.track.totalDisc == '':
             self.missingTagsCounter += 1
             self.missingTags.append('DiscTotal')
+        if self.track.bpm == '':
+            self.missingTagsCounter += 1
+            self.missingTags.append('BPM')
         if self.missingTagsCounter > 0:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.MISSING_TAGS)

@@ -1,6 +1,6 @@
 # MzkOstrichRemover
 
-![](https://badgen.net/badge/version/1.2.6/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.2.7/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 ##### Like your audio files to be correctly tagged ? *MzkOstrichRemover* might help you !
 
@@ -63,6 +63,15 @@ In any case, if the filled track name doesn't fit the convention, it will be not
 
 `$ python ./MzkOstrichRemover.py -f ./path/to/library/folder/`
 
+### Analyze (`-a` or `--analyze`)
+
+Available options :
+- `-d` or `--dump` to dump the analyze result in a json file.
+
+The analyze mode is made to use any JSON dumps generated with the `-sd` or `--scan --dump` command. Just provide the path where all your dumps resides and let the script generates you a meta analysis of them. The main goal of this command is to prepare data to be displayed in a graph (hello d3js). To do so, run (add `-d` or `--dump` to generate the JSON report) :
+
+`$ pyton ./MzkOstrichRemover.py -a ./path/to/json/dumps/`
+
 ### Clean (`-c` or `--clean`)
 
 The script will crawl the folder you gave as an argument, to clean all existing track metadata. It is mainly crafted to prepare tracks to be filled later on, to avoid ambiguous tags to remain (for example TOTALTRACK, TOTALTRACKS, TRACKTOTAL...). To do so, run:
@@ -83,6 +92,8 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 - [x] Fill tag from filename mode
 - [x] Clean tags of given folder
 - [x] Specific errors (~~cover size~~, ~~album artist field~~, ~~genre~~, ~~producer~~, ~~bpm~~)
+- [x] Meta analyzer for scan dumps
+- [ ] Update web report to support meta analyzis dumps
 - [ ] Verbose option (with several levels)
 - [ ] Qt interface
 
