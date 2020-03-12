@@ -101,7 +101,8 @@ h4 {
   background-color: var(--bg-light-blue);
   border: solid 3px var(--border);
   border-radius: var(--border-radius);
-  height: 60%;
+  height: inherit;
+  margin-bottom: calc(var(--margin) * 2);
   width: 60%;
 }
 
@@ -111,7 +112,7 @@ h4 {
   font-style: italic;
   height: auto;
   text-align: center;
-  transform: translateY(100px);
+  transform: translateY(50%);
   width: 100%;
 }
 
@@ -248,4 +249,14 @@ h4 {
   position: absolute;
   top: 55%;
   width: 100%;
+}
+
+@media only screen and (max-width: 1000px) {
+  h4 {
+    max-width: 80%;
+  }
+
+  .dnd-container {
+    width: 90%;
+  }
 }
