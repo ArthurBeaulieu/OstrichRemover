@@ -30,7 +30,11 @@ class MetaAnalyzer:
     # We compare first dump with last to extract global variation of values
     def _buildMetaAnalyzisData(self):
         first = self.dumps[0]['folderInfo']
-        last = self.dumps[len(self.dumps) - 1]['folderInfo']  
+        last = self.dumps[len(self.dumps) - 1]['folderInfo']
+        # Fill begin and end date range from dumps
+        self.metaAnalyzis['folderPath'] = self.path
+        self.metaAnalyzis['dateFrom'] = self.dumps[0]['date']
+        self.metaAnalyzis['dateTo'] = self.dumps[len(self.dumps) - 1]['date']
         self.metaAnalyzis['sizeDelta'] = last['size'] - first['size']
         self.metaAnalyzis['filesDelta'] = last['files'] - first['files']
         self.metaAnalyzis['foldersDelta'] = last['folders'] - first['folders']
@@ -43,7 +47,7 @@ class MetaAnalyzer:
         self.metaAnalyzis['flacPercentageDelta'] = last['flacPercentage'] - first['flacPercentage']
         self.metaAnalyzis['mp3PercentageDelta'] = last['mp3Percentage'] - first['mp3Percentage']
         self.metaAnalyzis['jpgPercentageDelta'] = last['jpgPercentage'] - first['jpgPercentage']
-        self.metaAnalyzis['pngPercentageDelta'] = last['pngPercentage'] - first['pngPercentage']        
+        self.metaAnalyzis['pngPercentageDelta'] = last['pngPercentage'] - first['pngPercentage']
         # Library variation
         self.metaAnalyzis['artistsDelta'] = last['artistsCount'] - first['artistsCount']
         self.metaAnalyzis['albumsDelta'] = last['albumsCount'] - first['albumsCount']

@@ -115,6 +115,40 @@ def printFillEnd(duration, filledTracks):
 
 
 # Prints the scan begin message
+def printAnalyzeStart(targetFolder, totalFiles):
+    print('  Folder analyzis : {} file(s) to analyze'.format(totalFiles))
+    print('> Analyzing JSON files in folder \'{}\'\n'.format(targetFolder))
+
+
+# Print the meta analyzis sum up
+def printAnalyzeStatus(metaAnalyzer):
+    ma = metaAnalyzer.metaAnalyzis
+    fd = metaAnalyzer.dumps[0]['folderInfo'] # First dump, usefull for totals
+    ld = metaAnalyzer.dumps[len(metaAnalyzer.dumps) - 1]['folderInfo'] # Last dump, usefull for totals
+    print('  Meta analysis sum up (from {} to {})\n'.format(ma['dateFrom'], ma['dateTo']))
+    print('> Library\'s size increased by {} ({} -> {})'.format(convertBytes(ma['sizeDelta']), convertBytes(fd['size']), convertBytes(ld['size'])))
+    print('  {} file(s) have been added ({} -> {} file(s))'.format(ma['filesDelta'], fd['files'], ld['files']))
+    print('  {} folder(s) have been created ({} -> {} folder(s))\n'.format(ma['foldersDelta'], fd['folders'], ld['folders']))
+    print('> Library\'s addition detail')
+    print('  {} artist(s) were added ({} -> {} artist(s))'.format(ma['artistsDelta'], fd['artistsCount'], ld['artistsCount']))
+    print('  {} album(s) were added ({} -> {} album(s))'.format(ma['albumsDelta'], fd['albumsCount'], ld['albumsCount']))
+    print('  {} track(s) were added ({} -> {} track(s))'.format(ma['tracksDelta'], fd['tracksCount'], ld['tracksCount']))
+    print('  {} cover(s) were added ({} -> {} cover(s))\n'.format(ma['coversDelta'], fd['coversCount'], ld['coversCount']))
+    print('> Quality detail')
+    print('  Purity grade increased by {}% ({}% -> {}%)'.format(ma['purityDelta'], fd['purity'], ld['purity']))
+    print('  {} flac file(s) were added ({} -> {} flac(s))'.format(ma['flacDelta'], fd['flacCount'], ld['flacCount']))
+    print('  {} mp3 file(s) were added ({} -> {} mp3(s))'.format(ma['mp3Delta'], fd['mp3Count'], ld['mp3Count']))
+    print('  {} jpg file(s) were added ({} -> {} jpg(s))'.format(ma['jpgDelta'], fd['jpgCount'], ld['jpgCount']))
+    print('  {} png file(s) were added ({} -> {} png(s))\n'.format(ma['pngDelta'], fd['pngCount'], ld['pngCount']))
+
+
+# Print the scand end message
+def printAnalyzeEnd(duration, analyzedFiles):
+    print('  Folder analyzis is done! It took {} seconds to perform the analyzis'.format(duration))
+    print('> {} json(s) have been analyzed'.format(analyzedFiles))
+
+
+# Prints the scan begin message
 def printCleanStart(targetFolder, totalTracks):
     print('  Folder scan : {} track(s) to clean'.format(totalTracks))
     print('> Removing tags in folder \'{}\' and all its sub-directories...\n'.format(targetFolder))
@@ -129,18 +163,6 @@ def printCleanProgress(percentage, cleanedTracks):
 def printCleanEnd(duration, cleanedTracks):
     print('  Tag cleaning is done! It took {} seconds to perform the clean'.format(duration))
     print('> {} tracks had their tags cleaned'.format(cleanedTracks))
-
-
-# Prints the scan begin message
-def printAnalyzeStart(targetFolder, totalFiles):
-    print('  Folder analyzis : {} file(s) to analyze'.format(totalFiles))
-    print('> Analyzing JSON files in folder \'{}\'\n'.format(targetFolder))
-
-
-# Print the scand end message
-def printAnalyzeEnd(duration, analyzedFiles):
-    print('  Folder analyzis is done! It took {} seconds to perform the analyzis'.format(duration))
-    print('> {} json(s) have been analyzed'.format(analyzedFiles))    
 
 
 # Print a line break in console

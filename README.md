@@ -1,6 +1,6 @@
 # MzkOstrichRemover
 
-![](https://badgen.net/badge/version/1.2.7/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.2.8/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 ##### Like your audio files to be correctly tagged ? *MzkOstrichRemover* might help you !
 
@@ -93,8 +93,10 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 - [x] Clean tags of given folder
 - [x] Specific errors (~~cover size~~, ~~album artist field~~, ~~genre~~, ~~producer~~, ~~bpm~~)
 - [x] Meta analyzer for scan dumps
-- [ ] Update web report to support meta analyzis dumps
-- [ ] Verbose option (with several levels)
+- [x] Update web report to support meta analyzis dumps
+- [ ] Verbose option (unified)
+
+##### v3.0
 - [ ] Qt interface
 
  You can still learn more about the following milestones and the current tasks on the associated [Trello board](https://trello.com/b/0nVfm0Xz/mzkostrichremover). Contributions and ideas welcome!

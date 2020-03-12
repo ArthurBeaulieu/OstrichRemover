@@ -1,4 +1,9 @@
+import Utils from './Utils.js';
+
+
 class ErrorsView {
+
+
   constructor(data, parentNode) {
     this._data = data;
     this._parentNode = parentNode;
@@ -6,13 +11,13 @@ class ErrorsView {
       folder: null,
       artists: null
     }
-    //console.log(this._data); // Debug purpose only
-    this._buildUi();
+
+    this._buildUI();
     document.body.removeChild(window.overlay);
   }
 
 
-  _buildUi() {
+  _buildUI() {
     const title = document.createElement('H1');
     title.innerHTML = `<em>${this._data.folderInfo.name}</em>`
     this._parentNode.appendChild(title);
@@ -44,7 +49,7 @@ class ErrorsView {
     const pictureDetails = document.createElement('P');
     // HTML markup
     libDetails.innerHTML = `
-      Scan duration : <b>${this.secondsToTimecode(this._data.elapsedSeconds)}</b> seconds<br><br>
+      Scan duration : <b>${Utils.secondsToTimecode(this._data.elapsedSeconds)}</b> seconds<br><br>
       <u><em class="lead">Library details</em></u><br>
       <b>${f.folders}</b> folder(s) – <b>${f.files}</b> file(s) – <b>${Math.floor(f.size > 100000000 ? f.size / 1000000000 : f.size / 1000000)} ${f.size > 100000000 ? '</b>Go' : '</b>Mo'}<br>
       <b>${f.artistsCount}</b> artist(s) – <b>${f.albumsCount}</b> albums(s)<br>
@@ -146,40 +151,6 @@ class ErrorsView {
   }
 
 
-  secondsToTimecode(time) {
-    const transformedTime = {
-      d: 0,
-      h: 0,
-      m: 0,
-      s: 0
-    };
-    // Cutting total seconds
-    transformedTime.d = Math.floor(time / 86400);
-    transformedTime.h = Math.floor((time - (transformedTime.d * 86400)) / 3600);
-    transformedTime.m = Math.floor((time - (transformedTime.d * 86400) - (transformedTime.h * 3600)) / 60);
-    transformedTime.s = time - (transformedTime.d * 86400) - (transformedTime.h * 3600) - (transformedTime.m * 60); // Keeping ms ICO
-    // Adding an extra 0 for values inferior to 10
-    if (transformedTime.d < 10) {
-      transformedTime.d = `0${transformedTime.d}`;
-    }
-    if (transformedTime.h < 10) {
-      transformedTime.h = `0${transformedTime.h}`;
-    }
-    if (transformedTime.m < 10) {
-      transformedTime.m = `0${transformedTime.m}`;
-    }
-    if (transformedTime.s < 10) {
-      transformedTime.s = `0${transformedTime.s}`;
-    }
-    // Formatting output
-    if (transformedTime.d > 0) {
-      return `${transformedTime.d}d ${transformedTime.h}h ${transformedTime.m}m ${transformedTime.s}s`;
-    } else if (transformedTime.h > 0) {
-      return `${transformedTime.h}:${transformedTime.m}:${transformedTime.s}`;
-    } else {
-      return `${transformedTime.m}:${transformedTime.s}`;
-    }
-  }
 }
 
 

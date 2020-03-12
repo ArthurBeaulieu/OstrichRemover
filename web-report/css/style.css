@@ -8,6 +8,7 @@ html, body {
   --border: rgba(127, 127, 127, 0.15);
   --border-radius: 5px;
   --top-height: 50px;
+  --foot-height: 50px;
   --margin: 20px;
   height: 100%;
   width: 100%;
@@ -57,9 +58,23 @@ nav a:hover {
 main {
   align-items: center;
   display: flex;
-  height: calc(100% - var(--top-height));
+  height: calc(100% - var(--top-height) - var(--foot-height));
   justify-content: center;
   width: 100%;
+}
+
+footer {
+  align-items: center;
+  display: flex;
+  font-size: .8rem;
+  height: var(--foot-height);
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+footer p {
+  margin: 0;
 }
 
 code {
@@ -69,6 +84,9 @@ code {
 
 h4 {
   margin: 0 !important;
+  max-width: 50%;
+  padding-bottom: var(--margin);
+  text-align: center;
 }
 
 .home-container {
@@ -84,7 +102,6 @@ h4 {
   border: solid 3px var(--border);
   border-radius: var(--border-radius);
   height: 60%;
-  margin-top: var(--margin);
   width: 60%;
 }
 
@@ -99,16 +116,15 @@ h4 {
 }
 
 .report-container {
+  align-items: center;
   display: none;
+  flex-direction: column;
   height: 100%;
   width: 100%;
 }
 
 .report-container h1 {
-  height: var(--top-height);
-  line-height: var(--top-height);
   margin-bottom: 0;
-  text-align: center;
 }
 
 .report-container	.row {
@@ -123,7 +139,16 @@ h4 {
   background-color: var(--bg-light-blue);
   border: solid 3px var(--border);
   border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
   padding: var(--margin);
+}
+
+.report-container	.col-three h3 {
+  margin-top: 0;
+  padding-bottom: 0;
 }
 
 .report-container	.col-seven {
@@ -179,6 +204,14 @@ h4 {
   top: 0;
   width: 100%;
   z-index: 9999;
+}
+
+.green {
+  color: var(--green);
+}
+
+.red {
+  color: var(--red);
 }
 
 @keyframes rotatePlane {

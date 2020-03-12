@@ -18,7 +18,7 @@ from src.utils.reportBuilder import *
 from src.utils.uiBuilder import *
 # Globals
 global scriptVersion
-scriptVersion = '1.2.7'
+scriptVersion = '1.2.8'
 
 
 # Script main frame
@@ -175,6 +175,7 @@ def metaAnalyzis(args):
     startTime = time.time()
     # Generate MetaAnalyzer object from this JSON list
     metaAnalyzer = MetaAnalyzer(sorted(jsonFiles), args['folder'])
+    printAnalyzeStatus(metaAnalyzer)
     duration = round(time.time() - startTime, 2)
     printAnalyzeEnd(duration, len(jsonFiles));
     # Compute and save JSON report
