@@ -3,7 +3,7 @@ import Utils from '../utils/Utils.js';
 'use strict';
 
 
-class AnalyzisView {
+class AnalysisView {
 
 
   constructor(data, parentNode) {
@@ -30,7 +30,7 @@ class AnalyzisView {
   }
 
 
-  // Build the analyzis interface, its content and its interactivity
+  // Build the analysis interface, its content and its interactivity
   _buildUI() {
     // Fill title with library path
     const title = document.createElement('H1');
@@ -72,7 +72,7 @@ class AnalyzisView {
     const qDetails = document.createElement('P');
     // HTML markup
     header.innerHTML = `
-      <h3 class="center">Meta analyzis sum up</h3><span class="center"><b>${fd.date}</b>&nbsp;→&nbsp;<b>${ld.date}</b></span>
+      <h3 class="center">Meta analysis sum up</h3><span class="center"><b>${fd.date}</b>&nbsp;→&nbsp;<b>${ld.date}</b></span>
     `;
     fsInfo.innerHTML = `
        <u><em class="lead">File system info</em></u>
@@ -266,4 +266,4 @@ class AnalyzisView {
 }
 
 
-export default AnalyzisView;
+export default AnalysisView;

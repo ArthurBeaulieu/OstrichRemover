@@ -53,12 +53,12 @@ def computeFillReport(version, duration, folderInfo, albumTesters, errorCounter,
 # Generate an JSON file from the metaAnalyzer class
 def computeMetaAnalyzeReport(version, duration, metaAnalyzer):
     # Creating output dict object
-    now = datetime.datetime.now()    
+    now = datetime.datetime.now()
     output = {
         'date': "{}-{}-{}".format(now.year, now.month, now.day),
         'version': version,
         'elapsedSeconds': duration,
-        'metaAnalyze': metaAnalyzer.metaAnalyzis,
+        'metaAnalyze': metaAnalyzer.metaAnalysis,
         'dumps': metaAnalyzer.dumps
     }
     return output

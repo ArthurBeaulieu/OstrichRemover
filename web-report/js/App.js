@@ -1,6 +1,6 @@
 import DnD from './utils/DnD.js';
 import ErrorsView from './views/ErrorsView.js';
-import AnalyzisView from './views/AnalyzisView.js';
+import AnalysisView from './views/AnalysisView.js';
 'use strict';
 
 
@@ -34,8 +34,8 @@ const loadJSON = (fileInfo, data) => {
       document.querySelector('#nav-title').innerHTML += ` – Error scan`;
       view = new ErrorsView(data, document.querySelector('.report-container'));
     } else if (data.dumps !== undefined && data.metaAnalyze !== undefined) { // The dropped JSON is a meta analysis
-      document.querySelector('#nav-title').innerHTML += ` – Meta analyzis`;
-      view = new AnalyzisView(data, document.querySelector('.report-container'));
+      document.querySelector('#nav-title').innerHTML += ` – Meta analysis`;
+      view = new AnalysisView(data, document.querySelector('.report-container'));
     } else {
       console.error('Invalid dropped JSON')
       document.body.removeChild(window.overlay);

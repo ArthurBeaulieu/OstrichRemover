@@ -95,7 +95,7 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 - [x] Clean tags of given folder
 - [x] Specific errors (~~cover size~~, ~~album artist field~~, ~~genre~~, ~~producer~~, ~~bpm~~)
 - [x] Meta analyzer for scan dumps
-- [x] Update web report to support meta analyzis dumps
+- [x] Update web report to support meta analysis dumps
 - [ ] Web improvement (local storage, error handling, full responsive)
 
 ##### v3.0

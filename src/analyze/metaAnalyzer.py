@@ -8,9 +8,9 @@ class MetaAnalyzer:
         self.files = files
         self.path = path
         self.dumps = []
-        self.metaAnalyzis = {}
+        self.metaAnalysis = {}
         self._extractInfoFromFiles()
-        self._buildMetaAnalyzisData()
+        self._buildMetaAnalysisData()
 
 
     # Extract information from each json file in order to process them later on
@@ -28,32 +28,32 @@ class MetaAnalyzer:
 
 
     # We compare first dump with last to extract global variation of values
-    def _buildMetaAnalyzisData(self):
+    def _buildMetaAnalysisData(self):
         first = self.dumps[0]['folderInfo']
         last = self.dumps[len(self.dumps) - 1]['folderInfo']
         # Fill begin and end date range from dumps
-        self.metaAnalyzis['folderPath'] = self.path
-        self.metaAnalyzis['dateFrom'] = self.dumps[0]['date']
-        self.metaAnalyzis['dateTo'] = self.dumps[len(self.dumps) - 1]['date']
-        self.metaAnalyzis['sizeDelta'] = last['size'] - first['size']
-        self.metaAnalyzis['filesDelta'] = last['files'] - first['files']
-        self.metaAnalyzis['foldersDelta'] = last['folders'] - first['folders']
+        self.metaAnalysis['folderPath'] = self.path
+        self.metaAnalysis['dateFrom'] = self.dumps[0]['date']
+        self.metaAnalysis['dateTo'] = self.dumps[len(self.dumps) - 1]['date']
+        self.metaAnalysis['sizeDelta'] = last['size'] - first['size']
+        self.metaAnalysis['filesDelta'] = last['files'] - first['files']
+        self.metaAnalysis['foldersDelta'] = last['folders'] - first['folders']
         # File variation
-        self.metaAnalyzis['flacDelta'] = last['flacCount'] - first['flacCount']
-        self.metaAnalyzis['mp3Delta'] = last['mp3Count'] - first['mp3Count']
-        self.metaAnalyzis['jpgDelta'] = last['jpgCount'] - first['jpgCount']
-        self.metaAnalyzis['pngDelta'] = last['pngCount'] - first['pngCount']
+        self.metaAnalysis['flacDelta'] = last['flacCount'] - first['flacCount']
+        self.metaAnalysis['mp3Delta'] = last['mp3Count'] - first['mp3Count']
+        self.metaAnalysis['jpgDelta'] = last['jpgCount'] - first['jpgCount']
+        self.metaAnalysis['pngDelta'] = last['pngCount'] - first['pngCount']
         # Proportion variations
-        self.metaAnalyzis['flacPercentageDelta'] = last['flacPercentage'] - first['flacPercentage']
-        self.metaAnalyzis['mp3PercentageDelta'] = last['mp3Percentage'] - first['mp3Percentage']
-        self.metaAnalyzis['jpgPercentageDelta'] = last['jpgPercentage'] - first['jpgPercentage']
-        self.metaAnalyzis['pngPercentageDelta'] = last['pngPercentage'] - first['pngPercentage']
+        self.metaAnalysis['flacPercentageDelta'] = last['flacPercentage'] - first['flacPercentage']
+        self.metaAnalysis['mp3PercentageDelta'] = last['mp3Percentage'] - first['mp3Percentage']
+        self.metaAnalysis['jpgPercentageDelta'] = last['jpgPercentage'] - first['jpgPercentage']
+        self.metaAnalysis['pngPercentageDelta'] = last['pngPercentage'] - first['pngPercentage']
         # Library variation
-        self.metaAnalyzis['artistsDelta'] = last['artistsCount'] - first['artistsCount']
-        self.metaAnalyzis['albumsDelta'] = last['albumsCount'] - first['albumsCount']
-        self.metaAnalyzis['tracksDelta'] = last['tracksCount'] - first['tracksCount']
-        self.metaAnalyzis['coversDelta'] = last['coversCount'] - first['coversCount']
+        self.metaAnalysis['artistsDelta'] = last['artistsCount'] - first['artistsCount']
+        self.metaAnalysis['albumsDelta'] = last['albumsCount'] - first['albumsCount']
+        self.metaAnalysis['tracksDelta'] = last['tracksCount'] - first['tracksCount']
+        self.metaAnalysis['coversDelta'] = last['coversCount'] - first['coversCount']
         # Errors variation
-        self.metaAnalyzis['errorsDelta'] = last['errorsCount'] - first['errorsCount']
-        self.metaAnalyzis['possibleErrorsDelta'] = last['possibleErrors'] - first['possibleErrors']
-        self.metaAnalyzis['purityDelta'] = last['purity'] - first['purity']
+        self.metaAnalysis['errorsDelta'] = last['errorsCount'] - first['errorsCount']
+        self.metaAnalysis['possibleErrorsDelta'] = last['possibleErrors'] - first['possibleErrors']
+        self.metaAnalysis['purityDelta'] = last['purity'] - first['purity']

@@ -50,9 +50,9 @@ def main():
     # Pre-fill folder's track tags with information held in folder name and file name
     elif args['fill']:
         fillTags(args)
-    # Make a meta analyzis of previously made scan to compile values
+    # Make a meta analysis of previously made scan to compile values
     elif args['analyze']:
-        metaAnalyzis(args)        
+        metaAnalysis(args)
     # Clean all previously setted tags (to prepare a track to be properly filled)
     elif args['clean']:
         if queryYesNo('> Warning, this command will erase any previously existing tags on audio files in this path. Just do it?', 'yes'):
@@ -173,7 +173,7 @@ def fillTags(args):
 
 
 # Will make a JSON file with compiled results from input path that contains JSON dumps (from --dump)
-def metaAnalyzis(args):
+def metaAnalysis(args):
     # Get JSON files in arg folder
     jsonFiles = [ file for file in os.listdir(args['folder']) if file.endswith('.json') ]
     # Start analyze

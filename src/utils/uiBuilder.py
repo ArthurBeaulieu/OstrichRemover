@@ -116,13 +116,13 @@ def printFillEnd(duration, filledTracks):
 
 # Prints the scan begin message
 def printAnalyzeStart(targetFolder, totalFiles):
-    print('  Folder analyzis : {} file(s) to analyze'.format(totalFiles))
-    print('> Analyzing JSON files in folder \'{}\'\n'.format(targetFolder))
+    print('  Folder analysis : {} file(s) to analyze'.format(totalFiles))
+    print('> Analysing JSON files in folder \'{}\'\n'.format(targetFolder))
 
 
-# Print the meta analyzis sum up
+# Print the meta analysis sum up
 def printAnalyzeStatus(metaAnalyzer):
-    ma = metaAnalyzer.metaAnalyzis
+    ma = metaAnalyzer.metaAnalysis
     fd = metaAnalyzer.dumps[0]['folderInfo'] # First dump, usefull for totals
     ld = metaAnalyzer.dumps[len(metaAnalyzer.dumps) - 1]['folderInfo'] # Last dump, usefull for totals
     print('  Meta analysis sum up (from {} to {})\n'.format(ma['dateFrom'], ma['dateTo']))
@@ -144,7 +144,7 @@ def printAnalyzeStatus(metaAnalyzer):
 
 # Print the scand end message
 def printAnalyzeEnd(duration, analyzedFiles):
-    print('  Folder analyzis is done! It took {} seconds to perform the analyzis'.format(duration))
+    print('  Folder analysis is done! It took {} seconds to perform the analysis'.format(duration))
     print('> {} json(s) have been analyzed'.format(analyzedFiles))
 
 

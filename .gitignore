@@ -1,6 +1,6 @@
 output/
 dump/
-meta-analyze/
+meta-analysis/
 **/__pycache__/
 
 # Created by .ignore support plugin (hsz.mobi)
