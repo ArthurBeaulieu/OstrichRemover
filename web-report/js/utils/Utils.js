@@ -4,17 +4,18 @@
 class Utils {
 
 
-  constructor() {
-
-  }
+  constructor() {}
 
 
+  // Format raw string into JSON object
   static formatAsJSON(raw) {
     return JSON.parse(raw);
   }
 
 
+  // Convert byte value into a human readable string
   static convertBytes(bytes) {
+    // Don't wanna try here to do any 0 division
     if (bytes === 0) {
       return '0 bytes';
     }
@@ -29,6 +30,7 @@ class Utils {
   }
 
 
+  // Convert a timestamp in seconds to a readable timecode
   static secondsToTimecode(time) {
     const transformedTime = {
       d: 0,
@@ -65,6 +67,33 @@ class Utils {
   }
 
 
+  // Build a PurityProgress HTML element with a given purity
+  static buildPurityProgress(purity) {
+    // Create HTML elements
+    const purityProgress = document.createElement('DIV');
+    const pure = document.createElement('DIV');
+    const impure = document.createElement('DIV');
+    // Set CSS classes
+    purityProgress.className = 'purity-progress';
+    pure.className = 'pure';
+    impure.className = 'impure';
+    // Add layout to DOM
+    purityProgress.appendChild(pure);
+    purityProgress.appendChild(impure);
+    // Set width from given purity for both track pure/impure
+    pure.style.width = purity + '%';
+    impure.style.width = 100 - purity + '%';
+    // Round right borders if pure bar is almost full length
+    if (purity > 98) {
+      pure.style.borderRadius = 'var(--border-radius)';
+    }
+    // Return DOM element
+    return purityProgress;
+  }
+
+
+  // If input value is below zero, add red color, if equal 0 do nothing for color and above zero, add green color
+  // This is to make UX for understand if numbers have raised of fall
   static setColorFromValue(value) {
     let colorClass = '';
     let sign = '';

@@ -1,22 +1,22 @@
 # MzkOstrichRemover
 
-![](https://badgen.net/badge/version/1.2.8/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.3.0/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 ##### Like your audio files to be correctly tagged ? *MzkOstrichRemover* might help you !
 
-This script is a tool specially made to test a folder against the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention). It handles both the folder tree structure and the files themselves. It is highly recommended to read the naming convention before going any further, as explanations are raw. It was designed to work in two fields, verifying and tagging. Using arguments, you can use it the way you want.
+This script is specially made to test a musical folder against the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention). It is highly recommended to read the naming convention before going any further. Based on this convention, *MzkOstrichRemover* was designed to work in three fields: verifying, pre-tagging and analyzing your musical library.
 
-If you encounter any problem that is undocumented, please contact [support@manazeak.org](mailto:support@manazeak.org)
+For any concerns, you can check the [wiki](https://github.com/ManaZeak/MzkOstrichRemover/wiki), however, if you encounter any problem that is undocumented, please contact [support@manazeak.org](mailto:support@manazeak.org)
 
 ## Get started
 
-This script uses `Python3`, and requires `mutagen`, `Pillow` (that replaced Python Image Library) and `PyICU`. Please ensure these are installed, otherwise run in the project folder (`pip` must be installed on the system):
+This script uses `Python3`, and requires `mutagen`, `Pillow` (that replaced Python Image Library) and `PyICU`. Please ensure these are installed on your system, otherwise, with `pip` installed, run the command:
 
 `# pip install -r requierements.txt`
 
-When all requierements are installed, you can launch *MzkOstrichRemover* in four modes :
+When all requierements are installed, you can launch *MzkOstrichRemover* in three main modes, and on additional command :
 
-### Scan (`-s` or `--scan`)
+## Scan mode (`-s` or `--scan`)
 
 Available options :
 - `-d` or `--dump` to dump a JSON report in the `./output` folder ;
@@ -36,7 +36,7 @@ Before running the script in scan mode, you must ensure that the folder you are 
 
 The script computes a purity grade, that takes into account the total number of possible errors per track and the actual number of errors.
 
-### Fill (`-f` or `--fill`)
+## Fill mode (`-f` or `--fill`)
 
 Available options :
 - `-v` or `--verbose` for a verbose output ;
@@ -63,7 +63,7 @@ In any case, if the filled track name doesn't fit the convention, it will be not
 
 `$ python ./MzkOstrichRemover.py -f ./path/to/library/folder/`
 
-### Analyze (`-a` or `--analyze`)
+## Analyze mode (`-a` or `--analyze`)
 
 Available options :
 - `-d` or `--dump` to dump the analyze result in a json file.
@@ -72,9 +72,11 @@ The analyze mode is made to use any JSON dumps generated with the `-sd` or `--sc
 
 `$ pyton ./MzkOstrichRemover.py -a ./path/to/json/dumps/`
 
-### Clean (`-c` or `--clean`)
+## Additional commands
 
-The script will crawl the folder you gave as an argument, to clean all existing track metadata. It is mainly crafted to prepare tracks to be filled later on, to avoid ambiguous tags to remain (for example TOTALTRACK, TOTALTRACKS, TRACKTOTAL...). To do so, run:
+### Clean mode (`-c` or `--clean`)
+
+The script will crawl the folder you gave as an argument, to clean all existing track metadata. It is mainly crafted to prepare tracks to be filled later on, to avoid ambiguous tags to remain (for example TOTALTRACK, TOTALTRACKS, TRACKTOTAL...). Warning, this command will remove all tags in files with no remorses at all, use with caution and self-awarness. To do so, run:
 
 `$ pyton ./MzkOstrichRemover.py -c ./path/to/library/folder/`
 
@@ -94,9 +96,12 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 - [x] Specific errors (~~cover size~~, ~~album artist field~~, ~~genre~~, ~~producer~~, ~~bpm~~)
 - [x] Meta analyzer for scan dumps
 - [x] Update web report to support meta analyzis dumps
-- [ ] Verbose option (unified)
+- [ ] Web improvement (local storage, error handling, full responsive)
 
 ##### v3.0
+- [ ] Packaging in pip (PyPi)
+- [ ] Verbose option (unified)
 - [ ] Qt interface
+- [ ] ManaZeak integration as a plugin
 
  You can still learn more about the following milestones and the current tasks on the associated [Trello board](https://trello.com/b/0nVfm0Xz/mzkostrichremover). Contributions and ideas welcome!

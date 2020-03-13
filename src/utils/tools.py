@@ -1,5 +1,6 @@
 # Python imports
 import os
+import sys
 
 # Project imports
 from src.utils.errorEnum import ErrorEnum
@@ -82,3 +83,26 @@ def removeSpecialCharFromArray(array):
                 string += item[x]
         output.append(string)
     return output
+
+
+# Prompt user to yes an action
+def queryYesNo(question, default='yes'):
+    valid = { 'yes': True, 'y': True, 'no': False, 'n': False}
+    if default is None:
+        prompt = ' [y/n] '
+    elif default == "yes":
+        prompt = ' [Y/n] '
+    elif default == "no":
+        prompt = ' [y/N] '
+    else:
+        raise ValueError("> Invalid default answer in source code: '%s'" % default)
+
+    while True:
+        sys.stdout.write(question + prompt)
+        choice = input().lower()
+        if default is not None and choice == '':
+            return valid[default]
+        elif choice in valid:
+            return valid[choice]
+        else:
+            print("Please respond with 'yes' or 'no' (or 'y' or 'n').\n")

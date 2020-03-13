@@ -10,6 +10,7 @@ html, body {
   --top-height: 50px;
   --foot-height: 50px;
   --margin: 20px;
+  --padding: 10px;
   height: 100%;
   width: 100%;
 }
@@ -160,11 +161,44 @@ h4 {
   margin: 0 0 0 var(--margin);
   overflow-y: auto;
   padding: var(--margin);
+  position: relative;
   width: calc(70% - var(--margin));
 }
 
 .report-container	.col-seven p {
   margin-bottom: 0;
+}
+
+.report-container .col-seven svg {
+  height: 100%;
+  width: 100%;
+}
+
+.report-container .col-seven .graph-controls {
+  align-items: center;
+  border-top: solid 3px var(--border);
+  bottom: 0;
+  display: flex;
+  height: 50px;
+  padding: 0 var(--padding);
+  position: absolute;
+  width: 100%;
+}
+
+.report-container .col-seven .graph-controls button {
+  margin: 0 calc(var(--margin) / 3);
+}
+
+.report-container .col-seven .graph-controls div {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  margin-left: auto;
+}
+
+.report-container .col-seven .graph-controls div p {
+  height: 22%;
+  line-height: 100%;
 }
 
 .purity-progress {

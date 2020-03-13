@@ -16,9 +16,10 @@ from src.analyze.metaAnalyzer import MetaAnalyzer
 from src.utils.tools import computePurity
 from src.utils.reportBuilder import *
 from src.utils.uiBuilder import *
+from src.utils.tools import *
 # Globals
 global scriptVersion
-scriptVersion = '1.2.8'
+scriptVersion = '1.3.0'
 
 
 # Script main frame
@@ -26,13 +27,16 @@ def main():
     # Init argparse arguments
     ap = argparse.ArgumentParser()
     ap.add_argument('folder', help='The input folder path to crawl (absolute or relative)')
+    # Main modes
     ap.add_argument('-s', '--scan', help='Scan a folder to test it against naming convention', action='store_true')
     ap.add_argument('-f', '--fill', help='Prefill tags with folder name and file name information', action='store_true')
-    ap.add_argument('-c', '--clean', help='Clean all previously setted tags, and ambiguous ones', action='store_true')
-    ap.add_argument('-d', '--dump', help='Dump errors as JSON in ./output folder', action='store_true')
-    ap.add_argument('-v', '--verbose', help='Log detailled progress when running', action='store_true')
-    ap.add_argument('-e', '--errors', help='Log errors only during run', action='store_true')
     ap.add_argument('-a', '--analyze', help='Analyze a folder of JSON dumps to make a meta analysis', action='store_true')
+    # Additional modes
+    ap.add_argument('-c', '--clean', help='Clean all previously setted tags, and ambiguous ones', action='store_true')
+    # Arguments
+    ap.add_argument('-d', '--dump', help='Dump errors as JSON in ./output folder', action='store_true')
+    ap.add_argument('-e', '--errors', help='Log errors only during run', action='store_true')
+    ap.add_argument('-v', '--verbose', help='Log detailled progress when running', action='store_true')
     args = vars(ap.parse_args())
     # Preventing path from missing its trailing slash (or backslash for win compatibility)
     if not args['folder'].endswith('\\') and not args['folder'].endswith('/'):
@@ -46,12 +50,14 @@ def main():
     # Pre-fill folder's track tags with information held in folder name and file name
     elif args['fill']:
         fillTags(args)
-    # Clean all previously setted tags (to prepare a track to be properly filled)
-    elif args['clean']:
-        cleanTags(args)
     # Make a meta analyzis of previously made scan to compile values
     elif args['analyze']:
-        metaAnalyzis(args)
+        metaAnalyzis(args)        
+    # Clean all previously setted tags (to prepare a track to be properly filled)
+    elif args['clean']:
+        if queryYesNo('> Warning, this command will erase any previously existing tags on audio files in this path. Just do it?', 'yes'):
+            printLineBreak()
+            cleanTags(args)
     # Otherwise print an error message (missing arguments)
     else:
         printMissingArguments()

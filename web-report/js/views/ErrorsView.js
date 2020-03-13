@@ -1,4 +1,5 @@
-import Utils from './Utils.js';
+import Utils from '../utils/Utils.js';
+'use strict';
 
 
 class ErrorsView {
@@ -7,6 +8,7 @@ class ErrorsView {
   constructor(data, parentNode) {
     this._data = data;
     this._parentNode = parentNode;
+
     this._elements = {
       folder: null,
       artists: null
@@ -17,28 +19,31 @@ class ErrorsView {
   }
 
 
+  // Build ErrorsView interface with its layout and content
   _buildUI() {
+    // Fill title with library path
     const title = document.createElement('H1');
     title.innerHTML = `<em>${this._data.folderInfo.name}</em>`
     this._parentNode.appendChild(title);
-
+    // Create row container
     const row = document.createElement('DIV');
     row.classList.add('row');
     this._parentNode.appendChild(row);
-
+    // Create column elements
     this._elements.folder = document.createElement('DIV');
     this._elements.folder.className = 'col-three align-left';
     this._elements.artists = document.createElement('DIV');
     this._elements.artists.className = 'col-seven align-left';
-
+    // Fill DOM with layout
     row.appendChild(this._elements.folder);
     row.appendChild(this._elements.artists);
-
+    // Fill layout with content
     this._buildFolderInfo();
     this._buildArtistsInfo();
   }
 
 
+  // Build folder info content
   _buildFolderInfo() {
     // Shortcut for folerInfo
     const f = this._data.folderInfo;
@@ -69,26 +74,16 @@ class ErrorsView {
       ~ <b>${(f.errorsCount / f.artistsCount).toFixed(2)}</b> error(s) per artist<br>~ <b>${(f.errorsCount / f.albumsCount).toFixed(2)}</b> error(s) per album<br>
       ~ <b>${(f.errorsCount / f.tracksCount).toFixed(2)}</b> error(s) per track<br><br>Library purity : <b>${f.purity}</b> %
     `;
-    // Purity progress
-    const purityProgress = document.createElement('DIV');
-    purityProgress.className = 'purity-progress';
-    const pure = document.createElement('DIV');
-    pure.className = 'pure';
-    const impure = document.createElement('DIV');
-    impure.className = 'impure';
-    purityProgress.appendChild(pure);
-    purityProgress.appendChild(impure);
-    pure.style.width = f.purity + '%';
-    impure.style.width = 100 - f.purity + '%';
     // DOM attachement
     this._elements.folder.appendChild(libDetails);
     this._elements.folder.appendChild(audioDetails);
     this._elements.folder.appendChild(pictureDetails);
     this._elements.folder.appendChild(libQuality);
-    this._elements.folder.appendChild(purityProgress);
+    this._elements.folder.appendChild(Utils.buildPurityProgress(f.purity));
   }
 
 
+  // Build all artists information in right column
   _buildArtistsInfo() {
     for (let i = 0; i < this._data.artists.length; ++i) {
       window.requestAnimationFrame(() => {
@@ -98,6 +93,7 @@ class ErrorsView {
   }
 
 
+  // Build a single artist error scan report
   _buildArtist(a) {
     // Display artist header
     const fragment = document.createDocumentFragment();
