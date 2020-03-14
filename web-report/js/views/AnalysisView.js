@@ -156,6 +156,9 @@ class AnalysisView {
       this._checked = checkbox.checked;
       this._changeView(this._activeGraph);
     }, false);
+    window.addEventListener('resize', () => {
+      this._changeView(this._activeGraph);
+    }, false);
   }
 
 
@@ -240,6 +243,8 @@ class AnalysisView {
         name: this._data.dumps[i].folderInfo.name,
         files: this._data.dumps[i].folderInfo.files,
         folders: this._data.dumps[i].folderInfo.folders,
+        audio: this._data.dumps[i].folderInfo.flacCount + this._data.dumps[i].folderInfo.mp3Count,
+        images: this._data.dumps[i].folderInfo.jpgCount + this._data.dumps[i].folderInfo.pngCount,
         size: this._data.dumps[i].folderInfo.size,
         totalArtists: this._data.dumps[i].folderInfo.artistsCount,
         totalAlbums: this._data.dumps[i].folderInfo.albumsCount,

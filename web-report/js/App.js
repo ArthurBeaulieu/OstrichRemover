@@ -5,7 +5,7 @@ import AnalysisView from './views/AnalysisView.js';
 
 
 let view = null; // The active view in report-container
-const scriptVersion = '1.3.0';
+const scriptVersion = '1.3.1';
 
 
 // Method to restore the homepage to its initial state (DnD container displayed)

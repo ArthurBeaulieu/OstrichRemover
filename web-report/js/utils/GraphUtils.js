@@ -6,18 +6,7 @@ class GraphUtils {
 
 
   constructor() {
-    // To be passed by caller
-    this._parent = null;
-    this._data = null;
-    this._xAxisValue = null;
-    this._yAxisValue = null;
-    this._title = null;
-    this._type = null;
-    // Internally set from passed variables
-    this._styles = null;
-    this._svg = null;
-    this._x = null;
-    this._y = null;
+
   }
 
 
@@ -26,11 +15,20 @@ class GraphUtils {
 
   // This method must be called before any other static method presented hereby
   static createGraph(options) {
+    // To be passed by caller
     this._parent = options.parent;
     this._data = options.data;
     this._xAxisValue = options.xAxis;
     this._yAxisValue = options.yAxis;
     this._title = options.title;
+    // Internally set from passed variables
+    this._styles = null;
+    this._svg = null;
+    this._x = null;
+    this._y = null;
+    // Legend internals
+    this._legends = [];
+    this._colors = []
     // Function chaining to prepare the graph to be filled
     GraphUtils.defineStyles();
     GraphUtils.createSVG();
@@ -101,16 +99,35 @@ class GraphUtils {
         .attr('dy', '.35em')
         .attr('transform', 'rotate(55)')
         .style('text-anchor', 'start');
+    // Append x axis label
+    this._svg.append("text")
+        .attr("transform",
+              "translate(" + (this._styles.width) + " ," +
+                             (this._styles.height - (this._styles.margin.top / 8))   + ")")
+        .style("text-anchor", "end")
+        .style('font-size', '.75rem')
+        .text('Date'); // X axis label is always a date so far
     // Add the Y axis
-    if (type === 'size') {
+    if (type === 'size') { // Size is bytes and therefore must be converted
       this._svg.append('g')
+        .attr('class', 'y-axis')
         .call(d3.axisLeft(this._y) // Call for y axis
         .tickFormat(d => { return Utils.convertBytes(d); })); // We convert bytes on each tick value
-      return; // return now to not add again the axis with wrong tick formatting
+    } else {
+      // Default Y axis addition
+      this._svg.append('g')
+        .call(d3.axisLeft(this._y));
     }
-    // Default Y axis addition
-    this._svg.append('g')
-      .call(d3.axisLeft(this._y));
+    // text label for the y axis
+    this._svg.append("text")
+        .attr("transform", "rotate(90)")
+        .attr("y", 0 - (this._styles.margin.left / 2.66))
+        .attr("x", 0)
+        .attr("dy", "1em")
+        .style("text-anchor", "start")
+        .style("text-transform", "capitalize")
+        .style('font-size', '.75rem')
+        .text(this._yAxisValue);
   }
 
 
@@ -125,11 +142,36 @@ class GraphUtils {
   }
 
 
+  // Set the graph legend : must be called when lines are in graph
+  static setLegend() {
+    // Create legend container
+    const lineLegend = this._svg.selectAll('.lineLegend')
+      .data(this._legends)
+      .enter().append('g')
+      .attr('class','lineLegend')
+      .attr('transform', (d, i) => {
+        return `translate(${this._styles.margin.left}, ${((i + 1) * 20)})`; // i+1 to offset from top (1 item height) and 20 is line height
+      });
+    // Append line name
+    lineLegend.append('text')
+      .text(d => d)
+      .style('font-size', '.8rem')
+      .style('text-transform', 'capitalize')
+      .attr('transform', 'translate(15, 9)'); //align texts with boxes
+    // Append colored circle
+    lineLegend.append('circle')
+      .attr('fill', (d, i) => { return this._colors[i]; })
+      .attr('cy', 4) // Offset to match text font resize to .8rem
+      .attr("r", 5);
+  }
+
+
   /* Graph internal elements factory */
 
 
   // Create a smoothed line (using d3 interpolation)
   static createLine(xVal, yVal) {
+    this._legends.push(yVal);
     return d3.line()
       .curve(d3.curveCardinal) // Smooth curve interpolation
       .x(d => { return this._x(d[xVal]); })
@@ -152,6 +194,7 @@ class GraphUtils {
 
   // Append line svg
   static appendLine(line, color) {
+    this._colors.push(color) // We assume append calls are in same order as create calls (map in // color and legend)
     this._svg.append('path')
       .data([this._data])
       .attr('class', 'line')
@@ -166,8 +209,8 @@ class GraphUtils {
     this._svg.append('path')
        .data([this._data])
        .attr('class', 'area')
-       .style('fill', color)
-       .attr('d', area);
+       .attr('d', area)
+       .style('fill', color);
   }
 
 

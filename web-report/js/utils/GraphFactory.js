@@ -32,6 +32,7 @@ class GraphFactory {
       return;
     }
 
+    GraphUtils.setLegend();
     return GraphUtils.getSvg();
   }
 
@@ -48,10 +49,14 @@ class GraphFactory {
     // Define and append lines to the graph
     GraphUtils.appendLine(GraphUtils.createLine('date', 'files'), LineColors.blue);
     GraphUtils.appendLine(GraphUtils.createLine('date', 'folders'), LineColors.green);
+    GraphUtils.appendLine(GraphUtils.createLine('date', 'audio'), LineColors.orange);
+    GraphUtils.appendLine(GraphUtils.createLine('date', 'images'), LineColors.red);
     // Define and append areas to the graph
     if (options.area === true) {
       GraphUtils.appendArea(GraphUtils.createArea('date', 'files'), AreaColors.blue);
       GraphUtils.appendArea(GraphUtils.createArea('date', 'folders'), AreaColors.green);
+      GraphUtils.appendArea(GraphUtils.createArea('date', 'audio'), AreaColors.orange);
+      GraphUtils.appendArea(GraphUtils.createArea('date', 'images'), AreaColors.red);
     }
   }
 
