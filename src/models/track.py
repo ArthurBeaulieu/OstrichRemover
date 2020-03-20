@@ -180,11 +180,12 @@ class Track(object):
 
     # Extract the track remix artist name from the track fileName
     def _computeRemixer(self):
-        if self.fileName.find(' Remix)') != -1:
+        if self.fileNameList[len(self.fileNameList) - 1].find(' Remix)') != -1:
             self.remix = self.fileName[
                          # +1 is to remove the opening parenthesis
                          self.fileName.rfind('(', 0, len(self.fileName)) + 1:self.fileName.rfind(' Remix)')
                          ].split(', ')
+        print(self.remix)
 
 
     # Test the cover existence in the file
