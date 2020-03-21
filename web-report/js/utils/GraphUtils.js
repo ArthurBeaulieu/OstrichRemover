@@ -2,6 +2,9 @@ import Utils from './Utils.js'
 'use strict';
 
 
+const MonthMap = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+
 class GraphUtils {
 
 
@@ -28,12 +31,14 @@ class GraphUtils {
     this._y = null;
     // Legend internals
     this._legends = [];
-    this._colors = []
+    this._colors = [];
+    // Mouse over
+    this._mouseG = null;
     // Function chaining to prepare the graph to be filled
     GraphUtils.defineStyles();
     GraphUtils.createSVG();
     GraphUtils.createAxis(options.yAxis);
-    GraphUtils.setTitle();
+    GraphUtils.createGraphElements();
   }
 
 
@@ -54,6 +59,14 @@ class GraphUtils {
         left: margin
       }
     }
+  }
+
+
+  // This method set legend and make graph interactive, must be called after
+  // every data addition to the graph so events are on top of every vectors
+  static makeActive() {
+    this.mouseEvents();
+    this.setLegend(); // Legend last to keep it above mouse event vectors
   }
 
 
@@ -132,10 +145,23 @@ class GraphUtils {
 
 
   // Set the graph title
-  static setTitle() {
+  static createGraphElements() {
+    // Mouse hover container
+    this._mouseG = this._svg.append('g')
+      .attr('class', 'mouse-over-effects');
+    // Black vertical line
+    this._mouseG.append('path')
+      .attr('class', 'mouse-line')
+      .style('stroke', 'black')
+      .style('stroke-width', '1px')
+      .style('opacity', '0');
+    // This text will contain hovered month
+    this._mouseG.append('text')
+      .style('font-style', 'italic');
+    // Graph title
     this._svg.append('text')
       .attr('x', (this._styles.width / 2))
-      .attr('y', 0)
+      .attr('y', -(this._styles.margin.bottom / 3))
       .attr('text-anchor', 'middle')
       .style('font-size', '1.66rem')
       .text(this._title);
@@ -150,7 +176,7 @@ class GraphUtils {
       .enter().append('g')
       .attr('class','lineLegend')
       .attr('transform', (d, i) => {
-        return `translate(${this._styles.margin.left}, ${((i + 1) * 20)})`; // i+1 to offset from top (1 item height) and 20 is line height
+        return `translate(${this._styles.margin.left / 1.66}, ${((i + 1) * 20)})`; // i+1 to offset from top (1 item height) and 20 is line height
       });
     // Append line name
     lineLegend.append('text')
@@ -163,6 +189,117 @@ class GraphUtils {
       .attr('fill', (d, i) => { return this._colors[i]; })
       .attr('cy', 4) // Offset to match text font resize to .8rem
       .attr("r", 5);
+  }
+
+
+  /* Graph interactivity */
+
+
+  // Make the graph interactive
+  static mouseEvents() {
+    GraphUtils.setMousePerLine();
+    this._mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
+      .attr('width', this._styles.width) // can't catch mouse events on a g element
+      .attr('height', this._styles.height)
+      .attr('fill', 'none')
+      .attr('pointer-events', 'all')
+      .on('mouseout', GraphUtils._mouseOut)
+      .on('mouseover', GraphUtils._mouseOver)
+      .on('mousemove', GraphUtils._mouseMove);
+  }
+
+
+  // Set the circle and text for each data line
+  static setMousePerLine() {
+    // Element for each data line
+    const mousePerLine = this._mouseG.selectAll('.mouse-per-line').data(this._data).enter()
+      .append('g')
+      .attr('class', 'mouse-per-line');
+    // Circle over matching point on line
+    mousePerLine.append('circle')
+      .attr('r', 6)
+      .style('stroke', (d, i) => { return this._colors[i]; }) // Map circle with colors
+      .style('fill', 'none')
+      .style('stroke-width', '1px')
+      .style('opacity', '0');
+    // Y axis value on line
+    mousePerLine.append('text')
+      .attr('transform', 'translate(10, 3)');
+  }
+
+
+  // Mouse event when cursor exits the svg area
+  static _mouseOut() {
+    d3.select('.mouse-line')
+      .style('opacity', '0');
+    d3.selectAll('.mouse-per-line circle')
+      .style('opacity', '0');
+    d3.selectAll('.mouse-per-line text')
+      .style('opacity', '0');
+    d3.select('.mouse-over-effects').select('text')
+      .style('opacity', '0');
+  }
+
+
+  // Mouse event when cursor is over the svg area
+  static _mouseOver() {
+    d3.select('.mouse-line')
+      .style('opacity', '1');
+    d3.selectAll('.mouse-per-line circle')
+      .style('opacity', '1');
+    d3.selectAll('.mouse-per-line text')
+      .style('opacity', '1');
+    d3.select('.mouse-over-effects').select('text')
+      .style('opacity', '1');
+  }
+
+
+  // Mouse event when cursor is moving over the svg area
+  static _mouseMove() {
+    const lines = document.getElementsByClassName('line');
+    const mouse = d3.mouse(this);
+    // Apply svg transformation to mouse line
+    d3.select('.mouse-line')
+      .attr('d', function() { return `M${mouse[0]}, ${this._styles.height} ${mouse[0]}, 0`; }.bind(GraphUtils)); // Binding bc need to access style value
+    // Set hover month on top of vertical bar
+    d3.select('.mouse-over-effects').select('text')
+      .style('font-size', '.8rem')
+      .attr('transform', `translate(${mouse[0] + (GraphUtils._styles.margin.left / 8)}, 10)`)
+      .text(`${MonthMap[GraphUtils._x.invert(mouse[0]).getMonth()]} ${GraphUtils._x.invert(mouse[0]).getFullYear()}`);
+    // Modifications for each data line
+    d3.selectAll('.mouse-per-line')
+      .attr('transform', function(d, i) { // We use function keyword to keep data line scope
+        let translation = null;
+        // Check that i has a regular value
+        if (i < lines.length) {
+          let beginning = 0;
+          let end = lines[i].getTotalLength();
+          let target = null;
+          // Iterate until Y position matching the data line is found
+          while (true) {
+            target = Math.floor((beginning + end) / 2);
+            var pos = lines[i].getPointAtLength(target);
+            if ((target === end || target === beginning) && pos.x !== mouse[0]) {
+              break;
+            }
+            // Re-define bounds
+            if (pos.x > mouse[0]) {
+              end = target;
+            } else if (pos.x < mouse[0]) {
+              beginning = target;
+            } else {
+              break; //position found
+            }
+          }
+          // Update data line text value
+          d3.select(this).select('text') // Scope is consumed here
+            .text(Math.floor(GraphUtils._y.invert(pos.y)));
+          // Set translation according to the Y position found
+          translation = `translate(${mouse[0]}, ${pos.y})`;
+        }
+
+        return translation;
+      });
   }
 
 

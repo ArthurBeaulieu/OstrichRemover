@@ -21,7 +21,7 @@ class MetaAnalyzer:
                 jsonText = json.load(jsonFile)
                 dump['date'] = jsonText['date']
                 dump['version'] = jsonText['version']
-                dump['elapsedSeconds'] = jsonText['elapsedSeconds']
+                dump['elapsedSeconds'] = jsonText.get('elapsedSeconds', '-1') # Since this key wasn't here in first version of script
                 dump['folderInfo'] = jsonText['folderInfo']
                 jsonFile.close()
             self.dumps.append(dump)

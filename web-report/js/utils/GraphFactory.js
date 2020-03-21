@@ -32,7 +32,7 @@ class GraphFactory {
       return;
     }
 
-    GraphUtils.setLegend();
+    GraphUtils.makeActive();
     return GraphUtils.getSvg();
   }
 
