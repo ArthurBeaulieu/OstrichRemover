@@ -11,8 +11,9 @@ class AnalysisView {
     this._parentNode = parentNode;
     this._graphData = this._prepareGraphData();
     // Default graph is the file one, allow to reload same view on filled curve checbox toggle
-    this._activeGraph = 'files';
-    this._checked = false; // When initiallizing controls, the Filled curves checkbox is unchecked
+    this._activeGraph = localStorage.getItem('ma-active-graph') !== null ? localStorage.getItem('ma-active-graph') : 'files';
+    // When initiallizing controls, the Filled curves checkbox is unchecked
+    this._checked = localStorage.getItem('fill-checked') !== null ? JSON.parse(localStorage.getItem('fill-checked')) : false;
     this._elements = {
       sumup: null,
       graph: null,
@@ -32,13 +33,9 @@ class AnalysisView {
 
   // Build the analysis interface, its content and its interactivity
   _buildUI() {
-    // Fill title with library path
-    const title = document.createElement('H1');
-    title.innerHTML = `<em>${this._data.metaAnalyze.folderPath}</em>`
-    this._parentNode.appendChild(title);
     // Create row container
     const row = document.createElement('DIV');
-    row.classList.add('row');
+    row.classList.add('row', 'meta-analysis');
     this._parentNode.appendChild(row);
     // Create column elements
     this._elements.sumup = document.createElement('DIV');
@@ -55,7 +52,8 @@ class AnalysisView {
     // Fill layout with content
     this._buildAnalyzeSumup();
     this._buildControls();
-    this._initGraphWithSize();
+
+    this._changeView(this._activeGraph);
   }
 
 
@@ -72,7 +70,9 @@ class AnalysisView {
     const qDetails = document.createElement('P');
     // HTML markup
     header.innerHTML = `
-      <h3 class="center">Meta analysis sum up</h3><span class="center"><b>${fd.date}</b>&nbsp;→&nbsp;<b>${ld.date}</b></span>
+      <h3 class="center">Meta analysis sum up</h3><em class="center">${this._data.metaAnalyze.folderPath}</em>
+      <span class="center">Meta analysis duration :&nbsp;<b>${Utils.secondsToTimecode(this._data.elapsedSeconds)}</b></span>
+      <span class="center"><b>${fd.date}</b>&nbsp;→&nbsp;<b>${ld.date}</b></span>
     `;
     fsInfo.innerHTML = `
        <u><em class="lead">File system info</em></u>
@@ -136,7 +136,7 @@ class AnalysisView {
     this._elements.views.size.innerHTML = 'Size';
     // Set cheboc internals and default to unchecked
     checkbox.type = 'checkbox';
-    checkbox.checked = false;
+    checkbox.checked = this._checked; // Checked must be a bool, not a string
     filledCurvesLabel.innerHTML = 'Filled curves';
     // DOM attachement
     checkboxContainer.appendChild(filledCurvesLabel);
@@ -154,6 +154,7 @@ class AnalysisView {
     // Check box to fill under curves
     checkbox.addEventListener('click', () => {
       this._checked = checkbox.checked;
+      localStorage.setItem('fill-checked', this._checked);
       this._changeView(this._activeGraph);
     }, false);
     window.addEventListener('resize', () => {
@@ -162,47 +163,26 @@ class AnalysisView {
   }
 
 
-  // Initialize the graph canvas with the Files graph by default
-  _initGraphWithSize() {
-    // Set file button active from style
-    this._elements.views.files.classList.add('active');
-    // Build files graph
-    const view = new GraphFactory({
-      parent: this._elements.graph,
-      data: this._graphData,
-      type: 'files',
-      area: this._checked
-    });
-  }
-
-
   // Replace previous graph with anothe one
-  _changeView(type, area) {
+  _changeView(type) {
     // Clear page state
     this._clearGraph();
     this._unselectAllButtons();
-    // Set factory type to be later sent to GraphFactory
-    let factoryType = '';
-    if (type === 'files') {
-      factoryType = 'files';
-    } else if (type === 'audio') {
-      factoryType = 'audio';
-    } else if (type === 'quality') {
-      factoryType = 'quality';
-    } else if (type === 'size') {
-      factoryType = 'size';
-    } else {
-      // TODO handle error
-      return; // Not building any view
+    // Exit if type isn't supported
+    if (type !== 'files' && type !== 'audio' && type !== 'quality' && type !== 'size') {
+      DisplayNotification('failure', 'Invalid graph type');
+      this._changeView(this._activeGraph); // Re-init canvas with default graph
+      return;
     }
     // Save current graph in view class
-    this._activeGraph = factoryType;
+    this._activeGraph = type;
     this._elements.views[this._activeGraph].classList.add('active');
+    localStorage.setItem('ma-active-graph', type);
     // Build graph with given type
     const view = new GraphFactory({
       parent: this._elements.graph,
       data: this._prepareGraphData(),
-      type: factoryType,
+      type: this._activeGraph,
       area: this._checked
     });
   }
@@ -232,7 +212,7 @@ class AnalysisView {
   // Format data from dumps to be sent in d3js graph factory
   _prepareGraphData() {
     // Define output array and date parser (to allow tick formatting later in d3)
-    const parseDate = d3.timeParse("%Y-%m-%d");
+    const parseDate = d3.timeParse('%Y-%m-%d');
     const output = [];
     // Iterate over dumps and store all useful keys
     for (let i = 0; i < this._data.dumps.length; ++i) {
@@ -254,7 +234,7 @@ class AnalysisView {
         totalMp3: this._data.dumps[i].folderInfo.mp3Count,
         totalJpg: this._data.dumps[i].folderInfo.jpgCount,
         totalPng: this._data.dumps[i].folderInfo.pngCount,
-        errors: this._data.dumps[i].folderInfo.errorsCount,
+        errorsCount: this._data.dumps[i].folderInfo.errorsCount,
         possibleErrors: this._data.dumps[i].folderInfo.possibleErrors,
         purity: this._data.dumps[i].folderInfo.purity,
         flacPercentage: this._data.dumps[i].folderInfo.flacPercentage,

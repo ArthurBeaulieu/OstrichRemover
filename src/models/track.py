@@ -185,7 +185,6 @@ class Track(object):
                          # +1 is to remove the opening parenthesis
                          self.fileName.rfind('(', 0, len(self.fileName)) + 1:self.fileName.rfind(' Remix)')
                          ].split(', ')
-        print(self.remix)
 
 
     # Test the cover existence in the file

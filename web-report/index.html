@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="maximum-scale=1.0,width=device-width,initial-scale=1.0,user-scalable=0">
-  <link rel="stylesheet" type="text/css" href="./css/messcss.css">
+  <link rel="stylesheet" type="text/css" href="./lib/messcss.css">
   <link rel="stylesheet" type="text/css" href="./css/style.css">
   <title>MzkOstrichRemover</title>
   <link rel="icon" type="image/png" href="https://manazeak.org/static/img/logo/manazeak-logo-square.svg">
@@ -11,7 +11,7 @@
 <body class="md">
   <nav>
     <ul>
-      <li style="display:flex;align-items:center;padding-left:20px;padding-right:0;"><img src="https://manazeak.org/static/img/logo/manazeak-logo-square.svg" height="40" alt="manazeak-logo"></li>
+      <li style="display:flex;align-items:center;padding-left:20px;padding-right:0;"><img src="https://manazeak.org/static/img/logo/manazeak-logo-square.svg" id="home" height="40" alt="manazeak-logo"></li>
       <li><h3 id="nav-title">MzkOstrichRemover</h3></li>
     </ul>
     <ul>
@@ -20,6 +20,7 @@
     </ul>
   </nav>
   <main>
+    <div class="notification"></div>
     <div class="home-container">
       <h1><em>MzkOstrichRemover reporting tool</em></h1>
       <h4>This page will properly display a JSON report made with the MzkOstrichRemover script.</h4>
@@ -32,7 +33,7 @@
   <footer>
     <p>ManaZeak organization<br>2017 – 2020</p>
   </footer>
-  <script src="./js/lib/d3.v5.min.js"></script>
+  <script src="./lib/d3.v5.min.js"></script>
   <script type="module" src="./js/App.js"></script>
 </body>
 </html>

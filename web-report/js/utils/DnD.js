@@ -25,6 +25,7 @@ class DnD {
       this._borderStyle = this._container.style.border; // Back target border style to restore it on leave/drop events
       this._events(); // Attach all drag events
     } catch(error) { // Mostly handle the case in which the target selector given as an argument is wrong
+      DisplayNotification('failure', 'Fatal error in Js codes');
       console.error(`Unable to build the DnD class.\n${error}`);
     }
   }

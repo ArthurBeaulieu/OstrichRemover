@@ -21,13 +21,9 @@ class ErrorsView {
 
   // Build ErrorsView interface with its layout and content
   _buildUI() {
-    // Fill title with library path
-    const title = document.createElement('H1');
-    title.innerHTML = `<em>${this._data.folderInfo.name}</em>`
-    this._parentNode.appendChild(title);
     // Create row container
     const row = document.createElement('DIV');
-    row.classList.add('row');
+    row.classList.add('row', 'error-scan');
     this._parentNode.appendChild(row);
     // Create column elements
     this._elements.folder = document.createElement('DIV');
@@ -48,13 +44,19 @@ class ErrorsView {
     // Shortcut for folerInfo
     const f = this._data.folderInfo;
     // DOM nodes declaration
-    const libQuality = document.createElement('P');
+    const scanInfo = document.createElement('P');
     const libDetails = document.createElement('P');
     const audioDetails = document.createElement('P');
     const pictureDetails = document.createElement('P');
+    const libQuality = document.createElement('P');
     // HTML markup
+    const elapsedTime = Utils.secondsToTimecode(this._data.elapsedSeconds);
+    scanInfo.innerHTML = `
+      <h3 class="center">Error scan sum up</h3><em class="center">${this._data.folderInfo.name}</em>
+      <span class="center">Scan duration :&nbsp;<b>${this._data.elapsedSeconds ? elapsedTime : 'N/A'}</b></span>
+      <span class="center"><b>${this._data.date}</b></span>
+    `;
     libDetails.innerHTML = `
-      Scan duration : <b>${Utils.secondsToTimecode(this._data.elapsedSeconds)}</b> seconds<br><br>
       <u><em class="lead">Library details</em></u><br>
       <b>${f.folders}</b> folder(s) – <b>${f.files}</b> file(s) – <b>${Math.floor(f.size > 100000000 ? f.size / 1000000000 : f.size / 1000000)} ${f.size > 100000000 ? '</b>Go' : '</b>Mo'}<br>
       <b>${f.artistsCount}</b> artist(s) – <b>${f.albumsCount}</b> albums(s)<br>
@@ -75,6 +77,7 @@ class ErrorsView {
       ~ <b>${(f.errorsCount / f.tracksCount).toFixed(2)}</b> error(s) per track<br><br>Library purity : <b>${f.purity}</b> %
     `;
     // DOM attachement
+    this._elements.folder.appendChild(scanInfo);
     this._elements.folder.appendChild(libDetails);
     this._elements.folder.appendChild(audioDetails);
     this._elements.folder.appendChild(pictureDetails);
@@ -85,6 +88,11 @@ class ErrorsView {
 
   // Build all artists information in right column
   _buildArtistsInfo() {
+    const section = document.createElement('H1');
+    section.classList.add('center')
+    section.innerHTML = 'Artists detailled list';
+    this._elements.artists.appendChild(section);
+
     for (let i = 0; i < this._data.artists.length; ++i) {
       window.requestAnimationFrame(() => {
         this._elements.artists.appendChild(this._buildArtist(this._data.artists[i]));

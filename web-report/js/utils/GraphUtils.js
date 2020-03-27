@@ -3,6 +3,7 @@ import Utils from './Utils.js'
 
 
 const MonthMap = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const Tooltip = { offset: 16 };
 
 
 class GraphUtils {
@@ -29,6 +30,7 @@ class GraphUtils {
     this._svg = null;
     this._x = null;
     this._y = null;
+    this._displayedDays = [];
     // Legend internals
     this._legends = [];
     this._colors = [];
@@ -38,7 +40,6 @@ class GraphUtils {
     GraphUtils.defineStyles();
     GraphUtils.createSVG();
     GraphUtils.createAxis(options.yAxis);
-    GraphUtils.createGraphElements();
   }
 
 
@@ -65,6 +66,8 @@ class GraphUtils {
   // This method set legend and make graph interactive, must be called after
   // every data addition to the graph so events are on top of every vectors
   static makeActive() {
+    this.appendAxis();
+    this.createGraphElements();
     this.mouseEvents();
     this.setLegend(); // Legend last to keep it above mouse event vectors
   }
@@ -90,38 +93,40 @@ class GraphUtils {
     this._x.domain(d3.extent(this._data, d => { return d[this._xAxisValue]; })); // Date axis is handled in a different way than min/max concept
     this._y.domain([0, d3.max(this._data, d => { return d[this._yAxisValue]; })]); // Min max scale
     // Display only one date every delta to avoid date overlaping in axis labels
-    const displayedDates = [];
     const delta = Math.floor(this._data.length / 12);
     for (let i = 0; i < this._data.length; i += delta) {
-      displayedDates.push(this._data[i].date);
+      this._displayedDays.push(this._data[i].date);
     }
+  }
+
+
+  // Method to append axis to the svg graph. Preferable to call after appending data so data doesn't overlap axis
+  static appendAxis() {
     // Add the X axis
     this._svg.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0, ${this._styles.height})`)
       .call(d3.axisBottom(this._x) // Call for x axis
-        .tickValues(displayedDates)
-        .tickFormat(d3.timeFormat("%m/%Y"))) // Only keep mont and year.
+        .tickValues(this._displayedDays)
+        .tickFormat(d3.timeFormat('%m/%Y'))) // Only keep month and year.
       .attr('dy', '.35em')
       .attr('y', 0)
       .attr('x', 9)
       .style('text-anchor', 'middle')
-      .selectAll('text') // Altering label to make them oblique
+      .selectAll('text') // Altering label to make them italic and not perpendicular to axis
         .attr('y', 0)
         .attr('x', 9)
         .attr('dy', '.35em')
         .attr('transform', 'rotate(55)')
         .style('text-anchor', 'start');
     // Append x axis label
-    this._svg.append("text")
-        .attr("transform",
-              "translate(" + (this._styles.width) + " ," +
-                             (this._styles.height - (this._styles.margin.top / 8))   + ")")
-        .style("text-anchor", "end")
+    this._svg.append('text')
+        .attr('transform', `translate(${(this._styles.width)}, ${(this._styles.height - (this._styles.margin.top / 8))})`)
+        .style('text-anchor', 'end')
         .style('font-size', '.75rem')
         .text('Date'); // X axis label is always a date so far
     // Add the Y axis
-    if (type === 'size') { // Size is bytes and therefore must be converted
+    if (this._yAxisValue === 'size') { // Size is bytes and therefore must be converted
       this._svg.append('g')
         .attr('class', 'y-axis')
         .call(d3.axisLeft(this._y) // Call for y axis
@@ -131,14 +136,14 @@ class GraphUtils {
       this._svg.append('g')
         .call(d3.axisLeft(this._y));
     }
-    // text label for the y axis
-    this._svg.append("text")
-        .attr("transform", "rotate(90)")
-        .attr("y", 0 - (this._styles.margin.left / 2.66))
-        .attr("x", 0)
-        .attr("dy", "1em")
-        .style("text-anchor", "start")
-        .style("text-transform", "capitalize")
+    // Text label for the y axis
+    this._svg.append('text')
+        .attr('transform', 'rotate(90)')
+        .attr('y', 0 - (this._styles.margin.left / 2.66))
+        .attr('x', 0)
+        .attr('dy', '1em')
+        .style('text-anchor', 'start')
+        .style('text-transform', 'capitalize')
         .style('font-size', '.75rem')
         .text(this._yAxisValue);
   }
@@ -183,12 +188,12 @@ class GraphUtils {
       .text(d => d)
       .style('font-size', '.8rem')
       .style('text-transform', 'capitalize')
-      .attr('transform', 'translate(15, 9)'); //align texts with boxes
+      .attr('transform', 'translate(15, 9)'); // Align texts with boxes
     // Append colored circle
     lineLegend.append('circle')
       .attr('fill', (d, i) => { return this._colors[i]; })
       .attr('cy', 4) // Offset to match text font resize to .8rem
-      .attr("r", 5);
+      .attr('r', 5);
   }
 
 
@@ -224,7 +229,8 @@ class GraphUtils {
       .style('opacity', '0');
     // Y axis value on line
     mousePerLine.append('text')
-      .attr('transform', 'translate(10, 3)');
+      .attr('transform', 'translate(10, 3)')
+      .style('fill', (d, i) => { return this._colors[i]; }); // Also map text with colors
   }
 
 
@@ -258,6 +264,7 @@ class GraphUtils {
   static _mouseMove() {
     const lines = document.getElementsByClassName('line');
     const mouse = d3.mouse(this);
+    const tooltipsYPos = []; // Store tooltips Y pos so they can be adjusted to never overlap
     // Apply svg transformation to mouse line
     d3.select('.mouse-line')
       .attr('d', function() { return `M${mouse[0]}, ${this._styles.height} ${mouse[0]}, 0`; }.bind(GraphUtils)); // Binding bc need to access style value
@@ -291,15 +298,39 @@ class GraphUtils {
               break; //position found
             }
           }
+          // Prepare text data to be displayed
+          let displayValue = Math.floor(GraphUtils._y.invert(pos.y));
+          if (displayValue < 0) {
+            displayValue = 0;
+          }
           // Update data line text value
           d3.select(this).select('text') // Scope is consumed here
-            .text(Math.floor(GraphUtils._y.invert(pos.y)));
+            .text(GraphUtils._yAxisValue === 'size' ? Utils.convertBytes(displayValue) : displayValue);
           // Set translation according to the Y position found
           translation = `translate(${mouse[0]}, ${pos.y})`;
+          tooltipsYPos.push ({ index: i, y: pos.y, offset: 0 });
         }
 
         return translation;
-      });
+      })
+      .call(sel => { // Handle tooltip overlapping by preparing tooltipYPos array
+        tooltipsYPos.sort((a, b) => { return (a.y - b.y); }); // Sort tooltipYPos array by y positions
+        tooltipsYPos.forEach((d, i) => {
+          if (i > 0) {
+            const last = tooltipsYPos[i - 1].y; // From the last tooltip, calculate an offset from their current y value
+            tooltipsYPos[i].offset = Math.max(0, (last + Tooltip.offset) - tooltipsYPos[i].y); // Make sure each tooltip is at least `Tooltip.offset` pixels separated
+            tooltipsYPos[i].y += tooltipsYPos[i].offset; // Add offset to Y position
+          }
+        });
+        // Then resort tooltip positions by index
+        tooltipsYPos.sort((a, b) => { return (a.index - b.index); });
+      })
+      .select('text') // Use the tooltip offset to move text from it's g element
+        .attr('transform', (d, i) => {
+          if (i < lines.length) {
+            return `translate(10, ${(3 + tooltipsYPos[i].offset)})`;
+          }
+        });
   }
 
 
@@ -307,8 +338,17 @@ class GraphUtils {
 
 
   // Create a smoothed line (using d3 interpolation)
-  static createLine(xVal, yVal) {
+  static createLine(xVal, yVal, color) {
     this._legends.push(yVal);
+    // Append dots each value point on graph with given color
+    this._svg.selectAll('dot')
+      .data(this._data).enter().append('circle')
+        .attr('fill', color)
+        .attr('stroke', 'none')
+        .attr('cx', d => { return this._x(d[xVal]); })
+        .attr('cy', d => { return this._y(d[yVal]); })
+        .attr('r', 1);
+
     return d3.line()
       .curve(d3.curveCardinal) // Smooth curve interpolation
       .x(d => { return this._x(d[xVal]); })
