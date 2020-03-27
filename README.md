@@ -23,7 +23,7 @@ Available options :
 - `-v` or `--verbose` for a verbose output.
 
 The script will crawl the folder you gave as an argument and will report you any error it found in your file naming / tagging. If specified with a `-d` of `--dump` flag, errors can be outputed in a JSON file, to be further reviewed in the `web-report/index.html` file (just drag and drop the json file in the input area).
-*MzkOstrichRemover* can detect **28 errors** per file (so far). Those errors are grouped in four categories that are detailed [in the wiki](https://github.com/ManaZeak/MzkOstrichRemover/wiki/Tracked-Errors), respectively:
+*MzkOstrichRemover* can detect **29 errors** per file (so far). Those errors are grouped in four categories that are detailed [in the wiki](https://github.com/ManaZeak/MzkOstrichRemover/wiki/Tracked-Errors), respectively:
 
 - *Category 1* – File system naming inconsistencies ;  
 - *Category 2* – File system naming against ID3 tags ;  
@@ -96,7 +96,8 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 - [x] Specific errors (~~cover size~~, ~~album artist field~~, ~~genre~~, ~~producer~~, ~~bpm~~)
 - [x] Meta analyzer for scan dumps
 - [x] Update web report to support meta analysis dumps
-- [ ] Web improvement (local storage, error handling, full responsive)
+- [x] Web improvement (local storage, error handling, full responsive)
+- [ ] Continuous integration (sonar)
 
 ##### v3.0
 - [ ] Packaging in pip (PyPi)
