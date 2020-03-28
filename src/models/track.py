@@ -1,6 +1,7 @@
 # Project imports
 from mutagen.id3 import ID3
 from mutagen.flac import FLAC, Picture
+from mutagen.id3._frames import TIT2, TDRC, TPE1, TPE2, TOPE, TRCK, TALB, TCMP, TCOM, TPOS, APIC
 
 import base64
 import mimetypes
@@ -32,6 +33,7 @@ class Track(object):
         self.totalDisc = 0
         self.bpm = ''
         self.lang = ''
+        self.compilation = ''
         # Computed
         self.audioTagPath = audioTagPath
         self.audioTag = {}
@@ -95,6 +97,8 @@ class Track(object):
                 self.totalDisc = -1
         if 'TBPM' in self.audioTag and self.audioTag['TBPM'].text[0] != '':
             self.bpm = self.audioTag['TBPM'].text[0].rstrip()
+        if 'TCMP' in self.audioTag and self.audioTag['TCMP'].text[0] != '':
+            self.compilation = self.audioTag['TCMP'].text[0].rstrip()
 
 
     # Read the flac track Vorbis tags and extract all interresting values into a Track object
@@ -131,6 +135,8 @@ class Track(object):
             self.bpm = self.audioTag['BPM'][0]
         if 'LANGUAGE' in self.audioTag:
             self.lang = self.audioTag['LANGUAGE'][0].split('; ')
+        if 'COMPILATION' in self.audioTag:
+            self.compilation = self.audioTag['COMPILATION'][0]
 
 
     # Compute all class internals that can not be extracted from ID3 tags
@@ -208,9 +214,17 @@ class Track(object):
 
     # Clear all previously existing tags
     def clearInternalTags(self, album):
-        if self.fileType == 'MP3' and 'APIC:' in self.audioTag:
-            # TODO
-            pass
+        # We could use audioTag.delet() but we juste want to clear the tags supported by convention
+        if self.fileType == 'MP3':
+            self.audioTag.add(TIT2(text=''))
+            self.audioTag.add(TDRC(text=''))
+            self.audioTag.add(TPE1(text=''))
+            self.audioTag.add(TPE2(text=''))
+            self.audioTag.add(TOPE(text=''))
+            self.audioTag.add(TRCK(text=''))
+            self.audioTag.add(TALB(text=''))
+            self.audioTag.add(TPOS(text=''))
+            self.audioTag.add(TCMP(text=''))
         elif self.fileType == 'FLAC':
             self.audioTag['TITLE'] = '';
             self.audioTag['DATE'] = '';
@@ -226,12 +240,17 @@ class Track(object):
             self.audioTag['DISCTOTAL'] = '';
             self.audioTag['TOTALDISC'] = '';
             self.audioTag['TOTALDISCS'] = '';
+            self.audioTag['COMPILATION'] = '';
             self.audioTag.clear_pictures()
-            self.audioTag.save(self.audioTagPath)
+        self.audioTag.save(self.audioTagPath)
 
 
     # Compute all class internals that can not be extracted from ID3 tags
     def setInternalTags(self, album):
+        # Compilation tag is '0' for regular release, '1' for various artist and '2' for mixes
+        compilation = str(0)
+        if ' Records' in album.albumArtist:
+            compilation = str(1)
         if self.fileType == 'FLAC':
             if len(self.fileNameList) == 6: # Avoid range exception
                 self._buildArtistsList()
@@ -258,13 +277,34 @@ class Track(object):
                 self._setInternalTag('DISCTOTAL', str(album.totalDisc))
             if len(self.fileNameList) == 6 and self.fileNameList[3] is not None:
                 self._setInternalTag('DISCNUMBER', str(self.fileNameList[3][0]))
+            self._setInternalTag('COMPILATION', compilation)
             # If other tags were previously filled, try to integrate them according to the tagging convention
             self._fillTagsFromPreviouslyExistingTag()
-            # Now save all the new tags into the audio file
-            self.audioTag.save(self.audioTagPath)
         elif self.fileType == 'MP3':
-            # TODO
-            print(album.albumArtist)
+            if len(self.fileNameList) == 6: # Avoid range exception
+                self._buildArtistsList()
+                self._buildPerformersList()
+                self._addCoverToFile(album)
+                # Append tag by tag o the track
+                if self.fileNameList[5] is not None: # Track title
+                    self.audioTag.add(TIT2(text=self.fileNameList[5][:-4])) # -4 for '.mp3' string
+            if album.year is not None: # Year
+                self.audioTag.add(TDRC(text=str(album.year)))
+            if self.artists is not None: # Artist
+                self.audioTag.add(TPE1(text='; '.join(self.artists)))
+            if album.albumArtist is not None: # Album artist
+                self.audioTag.add(TPE2(text=album.albumArtist))
+            if self.performers is not None: # Performer (original artist)
+                self.audioTag.add(TOPE(text='; '.join(self.performers)))
+            if len(self.fileNameList) == 6 and self.fileNameList[3] is not None and album.totalTrack is not None: # track N°/track total
+                self.audioTag.add(TRCK(text=str(self.fileNameList[3][1:]).lstrip('0') + '/' + str(album.totalTrack)))
+            if len(self.folderNameList) == 2 and self.folderNameList[1] is not None: # Album title
+                self.audioTag.add(TALB(text=self.folderNameList[1]))
+            if len(self.fileNameList) == 6 and self.fileNameList[3] is not None and album.totalDisc is not None: # disc N°/disc total
+                self.audioTag.add(TPOS(text=str(self.fileNameList[3][0]) + '/' + str(album.totalDisc)))
+            self.audioTag.add(TCMP(text=compilation)) # Compilation
+        # Now save all the new tags into the audio file
+        self.audioTag.save(self.audioTagPath)
 
 
     # Check if the tag is already filled before adding one
@@ -314,28 +354,32 @@ class Track(object):
 
     # Append a cover to the track only if it is 1k by 1k and if there is not any cover
     def _addCoverToFile(self, album):
-        if self.hasCover == False or (self.audioTag.pictures[0].height != 1000 and self.audioTag.pictures[0].width != 1000):
-            if self.hasCover == True:
-                self.audioTag.clear_pictures()
-            # Build the file path by concatenating folder in the file path
-            path = ''
-            for folder in self.pathList:
-                path += '{}/'.format(folder)
-            path += album.coverName
-            with open(path, "rb") as img:
-                data = img.read()
-            # Open physical image
-            im = PIL.Image.open(path)
-            width, height = im.size
-            # Create picture and set its internals
-            picture = Picture()
-            picture.data = data
-            picture.type = 3 # COVER_FRONT
-            picture.desc = path.rsplit('/', 1)[-1] # Add picture name as a description
-            picture.mime = mimetypes.guess_type(path)[0]
-            picture.width = width
-            picture.height = height
-            picture.depth = mode_to_bpp[im.mode]
-            # Save into file's audio tag
-            self.audioTag.add_picture(picture);
-            self.audioTag.save()
+        if self.fileType == 'FLAC':
+            if self.hasCover == False or (self.audioTag.pictures[0].height != 1000 and self.audioTag.pictures[0].width != 1000):
+                if self.hasCover == True:
+                    self.audioTag.clear_pictures()
+                # Build the file path by concatenating folder in the file path
+                path = ''
+                for folder in self.pathList:
+                    path += '{}/'.format(folder)
+                path += album.coverName
+                with open(path, "rb") as img:
+                    data = img.read()
+                # Open physical image
+                im = PIL.Image.open(path)
+                width, height = im.size
+                # Create picture and set its internals
+                picture = Picture()
+                picture.data = data
+                picture.type = 3 # COVER_FRONT
+                picture.desc = path.rsplit('/', 1)[-1] # Add picture name as a description
+                picture.mime = mimetypes.guess_type(path)[0]
+                picture.width = width
+                picture.height = height
+                picture.depth = mode_to_bpp[im.mode]
+                # Save into file's audio tag
+                self.audioTag.add_picture(picture);
+                self.audioTag.save()
+        else:
+            # TODO for APIC frame
+            pass
