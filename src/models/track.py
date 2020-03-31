@@ -248,9 +248,9 @@ class Track(object):
     # Compute all class internals that can not be extracted from ID3 tags
     def setInternalTags(self, album):
         # Compilation tag is '0' for regular release, '1' for various artist and '2' for mixes
-        compilation = str(0)
+        compilation = '0'
         if ' Records' in album.albumArtist:
-            compilation = str(1)
+            compilation = '1'
         if self.fileType == 'FLAC':
             if len(self.fileNameList) == 6: # Avoid range exception
                 self._buildArtistsList()

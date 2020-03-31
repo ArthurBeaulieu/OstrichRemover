@@ -103,6 +103,7 @@ class TrackTester:
         self._testCoverValidity()
         # ErrorCode 23 : BPM is not an integer
         # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
+        # ErrorCode 29 : Invalid compilation tag
         self._testIntegerFieldsValidity()
         # ErrorCode 25 : Invalid country value. Use NATO country notation with 3 capital letters
         # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
@@ -291,6 +292,10 @@ class TrackTester:
         if int(self.track.year) < 1900 or int(self.track.year) > datetime.datetime.now().year:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.UNLOGIC_YEAR)
+        # Ensure that compilation value is according to the ManaZeak convention
+        if self.track.compilation != '0' and self.track.compilation != '1' and self.track.compilation != '2' and self.track.compilation != '3':
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.INVALID_COMPILATION)
 
 
     # Test the lang tag to check its compliance with NATO country trigrams

@@ -141,6 +141,11 @@ class ErrorEnum(Enum):
         'errorCode': 28,
         'errorValue': "The genre tag value doesn't match any of supported genres and styles"
     }
+    # ErrorCode 29 : Invalid compilation tag
+    INVALID_COMPILATION = {
+        'errorCode': 29,
+        'errorValue': "The compilation tag must be 0, 1, 2 or 3. Check naming convention for details"
+    }
     ## ------------
     # Category 4 : Track tags coherence with album metrics
     # ErrorCode 14 : Computed album total track is not equal to the track total track tag

@@ -288,6 +288,9 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     # ErrorCode 28 : Unexisting genre tag
     elif errorCode == 28:
         printTrackErrorInfo(errorCode, t.genres, 'Invalid genre value')
+    # ErrorCode 29 : Invalid compilation tag
+    elif errorCode == 29:
+        printTrackErrorInfo(errorCode, t.compilation, 'Invalid compilation value')
 
 
 # Auxilliary, print an error about a given album
@@ -372,9 +375,9 @@ def printTrackErrorInfo(errorCode, string1, string2):
         location2 = 'Expected value         '
     # ErrorCode 27 : Inconsistent genre tag
     # ErrorCode 28 : Unexisting genre tag
-    elif errorCode == 27 or errorCode == 28:
+    # ErrorCode 29 : Invalid compilation tag
+    elif errorCode == 27 or errorCode == 28 or errorCode == 29:
         location1 = 'From Track Tags        '
-        location2 = 'From Computed Album    '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -448,6 +451,9 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 28 : Unexisting genre tag
     elif errorCode == 27 or errorCode == 28:
         topic = '-------------- Genre'
+    # ErrorCode 29 : Invalid compilation tag
+    elif errorCode == 29:
+        topic = '-------- Compilation'
     return topic
 
 
