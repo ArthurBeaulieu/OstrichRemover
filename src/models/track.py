@@ -20,7 +20,8 @@ class Track(object):
         self.artists = []
         self.albumTitle = ''
         self.albumArtist = ''
-        self.year = ''
+        self.year = '' # YYYY
+        self.date = '' # YYYY-MM-DD
         self.performers = []
         self.composedPerformer = []
         self.composers = ''
@@ -99,6 +100,8 @@ class Track(object):
             self.bpm = self.audioTag['TBPM'].text[0].rstrip()
         if 'TCMP' in self.audioTag and self.audioTag['TCMP'].text[0] != '':
             self.compilation = self.audioTag['TCMP'].text[0].rstrip()
+        if 'TDOR' in self.audioTag and self.audioTag['TDOR'].text[0] != '':
+            self.date = self.audioTag['TDOR'].text[0].rstrip()
 
 
     # Read the flac track Vorbis tags and extract all interresting values into a Track object
@@ -137,6 +140,8 @@ class Track(object):
             self.lang = self.audioTag['LANGUAGE'][0].split('; ')
         if 'COMPILATION' in self.audioTag:
             self.compilation = self.audioTag['COMPILATION'][0]
+        if 'RELEASEDATE' in self.audioTag:
+            self.date = self.audioTag['RELEASEDATE'][0]
 
 
     # Compute all class internals that can not be extracted from ID3 tags

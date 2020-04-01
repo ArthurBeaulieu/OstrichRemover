@@ -5,7 +5,7 @@ import AnalysisView from './views/AnalysisView.js';
 
 
 let view = null; // The active view in report-container
-const scriptVersion = '1.4.1';
+const scriptVersion = '1.4.2';
 
 
 // Display notification global method that can accessed through window object

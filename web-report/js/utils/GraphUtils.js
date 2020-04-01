@@ -102,6 +102,12 @@ class GraphUtils {
 
   // Method to append axis to the svg graph. Preferable to call after appending data so data doesn't overlap axis
   static appendAxis() {
+    const makeYAxisBacklines = () => {
+      return d3.axisLeft(this._y)
+        .tickSize(-this._styles.width, 0, 0)
+        .tickFormat('');
+    };
+
     // Add the X axis
     this._svg.append('g')
       .attr('class', 'x-axis')
@@ -136,16 +142,20 @@ class GraphUtils {
       this._svg.append('g')
         .call(d3.axisLeft(this._y));
     }
+    // Call for grid background line
+    this._svg.append('g')
+      .attr('class', 'grid')
+      .call(makeYAxisBacklines())
     // Text label for the y axis
     this._svg.append('text')
-        .attr('transform', 'rotate(90)')
-        .attr('y', 0 - (this._styles.margin.left / 2.66))
-        .attr('x', 0)
-        .attr('dy', '1em')
-        .style('text-anchor', 'start')
-        .style('text-transform', 'capitalize')
-        .style('font-size', '.75rem')
-        .text(this._yAxisValue);
+      .attr('transform', 'rotate(90)')
+      .attr('y', 0 - (this._styles.margin.left / 2.66))
+      .attr('x', 0)
+      .attr('dy', '1em')
+      .style('text-anchor', 'start')
+      .style('text-transform', 'capitalize')
+      .style('font-size', '.75rem')
+      .text(this._yAxisValue);
   }
 
 
@@ -272,7 +282,7 @@ class GraphUtils {
     d3.select('.mouse-over-effects').select('text')
       .style('font-size', '.8rem')
       .attr('transform', `translate(${mouse[0] + (GraphUtils._styles.margin.left / 8)}, 10)`)
-      .text(`${MonthMap[GraphUtils._x.invert(mouse[0]).getMonth()]} ${GraphUtils._x.invert(mouse[0]).getFullYear()}`);
+      .text(`${GraphUtils._x.invert(mouse[0]).getDate()} ${MonthMap[GraphUtils._x.invert(mouse[0]).getMonth()]} ${GraphUtils._x.invert(mouse[0]).getFullYear()}`);
     // Modifications for each data line
     d3.selectAll('.mouse-per-line')
       .attr('transform', function(d, i) { // We use function keyword to keep data line scope

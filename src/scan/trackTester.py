@@ -197,6 +197,9 @@ class TrackTester:
         if self.track.compilation == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Compilation')
+        if self.track.date == '':
+            self.missingTagsCounter += 1
+            self.missingTags.append('Date')
         if self.missingTagsCounter > 0:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.MISSING_TAGS)

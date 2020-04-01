@@ -19,7 +19,7 @@ from src.utils.uiBuilder import *
 from src.utils.tools import *
 # Globals
 global scriptVersion
-scriptVersion = '1.4.1'
+scriptVersion = '1.4.2'
 
 
 # Script main frame
@@ -84,7 +84,7 @@ def scanFolder(args):
     percentage = step
     previousLetter = '1' # Ordered folder/file parsing begins with numbers
     # Start scan
-    printScanStart(args['folder'], totalTracks)
+    printScanStart(args['folder'], totalTracks, len(ErrorEnum))
     startTime = time.time()
     # Sort directories so they are handled in the alphabetical order
     for root, directories, files in sorted(os.walk(args['folder'])):
@@ -101,8 +101,8 @@ def scanFolder(args):
         if len(path) == 2 and path[1] != '':
             albumTester = AlbumTester(files, preservedPath)
             scannedTracks += albumTester.album.totalTrack
-            errorCounter += albumTester.errorCounter
             errorCounter += albumTester.tracksErrorCounter()
+            errorCounter += albumTester.errorCounter
             albumTesters.append(albumTester)
             # Display a progress every step %
             scannedPercentage = (scannedTracks * 100) / totalTracks
@@ -165,6 +165,8 @@ def fillTags(args):
             if (filledTracks * 100) / totalTracks > percentage and percentage < 100:
                 printFillProgress(percentage, filledTracks)
                 percentage += step
+    if totalTracks is not filledTracks:
+        printInvalidFolderStructure(filledTracks, totalTracks, 'fill')
     # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
     if totalTracks > 10 and percentage != 10: # If more than 10 tracks and percentage have been displayed (if % = 10, it is its init value)
         printLineBreak()

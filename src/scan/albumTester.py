@@ -82,7 +82,23 @@ class AlbumTester:
 
     # Compute error counter for the album
     def tracksErrorCounter(self):
-        errorCounter = 0
-        for trackTester in self.tracks:
-            errorCounter += trackTester.errorCounter
-        return errorCounter
+        if len(self.tracks) > 0:
+            errorCounter = 0
+            labelLockErrors = False
+            languageLockErrors = False
+            albumLabel = self.tracks[0].track.label
+            albumLanguage = self.tracks[0].track.lang
+            for trackTester in self.tracks:
+                errorCounter += trackTester.errorCounter
+                # ErrorCode 30 : Label tag is not consistent over album tracks
+                if trackTester.track.label != albumLabel and labelLockErrors is False:
+                    labelLockErrors = True
+                    self.errorCounter += 1
+                    self.errors.append(ErrorEnum.INCONSISTENT_LABELS)
+                # ErrorCode 31 : Language tag is not consistent over album tracks
+                if trackTester.track.lang != albumLanguage and languageLockErrors is False:
+                    languageLockErrors = True
+                    self.errorCounter += 1
+                    self.errors.append(ErrorEnum.INCONSISTENT_LANGUAGES)
+            return errorCounter
+        return 0

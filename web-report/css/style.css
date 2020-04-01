@@ -221,6 +221,15 @@ button.active {
   stroke: rgba(52, 52, 52, 0.8);
 }
 
+.grid .tick {
+  stroke: lightgrey;
+  opacity: .1;
+}
+
+.grid path {
+  stroke-width: 0;
+}
+
 .report-container .col-seven .graph-controls {
   align-items: center;
   border-top: solid 3px var(--border);

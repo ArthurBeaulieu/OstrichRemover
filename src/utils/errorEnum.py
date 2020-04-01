@@ -163,3 +163,13 @@ class ErrorEnum(Enum):
         'errorCode': 16,
         'errorValue': "Computed album year is not equal to the track year tag"
     }
+    # ErrorCode 30 : Label tag is not consistent over album tracks
+    INCONSISTENT_LABELS = {
+        'errorCode': 30,
+        'errorValue': "Label tag is not consistent over album tracks"
+    }
+    # ErrorCode 31 : Lang tag is not consistent over album tracks
+    INCONSISTENT_LANGUAGES = {
+        'errorCode': 31,
+        'errorValue': "Language tag is not consistent over album tracks"
+    }

@@ -27,6 +27,13 @@ def printInvalidPath(path):
     print('> Exiting MzkOstrichRemover.py')
 
 
+# Displays an error message when the folder structure tested is not according to ManaZeak naming convention
+def printInvalidFolderStructure(done, max, verb):
+    print('\n  Unable to properly {} path ({} / {} tracks {}ed)'.format(verb, done, max, verb))
+    print('>  The folder structure does not exactly match the ManaZeak naming convention')
+    print('>  Ensure you don\'t have any release mis-named or exotic tree structures')
+
+
 # Prints script 'man' page
 def printHelp():
     print('  Script usage')
@@ -80,8 +87,8 @@ def printDetailledTrack(track):
 
 
 # Prints the scan begin message
-def printScanStart(targetFolder, totalTracks):
-    print('  Folder scan : {} track(s) to test'.format(totalTracks))
+def printScanStart(targetFolder, totalTracks, possibleErrors):
+    print('  Folder scan : {} track(s) to test ({} errors tested per track)'.format(totalTracks, possibleErrors))
     print('> Scanning files in folder \'{}\' and all its sub-directories...\n'.format(targetFolder))
 
 
@@ -126,20 +133,20 @@ def printAnalyzeStatus(metaAnalyzer):
     fd = metaAnalyzer.dumps[0]['folderInfo'] # First dump, usefull for totals
     ld = metaAnalyzer.dumps[len(metaAnalyzer.dumps) - 1]['folderInfo'] # Last dump, usefull for totals
     print('  Meta analysis sum up (from {} to {})\n'.format(ma['dateFrom'], ma['dateTo']))
-    print('> Library\'s size increased by {} ({} -> {})'.format(convertBytes(ma['sizeDelta']), convertBytes(fd['size']), convertBytes(ld['size'])))
-    print('  {} file(s) have been added ({} -> {} file(s))'.format(ma['filesDelta'], fd['files'], ld['files']))
-    print('  {} folder(s) have been created ({} -> {} folder(s))\n'.format(ma['foldersDelta'], fd['folders'], ld['folders']))
-    print('> Library\'s addition detail')
-    print('  {} artist(s) were added ({} -> {} artist(s))'.format(ma['artistsDelta'], fd['artistsCount'], ld['artistsCount']))
-    print('  {} album(s) were added ({} -> {} album(s))'.format(ma['albumsDelta'], fd['albumsCount'], ld['albumsCount']))
-    print('  {} track(s) were added ({} -> {} track(s))'.format(ma['tracksDelta'], fd['tracksCount'], ld['tracksCount']))
-    print('  {} cover(s) were added ({} -> {} cover(s))\n'.format(ma['coversDelta'], fd['coversCount'], ld['coversCount']))
-    print('> Quality detail')
-    print('  Purity grade increased by {}% ({}% -> {}%)'.format(ma['purityDelta'], fd['purity'], ld['purity']))
-    print('  {} flac file(s) were added ({} -> {} flac(s))'.format(ma['flacDelta'], fd['flacCount'], ld['flacCount']))
-    print('  {} mp3 file(s) were added ({} -> {} mp3(s))'.format(ma['mp3Delta'], fd['mp3Count'], ld['mp3Count']))
-    print('  {} jpg file(s) were added ({} -> {} jpg(s))'.format(ma['jpgDelta'], fd['jpgCount'], ld['jpgCount']))
-    print('  {} png file(s) were added ({} -> {} png(s))\n'.format(ma['pngDelta'], fd['pngCount'], ld['pngCount']))
+    print('  Library\'s size increased by {} ({} -> {})'.format(convertBytes(ma['sizeDelta']), convertBytes(fd['size']), convertBytes(ld['size'])))
+    print('> {} file(s) have been added ({} -> {} file(s))'.format(ma['filesDelta'], fd['files'], ld['files']))
+    print('> {} folder(s) have been created ({} -> {} folder(s))\n'.format(ma['foldersDelta'], fd['folders'], ld['folders']))
+    print('  Library\'s addition detail')
+    print('> {} artist(s) were added ({} -> {} artist(s))'.format(ma['artistsDelta'], fd['artistsCount'], ld['artistsCount']))
+    print('> {} album(s) were added ({} -> {} album(s))'.format(ma['albumsDelta'], fd['albumsCount'], ld['albumsCount']))
+    print('> {} track(s) were added ({} -> {} track(s))'.format(ma['tracksDelta'], fd['tracksCount'], ld['tracksCount']))
+    print('> {} cover(s) were added ({} -> {} cover(s))\n'.format(ma['coversDelta'], fd['coversCount'], ld['coversCount']))
+    print('  Quality detail')
+    print('> Purity grade increased by {}% ({}% -> {}%)'.format(ma['purityDelta'], fd['purity'], ld['purity']))
+    print('> {} flac file(s) were added ({} -> {} flac(s))'.format(ma['flacDelta'], fd['flacCount'], ld['flacCount']))
+    print('> {} mp3 file(s) were added ({} -> {} mp3(s))'.format(ma['mp3Delta'], fd['mp3Count'], ld['mp3Count']))
+    print('> {} jpg file(s) were added ({} -> {} jpg(s))'.format(ma['jpgDelta'], fd['jpgCount'], ld['jpgCount']))
+    print('> {} png file(s) were added ({} -> {} png(s))\n'.format(ma['pngDelta'], fd['pngCount'], ld['pngCount']))
 
 
 # Print the scand end message
@@ -182,10 +189,11 @@ def printErroredTracksReport(albumTesters):
             currentArtist = albumPathList[len(albumPathList) - 2]
         # Print current album name
         print('| + {}'.format(albumPathList[len(albumPathList) - 1]))
-        for error in albumTester.errors:
+        if len(albumTester.errors) > 0:
             print('| | + Errors that are album wide:')
             print('| | |----------------------------')
-            _printErroredAlbumsReport_aux(error.value)
+            for error in albumTester.errors:
+                _printErroredAlbumsReport_aux(error.value['errorCode'])
         trackErrorWarning = False
         for trackTester in albumTester.tracks:
             if trackTester.errorCounter > 0:
@@ -298,6 +306,12 @@ def _printErroredAlbumsReport_aux(errorCode):
     # ErrorCode 17 : Year is not the same on all physical files of the album
     if errorCode == 17:
         printTrackErrorInfo(errorCode, 'All files in folder does not have the same year', 'Rename them properly to remove this error')
+    # ErrorCode 30 : Label tag is not consistent over album tracks
+    elif errorCode == 30:
+        printTrackErrorInfo(errorCode, 'Inconsitent label across album', 'Please set each label tag on file with the same value')
+    # ErrorCode 31 : Label tag is not consistent over album tracks
+    elif errorCode == 31:
+        printTrackErrorInfo(errorCode, 'Inconsitent language across album', 'Please set each language tag on file with the same value')
 
 
 # Display the error message according to the topic and error code. It will display the two !matching values
@@ -378,6 +392,14 @@ def printTrackErrorInfo(errorCode, string1, string2):
     # ErrorCode 29 : Invalid compilation tag
     elif errorCode == 27 or errorCode == 28 or errorCode == 29:
         location1 = 'From Track Tags        '
+    # ErrorCode 30 : Label tag is not consistent over album tracks
+    elif errorCode == 30:
+        location1 = 'From label tag on files'
+        location2 = 'Action                 '
+    # ErrorCode 31 : Lang tag is not consistent over album tracks
+    elif errorCode == 31:
+        location1 = 'From lang tag on files '
+        location2 = 'Action                 '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -445,7 +467,8 @@ def getTopicStringFromErrorCode(errorCode):
         topic = '---------------- BPM'
     # ErrorCode 25 : Invalid country value. Use NATO country notation with 3 capital letters
     # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
-    elif errorCode == 25 or errorCode == 26:
+    # ErrorCode 31 : Lang tag is not consistent over album tracks
+    elif errorCode == 25 or errorCode == 26 or errorCode == 31:
         topic = '----------- Language'
     # ErrorCode 27 : Inconsistent genre tag
     # ErrorCode 28 : Unexisting genre tag
@@ -454,6 +477,9 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 29 : Invalid compilation tag
     elif errorCode == 29:
         topic = '-------- Compilation'
+    # ErrorCode 30 : Label tag is not consistent over album tracks
+    elif errorCode == 30:
+        topic = '-------- Album label'
     return topic
 
 
