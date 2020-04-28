@@ -30,7 +30,7 @@ class RefGenre(object):
               'Indie Rock', 'Industrial', 'Industrial Metal', 'Instrumental Rock', 'Jazz',
               'Jazz Funk', 'Jazz Fusion', 'Jazz Rap', 'Jazz Rock', 'J-Pop', 'Jumpstyle',
               'Jungle', 'Jungle Terror', 'Kawaii Metal', 'K-Pop', 'Latin', 'Latin Rock',
-              'Leftfield', 'Liquid Funk', 'Lolicore', 'Mambo', 'Mashup', 'Melodic Death Metal',
+              'Leftfield', 'Liquid Funk', 'Lolicore', 'Mambo', 'Mashup', 'Melodic Black Metal', 'Melodic Death Metal',
               'Metal', 'Metalcore', 'Metalstep', 'Mid-Tempo', 'Minimal', 'Modal Jazz',
               'Modern Classical', 'Moombahcore', 'Moombahton', 'Neo Soul', 'Neue Deutsche Härte',
               'Neue Deutsche Welle', 'Neurofunk', 'Neurohop', 'Neuro Trap', 'New Age',
