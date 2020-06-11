@@ -24,7 +24,7 @@ class FolderInfo(object):
         self._computeFolderInfo(folderPath)
 
 
-    # Reads the user given folder and store a few informations about it
+    # Reads the user given folder and store a few information about it
     def _computeFolderInfo(self, folder):
         self.folder = folder
         rootPathLength = len(folder.split(os.sep))

@@ -28,8 +28,8 @@ def printInvalidPath(path):
 
 
 # Displays an error message when the folder structure tested is not according to ManaZeak naming convention
-def printInvalidFolderStructure(done, max, verb):
-    print('\n  Unable to properly {} path ({} / {} tracks {}ed)'.format(verb, done, max, verb))
+def printInvalidFolderStructure(done, totalTrack, verb):
+    print('\n  Unable to properly {} path ({} / {} tracks {}ed)'.format(verb, done, totalTrack, verb))
     print('>  The folder structure does not exactly match the ManaZeak naming convention')
     print('>  Ensure you don\'t have any release mis-named or exotic tree structures')
 
@@ -46,7 +46,7 @@ def printRetrieveFolderInfo():
     print('  Retrieving folder information...\n')
 
 
-# Prints the studied folder and its informations
+# Prints the studied folder and its information
 def printRootFolderInfo(folderInfo):
     print('  Files and folders information')
     print('> Folder name  : {}'.format(folderInfo.folder))
@@ -203,12 +203,12 @@ def printErroredTracksReport(albumTesters):
                     print('| | |----------------------------')
                 print('| | + {}'.format(trackTester.track.fileName))
                 for error in trackTester.errors:
-                    _printErroredTracksReport_aux(error.value['errorCode'], trackTester, albumTester)
+                    _printErroredTracksReport_aux(error.value['errorCode'], trackTester)
 
 
 # Auxilliary, print an error about a given track
-def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
-    # For acented char sorting
+def _printErroredTracksReport_aux(errorCode, trackTester):
+    # For accented char sorting
     collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
     t = trackTester.track
     # ErrorCode 00 : Filename release artists doesn't match the artist foldername
@@ -299,6 +299,9 @@ def _printErroredTracksReport_aux(errorCode, trackTester, albumTester):
     # ErrorCode 29 : Invalid compilation tag
     elif errorCode == 29:
         printTrackErrorInfo(errorCode, t.compilation, 'Invalid compilation value')
+    # ErrorCode 32 : A tag in file doesn't have a unique field
+    elif errorCode == 32:
+        printTrackErrorInfo(errorCode, t.title, 'Each tag must have only one field for its data')
 
 
 # Auxilliary, print an error about a given album
@@ -400,6 +403,10 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 31:
         location1 = 'From lang tag on files '
         location2 = 'Action                 '
+    # ErrorCode 32 : Lang tag is not consistent over album tracks
+    elif errorCode == 32:
+        location1 = 'From track             '
+        location2 = 'Action                 '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -480,6 +487,9 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 30 : Label tag is not consistent over album tracks
     elif errorCode == 30:
         topic = '-------- Album label'
+    # ErrorCode 32 : A tag in file doesn't have a unique field
+    elif errorCode == 32:
+        topic = '---------- Tag error'
     return topic
 
 

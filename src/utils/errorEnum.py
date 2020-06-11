@@ -146,6 +146,11 @@ class ErrorEnum(Enum):
         'errorCode': 29,
         'errorValue': "The compilation tag must be 0, 1, 2 or 3. Check naming convention for details"
     }
+    # ErrorCode 32 : A tag in file doesn't have a unique field
+    TAG_NOT_UNIQUE = {
+        'errorCode': 32,
+        'errorValue': "There is a tag that has several fields, which is unauthorized"
+    }
     ## ------------
     # Category 4 : Track tags coherence with album metrics
     # ErrorCode 14 : Computed album total track is not equal to the track total track tag

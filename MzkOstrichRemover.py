@@ -19,7 +19,7 @@ from src.utils.uiBuilder import *
 from src.utils.tools import *
 # Globals
 global scriptVersion
-scriptVersion = '1.4.2'
+scriptVersion = '1.4.3'
 
 
 # Script main frame
@@ -32,11 +32,11 @@ def main():
     ap.add_argument('-f', '--fill', help='Prefill tags with folder name and file name information', action='store_true')
     ap.add_argument('-a', '--analyze', help='Analyze a folder of JSON dumps to make a meta analysis', action='store_true')
     # Additional modes
-    ap.add_argument('-c', '--clean', help='Clean all previously setted tags, and ambiguous ones', action='store_true')
+    ap.add_argument('-c', '--clean', help='Clean all previously set tags, and ambiguous ones', action='store_true')
     # Arguments
     ap.add_argument('-d', '--dump', help='Dump errors as JSON in ./output folder', action='store_true')
     ap.add_argument('-e', '--errors', help='Log errors only during run', action='store_true')
-    ap.add_argument('-v', '--verbose', help='Log detailled progress when running', action='store_true')
+    ap.add_argument('-v', '--verbose', help='Log detailed progress when running', action='store_true')
     args = vars(ap.parse_args())
     # Preventing path from missing its trailing slash (or backslash for win compatibility)
     if not args['folder'].endswith('\\') and not args['folder'].endswith('/'):
@@ -53,7 +53,7 @@ def main():
     # Make a meta analysis of previously made scan to compile values
     elif args['analyze']:
         metaAnalysis(args)
-    # Clean all previously setted tags (to prepare a track to be properly filled)
+    # Clean all previously set tags (to prepare a track to be properly filled)
     elif args['clean']:
         if queryYesNo('> Warning, this command will erase any previously existing tags on audio files in this path. Just do it?', 'yes'):
             printLineBreak()
@@ -76,7 +76,6 @@ def scanFolder(args):
     totalTracks = folderInfo.flacCounter + folderInfo.mp3Counter
     rootPathLength = len(args['folder'].split(os.sep))
     scannedTracks = 0
-    fileCounter = 0
     errorCounter = 0
     albumTesters = []
     # Scan progression utils
@@ -106,7 +105,7 @@ def scanFolder(args):
             albumTesters.append(albumTester)
             # Display a progress every step %
             scannedPercentage = (scannedTracks * 100) / totalTracks
-            if totalTracks > 10 and scannedPercentage >= step  and scannedTracks < totalTracks:
+            if totalTracks > 10 and scannedPercentage >= step and scannedTracks < totalTracks:
                 if (scannedTracks * 100) / totalTracks > percentage and percentage < 100:
                     printScanProgress(percentage, previousLetter, path[0][0], errorCounter, scannedTracks,
                                       computePurity(errorCounter, scannedTracks))
@@ -116,7 +115,7 @@ def scanFolder(args):
     if totalTracks > 10 and percentage != 10:
         printLineBreak()
     duration = round(time.time() - startTime, 2)
-    printScanEnd(duration, errorCounter, totalTracks, computePurity(errorCounter, scannedTracks));
+    printScanEnd(duration, errorCounter, totalTracks, computePurity(errorCounter, scannedTracks))
     # Compute and save JSON report
     if args['dump']:
         saveReportFile(computeFillReport(scriptVersion, duration, folderInfo, albumTesters, errorCounter,
@@ -185,7 +184,7 @@ def metaAnalysis(args):
     metaAnalyzer = MetaAnalyzer(sorted(jsonFiles), args['folder'])
     printAnalyzeStatus(metaAnalyzer)
     duration = round(time.time() - startTime, 2)
-    printAnalyzeEnd(duration, len(jsonFiles));
+    printAnalyzeEnd(duration, len(jsonFiles))
     # Compute and save JSON report
     if args['dump']:
         saveReportFile(computeMetaAnalyzeReport(scriptVersion, duration, metaAnalyzer), 'meta-analyze')

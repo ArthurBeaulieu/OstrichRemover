@@ -15,7 +15,7 @@ class AlbumFiller:
 
     # Analyse first the global album errors (compute a total disc/track and global album year)
     def _analyseAlbumInternals(self):
-        self.album.folderNameList = self.preservedPath[len(self.preservedPath) - 1].split(' - ');
+        self.album.folderNameList = self.preservedPath[len(self.preservedPath) - 1].split(' - ')
         self.album.albumArtist = self.preservedPath[len(self.preservedPath) - 2]
         lockErrors = False
         # Filling internals
@@ -38,7 +38,7 @@ class AlbumFiller:
                             print("ERROR for track : {}\n\tThe file isn't named according to the naming convention.\n".format(fileName))
                     if self.album.year == 0:
                         self.album.year = fileNameList[1]
-                    if self.verbose == True:
+                    if self.verbose:
                         print('Track {}: {}\n\tRelease artist: {}\n\tAlbum: {}'.format(fileNameList[3], fileNameList[5][:-5], fileNameList[0], fileNameList[2]))
                 else:
                     if self.verbose == True or self.logErrors == True:
@@ -59,11 +59,11 @@ class AlbumFiller:
     # Analyse the album tracks
     def _analyseTracks(self):
         for fileName in self.files:
-            self._fillFile(fileName, self.preservedPath, self.album)
+            self._fillFile(fileName, self.preservedPath)
 
 
     # Manages the MP3/FLAC files to test in the pipeline
-    def _fillFile(self, fileName, pathList, album):
+    def _fillFile(self, fileName, pathList):
         audioTagPath = ''
         for folder in pathList:  # Build the file path by concatenating folder in the file path
             audioTagPath += '{}/'.format(folder)

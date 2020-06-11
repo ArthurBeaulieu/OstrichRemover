@@ -111,6 +111,10 @@ class TrackTester:
         # ErrorCode 27 : Unconsistent genre tag
         # ErrorCode 28 : Genre missing from convention list
         self._testGenreComposition()
+        # ErrorCode 32 : A tag in file doesn't have a unique field
+        if not self.track.testTagsUnicity():
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.TAG_NOT_UNIQUE)
 
 
     # Testing Category 4 : Track tags coherence with album metrics
@@ -210,10 +214,10 @@ class TrackTester:
         # For acented char sorting
         collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
         # If track has featured artists, we append them to the performer tmp string
-        # Sorted comparaison to only test value equality. The artists alphabetic order is tested elswhere
-        if len(self.track.performers) != len(self.track.composedPerformer) or sorted(
-            removeSpecialCharFromArray(self.track.performers), key=collator.getSortKey) != sorted(
-            removeSpecialCharFromArray(self.track.composedPerformer), key=collator.getSortKey):
+        # Sorted comparison to only test value equality. The artists alphabetic order is tested elsewhere
+        if len(self.track.performers) != len(self.track.composedPerformer) or \
+            sorted(removeSpecialCharFromArray(self.track.performers), key=collator.getSortKey) != \
+            sorted(removeSpecialCharFromArray(self.track.composedPerformer), key=collator.getSortKey):
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INCONSISTENT_PERFORMER)
 
@@ -330,7 +334,7 @@ class TrackTester:
         # Iterate over arrays
         for item1, item2 in zip(array1, array2):
             if item1 != item2:
-                if self._areStringsMatchingWithFoldernameRestrictions(item1, item2) == False:
+                if not self._areStringsMatchingWithFoldernameRestrictions(item1, item2):
                     self.errorCounter += 1
                     self.errors.append(errorCode)
                     return
