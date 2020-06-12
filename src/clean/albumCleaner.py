@@ -24,7 +24,7 @@ class AlbumCleaner:
               self.album.hasCover = True
               self.album.coverName = fileName
 
-1
+
     # Analyse the album tracks
     def _analyseTracks(self):
         for fileName in self.files:
