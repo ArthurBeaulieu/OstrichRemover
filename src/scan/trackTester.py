@@ -51,6 +51,7 @@ class TrackTester:
 
     # Testing Category 1 : Filesystem naming inconsistencies (see ErrorEnum.py)
     def _testFileSystemNaming(self):
+        # TODO test foldername and filename proper length etc
         # ErrorCode 00 : Filename release artists doesn't match the artist foldername
         self._testErrorForErrorCode(ErrorEnum.FILENAME_RELEASE_ARTIST_VS_ARTIST_FOLDER_NAME, self.track.fileNameList[0],
                                     self.track.pathList[len(self.track.pathList) - 2])
@@ -195,9 +196,9 @@ class TrackTester:
         if self.track.totalDisc == '':
             self.missingTagsCounter += 1
             self.missingTags.append('DiscTotal')
-        if self.track.bpm == '':
-            self.missingTagsCounter += 1
-            self.missingTags.append('BPM')
+#        if self.track.bpm == '': # This needs to be a warning, not an error
+#            self.missingTagsCounter += 1
+#            self.missingTags.append('BPM')
         if self.track.compilation == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Compilation')

@@ -100,7 +100,7 @@ class Track(object):
         if 'TCMP' in self.audioTag and self.audioTag['TCMP'].text[0] != '':
             self.compilation = self.audioTag['TCMP'].text[0].rstrip()
         if 'TDOR' in self.audioTag and self.audioTag['TDOR'].text[0] != '':
-            self.date = self.audioTag['TDOR'].text[0].rstrip()
+            self.date = self.audioTag['TDOR'].text[0]
 
     # Read the flac track Vorbis tags and extract all interresting values into a Track object
     def _fillFromFLAC(self):
