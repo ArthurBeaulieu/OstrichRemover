@@ -93,6 +93,6 @@ def _computeFolderInfo(folderInfo, errorCounter, purity):
 # Save the output json file
 def saveReportFile(report, directory):
     createDirectory(directory)
-    fileName = "MzkOstrichRemover-{}".format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+    fileName = "OstrichRemover-{}".format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
     with open('{}/{}.json'.format(directory, fileName), 'w') as file:
         json.dump(report, file, indent=2)

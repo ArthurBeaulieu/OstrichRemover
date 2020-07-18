@@ -3,7 +3,6 @@ from mutagen.id3 import ID3
 from mutagen.flac import FLAC, Picture
 from mutagen.id3._frames import TIT2, TDRC, TPE1, TPE2, TOPE, TRCK, TALB, TCMP, TCOM, TPOS, APIC
 
-import base64
 import mimetypes
 import PIL
 
@@ -100,7 +99,7 @@ class Track(object):
         if 'TCMP' in self.audioTag and self.audioTag['TCMP'].text[0] != '':
             self.compilation = self.audioTag['TCMP'].text[0].rstrip()
         if 'TDOR' in self.audioTag and self.audioTag['TDOR'].text[0] != '':
-            self.date = self.audioTag['TDOR'].text[0]
+            self.date = str(self.audioTag['TDOR'].text[0])
 
     # Read the flac track Vorbis tags and extract all interresting values into a Track object
     def _fillFromFLAC(self):
@@ -261,6 +260,7 @@ class Track(object):
             self.audioTag['TOTALDISC'] = ''
             self.audioTag['TOTALDISCS'] = ''
             self.audioTag['COMPILATION'] = ''
+            self.audioTag['RELEASEDATE'] = ''
             self.audioTag.clear_pictures()
         self.audioTag.save(self.audioTagPath)
 

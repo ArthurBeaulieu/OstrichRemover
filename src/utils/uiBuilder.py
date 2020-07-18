@@ -9,7 +9,7 @@ from src.utils.tools import convertBytes
 def printCredentials(scriptVersion):
     print('##----------------------------------------##')
     print('##                                        ##')
-    print('##  MzkOstrichRemover.py - version {}  ##'.format(scriptVersion))
+    print('##   OstrichRemover.py - version {}    ##'.format(scriptVersion))
     print('##                                        ##')
     print('##----------------------------------------##\n')
 
@@ -17,14 +17,14 @@ def printCredentials(scriptVersion):
 # Displays an error message when the user didn't provided either scan of fill argument
 def printMissingArguments():
     print('  You must provide the -s (--scan) or the -f (--fill) argument to the command, depending on your need\n')
-    print('> Exiting MzkOstrichRemover.py')
+    print('> Exiting OstrichRemover.py')
 
 
 # Displays an error message when the user path is invalid
 def printInvalidPath(path):
     print('  The path \'{}\' is invalid...'.format(path))
     print('  It must end with a / or an \\, depending on your system\n')
-    print('> Exiting MzkOstrichRemover.py')
+    print('> Exiting OstrichRemover.py')
 
 
 # Displays an error message when the folder structure tested is not according to ManaZeak naming convention
@@ -37,8 +37,8 @@ def printInvalidFolderStructure(done, totalTrack, verb):
 # Prints script 'man' page
 def printHelp():
     print('  Script usage')
-    print('> python MzkOstrichRemover.py ./path/to/library    : Do a crawling on the given folder')
-    print('> python MzkOstrichRemover.py -h                   : Displays the script help menu')
+    print('> python OstrichRemover.py ./path/to/library    : Do a crawling on the given folder')
+    print('> python OstrichRemover.py -h                   : Displays the script help menu')
 
 
 # Prints the first message before scanning folder information
@@ -315,6 +315,12 @@ def _printErroredAlbumsReport_aux(errorCode):
     # ErrorCode 31 : Label tag is not consistent over album tracks
     elif errorCode == 31:
         printTrackErrorInfo(errorCode, 'Inconsitent language across album', 'Please set each language tag on file with the same value')
+    # ErrorCode 33 : The year tag doesn't match the year in released date tag
+    elif errorCode == 33:
+        printTrackErrorInfo(errorCode, 'Inconsistent year', 'Release date year doesn\'t match the year tag')
+    # ErrorCode 34 : There is no cover, or there are more than one cover
+    elif errorCode == 34:
+        printTrackErrorInfo(errorCode, 'Cover count error', 'No cover, or invalid amount of cover in album')
 
 
 # Display the error message according to the topic and error code. It will display the two !matching values
@@ -370,8 +376,10 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 18:
         location1 = 'Expected Pattern       '
         location2 = 'Example                '
-    # ErrorCode 19-20 : Cover errors (19 no cover, 20 incorrect size)
-    elif errorCode == 19 or errorCode == 20:
+    # ErrorCode 19 : Cover is not a 1000x1000 jpg image
+    # ErrorCode 20 : Track has no cover
+    # ErrorCode 34 : There is no cover, or there are more than one cover
+    elif errorCode == 19 or errorCode == 20 or errorCode == 34:
         location1 = 'From Cover Tag         '
     # ErrorCode 22 : Cover format is not optimized (not jpg)
     elif errorCode == 22:
@@ -407,6 +415,10 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 32:
         location1 = 'From track             '
         location2 = 'Action                 '
+    # ErrorCode 33 : The year tag doesn't match the year in released date tag
+    elif errorCode == 33:
+        location1 = 'From year              '
+        location2 = 'From release year      '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -460,8 +472,10 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 18 : The Filename doesn't follow the naming pattern properly
     elif errorCode == 18:
         topic = '-- Wrong File Naming'
-    # ErrorCode 19-20 : Cover errors (19 no cover, 20 incorrect size)
-    elif errorCode == 19 or errorCode == 20:
+    # ErrorCode 19 : Cover is not a 1000x1000 jpg image
+    # ErrorCode 20 : Track has no cover
+    # ErrorCode 34 : There is no cover, or there are more than one cover
+    elif errorCode == 19 or errorCode == 20 or errorCode == 34:
         topic = '-------- Cover Error'
     # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
     elif errorCode == 21:
@@ -490,6 +504,9 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 32 : A tag in file doesn't have a unique field
     elif errorCode == 32:
         topic = '---------- Tag error'
+    # ErrorCode 33 : The year tag doesn't match the year in released date tag
+    elif errorCode == 33:
+        topic = '------- Release Year'
     return topic
 
 

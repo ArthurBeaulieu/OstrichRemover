@@ -116,6 +116,11 @@ class TrackTester:
         if not self.track.testTagsUnicity():
             self.errorCounter += 1
             self.errors.append(ErrorEnum.TAG_NOT_UNIQUE)
+        # ErrorCode 33 : The year tag doesn't match the year in released date tag
+        if self.track.date != '':
+            if self.track.year != self.track.date[0:4]:
+                self.errorCounter += 1
+                self.errors.append(ErrorEnum.YEAR_VS_RELEASE_YEAR)
 
 
     # Testing Category 4 : Track tags coherence with album metrics
@@ -202,9 +207,9 @@ class TrackTester:
         if self.track.compilation == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Compilation')
-        if self.track.date == '':
-            self.missingTagsCounter += 1
-            self.missingTags.append('Date')
+#        if self.track.date == '':
+#            self.missingTagsCounter += 1
+#            self.missingTags.append('Date')
         if self.missingTagsCounter > 0:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.MISSING_TAGS)
@@ -212,7 +217,7 @@ class TrackTester:
 
     # Test if the performer field is accurate regarding the track title (via composedPerformer)
     def _testPerformerComposition(self):
-        # For acented char sorting
+        # For accented char sorting
         collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
         # If track has featured artists, we append them to the performer tmp string
         # Sorted comparison to only test value equality. The artists alphabetic order is tested elsewhere

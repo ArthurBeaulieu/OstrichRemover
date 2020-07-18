@@ -4,6 +4,7 @@ from src.models.track import Track
 from src.scan.trackTester import TrackTester
 from src.utils.errorEnum import ErrorEnum
 
+import fnmatch,os
 
 # AlbumTester aim to test all tracks in a folder and group all their errors
 class AlbumTester:
@@ -53,6 +54,9 @@ class AlbumTester:
                     self.errorCounter += 1
                     self.errors.append(ErrorEnum.FILES_ALBUM_YEAR_NOT_EQUAL)
                     self.album.year = -1
+        if len(fnmatch.filter(os.listdir('\\'.join(self.preservedPath)),'*.jpg')) != 1:
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.COVER_NOT_UNIQUE)
 
 
     # Analyse the album tracks (by creating a TrackTester for each)

@@ -5,7 +5,7 @@ import AnalysisView from './views/AnalysisView.js';
 
 
 let view = null; // The active view in report-container
-const scriptVersion = '1.4.4';
+const scriptVersion = '1.4.5';
 
 
 // Display notification global method that can accessed through window object
@@ -31,7 +31,7 @@ const restoreHomepage = () => {
   document.querySelector('.report-container').innerHTML = '';
   document.querySelector('#home').blur();
   document.querySelector('#clear-view').blur();
-  document.querySelector('#nav-title').innerHTML = `MzkOstrichRemover ${scriptVersion}`;
+  document.querySelector('#nav-title').innerHTML = `OstrichRemover ${scriptVersion}`;
   view = null;
 };
 

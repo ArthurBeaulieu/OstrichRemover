@@ -178,3 +178,13 @@ class ErrorEnum(Enum):
         'errorCode': 31,
         'errorValue': "Language tag is not consistent over album tracks"
     }
+    # ErrorCode 33 : The year tag doesn't match the year in released date tag
+    YEAR_VS_RELEASE_YEAR = {
+        'errorCode': 33,
+        'errorValue': "The year tag doesn't match the year in released date tag"
+    }
+    # ErrorCode 34 : There is no cover, or there are more than one cover
+    COVER_NOT_UNIQUE = {
+        'errorCode': 34,
+        'errorValue': "There is no cover, or there are more than one cover"
+    }
