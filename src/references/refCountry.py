@@ -14,4 +14,5 @@ class RefCountry(object):
                    'PLW', 'QAT', 'ROU', 'PHL', 'PRI', 'RUS', 'RWA', 'SAU', 'KNA', 'SYC', 'ZAF', 'SEN', 'SVN', 'SVK',
                    'SLE', 'SMR', 'SGP', 'SOM', 'ESP', 'LCA', 'SDN', 'SWE', 'SYR', 'CHE', 'ARE', 'TTO', 'TLS', 'THA',
                    'TJK', 'TON', 'TGO', 'STP', 'TUN', 'TUV', 'TUR', 'TWN', 'TKM', 'TZN', 'UGA', 'GBR', 'UKR', 'USA',
-                   'BFA', 'URY', 'UZB', 'VCT', 'VEN', 'VNM', 'VAT', 'NAM', 'WSM', 'SWZ', 'YEM', 'ZMB', 'ZWE', 'SRB']
+                   'BFA', 'URY', 'UZB', 'VCT', 'VEN', 'VNM', 'VAT', 'NAM', 'WSM', 'SWZ', 'YEM', 'ZMB', 'ZWE', 'SRB',
+                   'TBT']
