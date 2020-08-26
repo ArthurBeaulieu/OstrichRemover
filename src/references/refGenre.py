@@ -4,7 +4,7 @@ class RefGenre(object):
     genres = ['2-Step-Garage', 'Abstract', 'Abstract Hip-Hop', 'Acid House', 'Acid Rock', 'Acid Techno', 'Acoustic',
               'African Blues', 'Afrobeat', 'Alternative Hip-Hop', 'Alternative Metal',
               'Alternative Rock', 'Ambient', 'Ambient Pop', 'Arena Rock', 'Avant-Garde',
-              'Avant-Garde Metal', 'Ballroom', 'Baroque', 'Baroque Pop', 'Bass House', 'Bassline',
+              'Avant-Garde Metal', 'Ballroom', 'Bhangra', 'Baroque', 'Baroque Pop', 'Bass House', 'Bassline',
               'Big Beat', 'Big Room', 'Bitpop', 'Black Metal', 'Blues', 'Blues Rock',
               'Boogaloo', 'Boogie Rock', 'Boom Bap', 'Bossa Nova', 'Bounce', 'Breakbeat', 'Breakcore',
               'Breaks', 'Britpop', 'Broken Beat', 'Brostep', 'Celtic', 'Celtic Rock',
