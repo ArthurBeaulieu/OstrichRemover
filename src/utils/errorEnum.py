@@ -151,6 +151,21 @@ class ErrorEnum(Enum):
         'errorCode': 32,
         'errorValue': "There is a tag that has several fields, which is unauthorized"
     }
+    # ErrorCode 33 : The year tag doesn't match the year in released date tag
+    YEAR_VS_RELEASE_YEAR = {
+        'errorCode': 33,
+        'errorValue': "The year tag doesn't match the year in released date tag"
+    }
+    # ErrorCode 35 : Cover has no description in tag
+    NO_COVER_DESCRIPTION = {
+        'errorCode': 35,
+        'errorValue': "Cover has no description"
+    }
+    # ErrorCode 36 : Cover description doesn't match the fileName
+    COVER_DESCRIPTION_NOT_MATCHING = {
+        'errorCode': 36,
+        'errorValue': "Cover description doesn't match cover filename"
+    }
     ## ------------
     # Category 4 : Track tags coherence with album metrics
     # ErrorCode 14 : Computed album total track is not equal to the track total track tag
@@ -177,11 +192,6 @@ class ErrorEnum(Enum):
     INCONSISTENT_LANGUAGES = {
         'errorCode': 31,
         'errorValue': "Language tag is not consistent over album tracks"
-    }
-    # ErrorCode 33 : The year tag doesn't match the year in released date tag
-    YEAR_VS_RELEASE_YEAR = {
-        'errorCode': 33,
-        'errorValue': "The year tag doesn't match the year in released date tag"
     }
     # ErrorCode 34 : There is no cover, or there are more than one cover
     COVER_NOT_UNIQUE = {

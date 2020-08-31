@@ -42,6 +42,7 @@ class Track(object):
         self.hasCover = False
         self.cover = {}
         self.coverType = ''
+        self.coverDesc = ''
         # Filesystem path and name as lists (separator is ` - `)
         self.pathList = pathList
         self.fileType = fileType
@@ -192,13 +193,17 @@ class Track(object):
     # Test the cover existence in the file
     def _containsCover(self):
         # Extract image from file
-        if self.fileType == 'MP3' and 'APIC:' in self.audioTag:
-            self.cover = self.audioTag['APIC:'].data
-            self.coverType = self.audioTag['APIC:'].mime
+        if self.fileType == 'MP3':
+            mp3Cover = self.audioTag.getall('APIC')[0]
+            if mp3Cover is not None:
+                self.cover = mp3Cover.data
+                self.coverType = mp3Cover.mime
+                self.coverDesc = mp3Cover.desc
         elif self.fileType == 'FLAC':
             if len(self.audioTag.pictures) > 0:
                 self.cover = self.audioTag.pictures[0].data
                 self.coverType = self.audioTag.pictures[0].mime
+                self.coverDesc = self.audioTag.pictures[0].desc
             else:
                 self.cover = self.audioTag.pictures
         # Test cover existence

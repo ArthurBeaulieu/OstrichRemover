@@ -288,6 +288,14 @@ class TrackTester:
                         self.errors.append(ErrorEnum.INVALID_COVER)
                 img.close()
                 os.remove('tmp.jpg')  # GC
+                if self.track.coverDesc == '':
+                    self.errorCounter += 1
+                    self.errors.append(ErrorEnum.NO_COVER_DESCRIPTION)
+                else:
+                    description = self.track.albumArtist + ' - ' + self.track.year + ' - ' + self.track.albumTitle + ' - Front.jpg'
+                    if self.track.coverDesc != description and self._areStringsMatchingWithFoldernameRestrictions(self.track.coverDesc, description) is False:
+                        self.errorCounter += 1
+                        self.errors.append(ErrorEnum.COVER_DESCRIPTION_NOT_MATCHING)
 
 
     # Test ID3 fields to check if they are indeed integer (floating are forbidden in those)

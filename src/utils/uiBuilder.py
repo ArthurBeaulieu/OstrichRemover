@@ -302,6 +302,12 @@ def _printErroredTracksReport_aux(errorCode, trackTester):
     # ErrorCode 32 : A tag in file doesn't have a unique field
     elif errorCode == 32:
         printTrackErrorInfo(errorCode, t.title, 'Each tag must have only one field for its data')
+    # ErrorCode 35 : Cover has no description in tag
+    elif errorCode == 35:
+        printTrackErrorInfo(errorCode, t.coverDesc, 'Cover description is missing')
+    # ErrorCode 36 : Cover description doesn't match the fileName
+    elif errorCode == 36:
+        printTrackErrorInfo(errorCode, t.coverDesc, 'Cover description doesn\'t match the convention')
 
 
 # Auxilliary, print an error about a given album
@@ -379,7 +385,9 @@ def printTrackErrorInfo(errorCode, string1, string2):
     # ErrorCode 19 : Cover is not a 1000x1000 jpg image
     # ErrorCode 20 : Track has no cover
     # ErrorCode 34 : There is no cover, or there are more than one cover
-    elif errorCode == 19 or errorCode == 20 or errorCode == 34:
+    # ErrorCode 35 : Cover has no description in tag
+    # ErrorCode 36 : Cover description doesn't match the fileName
+    elif errorCode == 19 or errorCode == 20 or errorCode == 34 or errorCode == 35 or errorCode == 36:
         location1 = 'From Cover Tag         '
     # ErrorCode 22 : Cover format is not optimized (not jpg)
     elif errorCode == 22:
@@ -475,7 +483,9 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 19 : Cover is not a 1000x1000 jpg image
     # ErrorCode 20 : Track has no cover
     # ErrorCode 34 : There is no cover, or there are more than one cover
-    elif errorCode == 19 or errorCode == 20 or errorCode == 34:
+    # ErrorCode 35 : Cover has no description in tag
+    # ErrorCode 36 : Cover description doesn't match the fileName
+    elif errorCode == 19 or errorCode == 20 or errorCode == 34 or errorCode == 35 or errorCode == 36:
         topic = '-------- Cover Error'
     # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
     elif errorCode == 21:

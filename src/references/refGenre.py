@@ -42,7 +42,7 @@ class RefGenre(object):
               'Progressive Metal', 'Progressive Metalcore', 'Progressive Psytrance',
               'Progressive Rock', 'Progressive Trance', 'Psychedelic Blues', 'Psychedelic Funk',
               'Psychedelic Pop', 'Psychedelic Rock', 'Psychedelic Soul', 'Psychill', 'Psytrance',
-              'Punk', 'Punk Rock', 'Raga Rock', 'Ragga', 'Raggatek', 'Rap', 'Rap Be', 'Rap Fr',
+              'Punk', 'Punk Rock', 'Raga Rock', 'Ragga', 'Raggatek', 'Raï', 'Rap', 'Rap Be', 'Rap Fr',
               'Rap Rock', 'Rap Uk', 'Rap Us', 'Rawstyle', 'R&B', 'Reggae', 'Reggae Metal',
               'Reggaestep', 'Reggaeton', 'Riddim', 'Rock', 'Rockabilly', "Rock'n'Roll", 'Rocksteady',
               'Romantic', 'Roots Reggae', 'Shoegaze', 'Ska', 'Ska Punk', 'Slowcore', 'Slow Rock',
