@@ -1,10 +1,12 @@
+# Python imports
+import os
+import fnmatch
 # Project imports
 from src.models.album import Album
 from src.models.track import Track
 from src.scan.trackTester import TrackTester
 from src.utils.errorEnum import ErrorEnum
 
-import fnmatch,os
 
 # AlbumTester aim to test all tracks in a folder and group all their errors
 class AlbumTester:
@@ -90,8 +92,10 @@ class AlbumTester:
             errorCounter = 0
             labelLockErrors = False
             languageLockErrors = False
+            dateLockErrors = False
             albumLabel = self.tracks[0].track.label
             albumLanguage = self.tracks[0].track.lang
+            albumDate = self.tracks[0].track.date
             for trackTester in self.tracks:
                 errorCounter += trackTester.errorCounter
                 # ErrorCode 30 : Label tag is not consistent over album tracks
@@ -104,5 +108,10 @@ class AlbumTester:
                     languageLockErrors = True
                     self.errorCounter += 1
                     self.errors.append(ErrorEnum.INCONSISTENT_LANGUAGES)
+                # ErrorCode 38 : Release date is not consistent accross album
+                if trackTester.track.date != albumDate and dateLockErrors is False:
+                    dateLockErrors = True
+                    self.errorCounter += 1
+                    self.errors.append(ErrorEnum.INCONSISTENT_RELEASE_DATE)                    
             return errorCounter
         return 0

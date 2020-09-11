@@ -1,5 +1,4 @@
 class RefGenre(object):
-
     # Allowed genres and style according to the naming convention
     genres = ['2-Step-Garage', 'Abstract', 'Abstract Hip-Hop', 'Acid House', 'Acid Rock', 'Acid Techno', 'Acoustic',
               'African Blues', 'Afrobeat', 'Alternative Hip-Hop', 'Alternative Metal',

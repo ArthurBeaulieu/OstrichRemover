@@ -2,6 +2,7 @@
 from src.models.album import Album
 from src.models.track import Track
 
+
 class AlbumFiller:
     def __init__(self, files, preservedPath, verbose, logErrors):
         self.preservedPath = preservedPath
@@ -9,6 +10,7 @@ class AlbumFiller:
         self.album = Album(files)
         self.verbose = verbose
         self.logErrors = logErrors
+        self.hasErrors = False
         self._analyseAlbumInternals()
         self._analyseTracks()
 
@@ -34,6 +36,7 @@ class AlbumFiller:
                         if int(fileNameList[len(fileNameList) - 3][:-2]) > int(self.album.totalDisc):
                             self.album.totalDisc = fileNameList[len(fileNameList) - 3][:-2]
                     except:
+                        self.hasErrors = True
                         if self.verbose == True or self.logErrors == True:
                             print("ERROR for track : {}\n\tThe file isn't named according to the naming convention.\n".format(fileName))
                     if self.album.year == 0:
@@ -41,6 +44,7 @@ class AlbumFiller:
                     if self.verbose:
                         print('Track {}: {}\n\tRelease artist: {}\n\tAlbum: {}'.format(fileNameList[3], fileNameList[5][:-5], fileNameList[0], fileNameList[2]))
                 else:
+                    self.hasErrors = True
                     if self.verbose == True or self.logErrors == True:
                         print("ERROR for track : {}\n\tThe file isn't named according to the naming convention.\n".format(fileName))
             if fileName[-3:] == 'JPG' or fileName[-3:] == 'jpg' or fileName[-4:] == 'JPEG' or fileName[-4:] == 'jpeg' or fileName[-3:] == 'PNG' or fileName[-3:] == 'png':

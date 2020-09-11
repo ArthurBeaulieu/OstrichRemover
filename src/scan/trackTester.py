@@ -51,7 +51,6 @@ class TrackTester:
 
     # Testing Category 1 : Filesystem naming inconsistencies (see ErrorEnum.py)
     def _testFileSystemNaming(self):
-        # TODO test foldername and filename proper length etc
         # ErrorCode 00 : Filename release artists doesn't match the artist foldername
         self._testErrorForErrorCode(ErrorEnum.FILENAME_RELEASE_ARTIST_VS_ARTIST_FOLDER_NAME, self.track.fileNameList[0],
                                     self.track.pathList[len(self.track.pathList) - 2])
@@ -105,7 +104,7 @@ class TrackTester:
         # ErrorCode 23 : BPM is not an integer
         # ErrorCode 24 : Release year is not realistic (< 1900 or > today)
         # ErrorCode 29 : Invalid compilation tag
-        self._testIntegerFieldsValidity()
+        self._testFieldsValidity()
         # ErrorCode 25 : Invalid country value. Use NATO country notation with 3 capital letters
         # ErrorCode 26 : Unexisting country trigram. Check existing NATO values
         self._testLanguageTag()
@@ -298,8 +297,8 @@ class TrackTester:
                         self.errors.append(ErrorEnum.COVER_DESCRIPTION_NOT_MATCHING)
 
 
-    # Test ID3 fields to check if they are indeed integer (floating are forbidden in those)
-    def _testIntegerFieldsValidity(self):
+    # Test ID3 fields to check if they are indeed valid
+    def _testFieldsValidity(self):
         # Prevents any test if year is an empty tag
         if len(self.track.year) == 0:
             self.errorCounter += 1
@@ -317,6 +316,16 @@ class TrackTester:
         if self.track.compilation != '0' and self.track.compilation != '1' and self.track.compilation != '2' and self.track.compilation != '3':
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INVALID_COMPILATION)
+        # Wrong release date formating (test hyphen, year, month and day)
+        if self.track.date != '' and (self.track.date[4] != '-' or self.track.date[7] != '-' or len(self.track.date) != 10 or \
+            int(self.track.date[:4]) < 1900 or int(self.track.date[:4]) > datetime.datetime.now().year or \
+            int(self.track.date[5:7]) < 1 or int(self.track.date[5:7]) > 12 or \
+            int(self.track.date[8:]) < 1 or int(self.track.date[8:]) > 31 or \
+            (int(self.track.date[5:7]) % 2 == 1 and int(self.track.date[8:]) > 31) or \
+            (int(self.track.date[5:7]) % 2 == 0 and int(self.track.date[8:]) != 2 and int(self.track.date[8:]) > 30) or \
+            (int(self.track.date[5:7]) == 2 and int(self.track.date[8:]) > 29)):
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.WRONG_DATE_FORMAT)            
 
 
     # Test the lang tag to check its compliance with NATO country trigrams

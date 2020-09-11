@@ -1,6 +1,5 @@
 # Python imports
 import icu
-
 # Project imports
 from src.utils.tools import convertBytes
 
@@ -66,17 +65,17 @@ def printRootFolderInfo(folderInfo):
 
 # Prints a detailled view of a given track. Very verbose, use carefully with big libraries (unless you're ok with the shell dying in the field!)
 def printDetailledTrack(track):
-    print('ID3 Title : {}'.format(track.title))
-    print('ID3 Artists : {}'.format(track.artists))
-    print('ID3 Album : {}'.format(track.albumTitle))
-    print('ID3 Year : {}'.format(track.year))
-    print('ID3 Performers : {}'.format(track.performers))
-    print('ID3 Composers : {}'.format(track.composers))
-    print('ID3 Producer : {}'.format(track.producer))
-    print('ID3 Track n° : {}'.format(track.trackNumber))
-    print('ID3 Track total : {}'.format(track.totalTrack))
-    print('ID3 Disc n° : {}'.format(track.discNumber))
-    print('ID3 Disc total : {}'.format(track.totalDisc))
+    print('Title : {}'.format(track.title))
+    print('Artists : {}'.format(track.artists))
+    print('Album : {}'.format(track.albumTitle))
+    print('Year : {}'.format(track.year))
+    print('Performers : {}'.format(track.performers))
+    print('Composers : {}'.format(track.composers))
+    print('Producer : {}'.format(track.producer))
+    print('Track n° : {}'.format(track.trackNumber))
+    print('Track total : {}'.format(track.totalTrack))
+    print('Disc n° : {}'.format(track.discNumber))
+    print('Disc total : {}'.format(track.totalDisc))
     print('Remixer : {}'.format(track.remix))
     print('Featuring : {}'.format(track.feat))
     print('FileType : {}'.format(track.fileType))
@@ -308,6 +307,9 @@ def _printErroredTracksReport_aux(errorCode, trackTester):
     # ErrorCode 36 : Cover description doesn't match the fileName
     elif errorCode == 36:
         printTrackErrorInfo(errorCode, t.coverDesc, 'Cover description doesn\'t match the convention')
+    # ErrorCode 37 : Release date tag is not using YYYY-MM-DD format
+    elif errorCode == 37:
+        printTrackErrorInfo(errorCode, t.date, 'Release date is not a valid date')    
 
 
 # Auxilliary, print an error about a given album
@@ -327,6 +329,9 @@ def _printErroredAlbumsReport_aux(errorCode):
     # ErrorCode 34 : There is no cover, or there are more than one cover
     elif errorCode == 34:
         printTrackErrorInfo(errorCode, 'Cover count error', 'No cover, or invalid amount of cover in album')
+    # ErrorCode 38 : Release date is not consistent accross album
+    elif errorCode == 38:
+        printTrackErrorInfo(errorCode, 'Inconsistent release date accross album', 'Please set each release date tag on file with the same value')        
 
 
 # Display the error message according to the topic and error code. It will display the two !matching values
@@ -427,6 +432,13 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 33:
         location1 = 'From year              '
         location2 = 'From release year      '
+    # ErrorCode 37 : Release date tag is not using YYYY-MM-DD format
+    elif errorCode == 37:
+        location1 = 'From release year      '
+    # ErrorCode 38 : Release date is not consistent accross album
+    elif errorCode == 38:
+        location1 = 'From date tag on files '
+        location2 = 'Action                 '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -515,8 +527,9 @@ def getTopicStringFromErrorCode(errorCode):
     elif errorCode == 32:
         topic = '---------- Tag error'
     # ErrorCode 33 : The year tag doesn't match the year in released date tag
-    elif errorCode == 33:
-        topic = '------- Release Year'
+    # ErrorCode 38 : Release date is not consistent accross album    
+    elif errorCode == 33 or errorCode == 37 or errorCode == 38:
+        topic = '------- Release date'
     return topic
 
 

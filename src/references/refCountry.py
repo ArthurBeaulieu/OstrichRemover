@@ -1,5 +1,4 @@
 class RefCountry(object):
-
     # https://en.wikipedia.org/wiki/List_of_NATO_country_codes + BZH (29 rpz)
     countryList = ['ATG', 'AFG', 'DZA', 'AZE', 'ALB', 'ARM', 'AND', 'AGO', 'ARG', 'AUS', 'AUT', 'BHR', 'BRB', 'BWA',
                    'BZH', 'BEL', 'BHS', 'BGD', 'BLZ', 'BIH', 'BOL', 'MMR', 'BEN', 'BLR', 'SLB', 'BRA', 'BTN', 'BGR',

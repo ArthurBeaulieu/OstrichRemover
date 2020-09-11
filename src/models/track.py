@@ -1,10 +1,11 @@
+# Python imports
+import mimetypes
+import PIL
 # Project imports
 from mutagen.id3 import ID3
 from mutagen.flac import FLAC, Picture
 from mutagen.id3._frames import TIT2, TDRC, TPE1, TPE2, TOPE, TRCK, TALB, TCMP, TCOM, TPOS, APIC
 
-import mimetypes
-import PIL
 
 # from utils.uiBuilder import printDetailledTrack # Uncomment for debug purpose only (printDetailledTrack() is very verbose)
 mimetypes.init()
@@ -59,6 +60,7 @@ class Track(object):
             self._fillFromFLAC()
         self._computeInternals()
 
+
     # Read the mp3 track ID3 tags and extract all interresting values into a Track object
     def _fillFromMP3(self):
         if 'TIT2' in self.audioTag and self.audioTag['TIT2'].text[0] != '':
@@ -102,6 +104,7 @@ class Track(object):
         if 'TDOR' in self.audioTag and self.audioTag['TDOR'].text[0] != '':
             self.date = str(self.audioTag['TDOR'].text[0])
 
+
     # Read the flac track Vorbis tags and extract all interresting values into a Track object
     def _fillFromFLAC(self):
         if 'TITLE' in self.audioTag:
@@ -141,6 +144,7 @@ class Track(object):
         if 'RELEASEDATE' in self.audioTag:
             self.date = self.audioTag['RELEASEDATE'][0]
 
+
     # Compute all class internals that can not be extracted from ID3 tags
     def _computeInternals(self):
         self._computeFileNameList()
@@ -148,6 +152,7 @@ class Track(object):
         self._computeFeaturing()
         self._computeRemixer()
         self._containsCover()
+
 
     # Splits the filename into its components
     # (%releaseArtists% - %year% - %albumTitle% - %discNumber%%trackNumber% - %artists% - %title%)
@@ -160,6 +165,7 @@ class Track(object):
             # When album is a single, we must re-join the album name and the 'Single' suffix
             self.fileNameList[2:4] = [' - '.join(self.fileNameList[2:4])]  # Re-join with a ' - ' separator
 
+
     # Splits the folderame into its components (%year% - %albumTitle%)
     def _computeFolderNameList(self):
         # We also split the folder name to make a double check for Year and Album name
@@ -169,6 +175,7 @@ class Track(object):
         if len(self.folderNameList) == 3 and self.folderNameList[2] in forbiddenPattern:
             # When album is a single, we must re-join the album name and the 'Single' suffix
             self.folderNameList[1:3] = [' - '.join(self.folderNameList[1:3])]  # Re-join with a ' - ' separator
+
 
     # Extract the featured artist(s) name(s) from the track fileName
     def _computeFeaturing(self):
@@ -182,6 +189,7 @@ class Track(object):
                 return
         self.composedPerformer = self.artists  # No featuring so performer should be equal to artist
 
+
     # Extract the track remix artist name from the track fileName
     def _computeRemixer(self):
         if self.fileNameList[len(self.fileNameList) - 1].find(' Remix)') != -1:
@@ -189,6 +197,7 @@ class Track(object):
                          # +1 is to remove the opening parenthesis
                          self.fileName.rfind('(', 0, len(self.fileName)) + 1:self.fileName.rfind(' Remix)')
                          ].split(', ')
+
 
     # Test the cover existence in the file
     def _containsCover(self):
@@ -211,6 +220,7 @@ class Track(object):
             self.hasCover = True
         else:
             self.hasCover = False
+
 
     def testTagsUnicity(self):
         if self.fileType == 'MP3':
@@ -235,6 +245,7 @@ class Track(object):
             if 'COMPILATION' in self.audioTag and len(self.audioTag['COMPILATION']) > 1: return False
             if 'RELEASEDATE' in self.audioTag and len(self.audioTag['RELEASEDATE']) > 1: return False
         return True
+
 
     # Clear all previously existing tags
     def clearInternalTags(self, album):
@@ -268,6 +279,7 @@ class Track(object):
             self.audioTag['RELEASEDATE'] = ''
             self.audioTag.clear_pictures()
         self.audioTag.save(self.audioTagPath)
+
 
     # Compute all class internals that can not be extracted from ID3 tags
     def setInternalTags(self, album):
@@ -332,12 +344,14 @@ class Track(object):
         # Now save all the new tags into the audio file
         self.audioTag.save(self.audioTagPath)
 
+
     # Check if the tag is already filled before adding one
     def _setInternalTag(self, tag, value):
         if tag in self.audioTag and self.audioTag[tag] is not value:
             self.audioTag[tag] = value
         else:
             self.audioTag[tag] = ''
+
 
     # This method will fill :
     # - Label tag if publisher tag was previously filled (according to this convention, the label is stored in publisher (TPUB) for mp3 files)
@@ -346,6 +360,7 @@ class Track(object):
             if 'PUBLISHER' in self.audioTag and self.audioTag['PUBLISHER'] != ['']:
                 self._setInternalTag('LABEL', self.audioTag['PUBLISHER'][0])
                 self.audioTag['PUBLISHER'] = ''  # Clear publisher tag
+
 
     # Build artist array from artist string and support remix artist if any
     def _buildArtistsList(self):
@@ -358,6 +373,7 @@ class Track(object):
             outputList = list(set(outputList + self.remix))
         outputList.sort()
         self.artists = outputList
+
 
     # Build performers array from artist string and support remix artist if any
     def _buildPerformersList(self):
@@ -372,6 +388,7 @@ class Track(object):
             outputList = list(set(outputList + self.feat))
         outputList.sort()
         self.performers = outputList
+
 
     # Append a cover to the track only if it is 1k by 1k and if there is not any cover
     def _addCoverToFile(self, album):

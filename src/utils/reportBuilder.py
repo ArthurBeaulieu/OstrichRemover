@@ -1,7 +1,6 @@
 # Python imports
 import datetime
 import json
-
 # Project imports
 from src.utils.errorEnum import ErrorEnum
 from src.utils.tools import createDirectory

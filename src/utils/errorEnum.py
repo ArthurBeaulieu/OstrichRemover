@@ -166,6 +166,11 @@ class ErrorEnum(Enum):
         'errorCode': 36,
         'errorValue': "Cover description doesn't match cover filename"
     }
+    # ErrorCode 37 : Release date tag is not using YYYY-MM-DD format
+    WRONG_DATE_FORMAT = {
+        'errorCode': 37,
+        'errorValue': "Release date is not a valid date"
+    }
     ## ------------
     # Category 4 : Track tags coherence with album metrics
     # ErrorCode 14 : Computed album total track is not equal to the track total track tag
@@ -198,3 +203,8 @@ class ErrorEnum(Enum):
         'errorCode': 34,
         'errorValue': "There is no cover, or there are more than one cover"
     }
+    # ErrorCode 38 : Release date tag is not consistent over album tracks
+    INCONSISTENT_RELEASE_DATE = {
+        'errorCode': 38,
+        'errorValue': "Release date tag is not consistent over album tracks"
+    }    

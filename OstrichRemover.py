@@ -19,7 +19,7 @@ from src.utils.uiBuilder import *
 from src.utils.tools import *
 # Globals
 global scriptVersion
-scriptVersion = '1.4.7'
+scriptVersion = '1.5.0'
 
 
 # Script main frame
@@ -157,13 +157,15 @@ def fillTags(args):
         if len(path) == 2 and path[1] != '':
             albumFiller = AlbumFiller(files, preservedPath, args['verbose'], args['errors'])
             albumFillers.append(albumFiller)
-            filledTracks += albumFiller.album.totalTrack
+            if albumFiller.hasErrors is False:
+                filledTracks += albumFiller.album.totalTrack
         # Display a progress every step %
         fillPercentage = (filledTracks * 100) / totalTracks
         if totalTracks > 10 and fillPercentage >= step and filledTracks < totalTracks:
             if (filledTracks * 100) / totalTracks > percentage and percentage < 100:
                 printFillProgress(percentage, filledTracks)
                 percentage += step
+    # Couldn't fill all track because of naming error
     if totalTracks is not filledTracks:
         printInvalidFolderStructure(filledTracks, totalTracks, 'fill')
     # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed

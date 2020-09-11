@@ -1,7 +1,6 @@
 # Python imports
 import os
 import sys
-
 # Project imports
 from src.utils.errorEnum import ErrorEnum
 from src.references.refForbiddenChar import RefForbiddenChar
