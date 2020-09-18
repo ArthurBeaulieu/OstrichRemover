@@ -317,7 +317,7 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INVALID_COMPILATION)
         # Wrong release date formating (test hyphen, year, month and day)
-        if self.track.date != '' and (self.track.date[4] != '-' or self.track.date[7] != '-' or len(self.track.date) != 10 or \
+        if self.track.date != '' and len(self.track.date) > 8 and (self.track.date[4] != '-' or self.track.date[7] != '-' or len(self.track.date) != 10 or \
             int(self.track.date[:4]) < 1900 or int(self.track.date[:4]) > datetime.datetime.now().year or \
             int(self.track.date[5:7]) < 1 or int(self.track.date[5:7]) > 12 or \
             int(self.track.date[8:]) < 1 or int(self.track.date[8:]) > 31 or \
@@ -325,7 +325,7 @@ class TrackTester:
             (int(self.track.date[5:7]) % 2 == 0 and int(self.track.date[8:]) != 2 and int(self.track.date[8:]) > 30) or \
             (int(self.track.date[5:7]) == 2 and int(self.track.date[8:]) > 29)):
             self.errorCounter += 1
-            self.errors.append(ErrorEnum.WRONG_DATE_FORMAT)            
+            self.errors.append(ErrorEnum.WRONG_DATE_FORMAT)
 
 
     # Test the lang tag to check its compliance with NATO country trigrams
