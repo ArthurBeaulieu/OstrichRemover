@@ -97,6 +97,7 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 - [x] Meta analyzer for scan dumps
 - [x] Update web report to support meta analysis dumps
 - [x] Web improvement (local storage, error handling, full responsive)
+- [ ] Service usage to make ostrich call an output point when done ;
 - [ ] Continuous integration (sonar)
 
 ##### v3.0
