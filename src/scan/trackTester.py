@@ -9,7 +9,7 @@ from src.references.refGenre import RefGenre
 # Enum imports
 from src.utils.errorEnum import ErrorEnum
 # Utils imports
-from src.utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray
+from src.utils.tools import prefixDot, prefixThreeDots, suffixDot, suffixThreeDots, removeSpecialCharFromArray, validateDateFormat
 from PIL import Image
 
 
@@ -317,13 +317,7 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.INVALID_COMPILATION)
         # Wrong release date formating (test hyphen, year, month and day)
-        if self.track.date != '' and len(self.track.date) > 8 and (self.track.date[4] != '-' or self.track.date[7] != '-' or len(self.track.date) != 10 or \
-            int(self.track.date[:4]) < 1900 or int(self.track.date[:4]) > datetime.datetime.now().year or \
-            int(self.track.date[5:7]) < 1 or int(self.track.date[5:7]) > 12 or \
-            int(self.track.date[8:]) < 1 or int(self.track.date[8:]) > 31 or \
-            (int(self.track.date[5:7]) % 2 == 1 and int(self.track.date[8:]) > 31) or \
-            (int(self.track.date[5:7]) % 2 == 0 and int(self.track.date[8:]) != 2 and int(self.track.date[8:]) > 30) or \
-            (int(self.track.date[5:7]) == 2 and int(self.track.date[8:]) > 29)):
+        if self.track.date != '' and validateDateFormat(self.track.date) == False:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.WRONG_DATE_FORMAT)
 

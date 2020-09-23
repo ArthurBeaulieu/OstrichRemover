@@ -1,6 +1,7 @@
 # Python imports
 import os
 import sys
+import datetime
 # Project imports
 from src.utils.errorEnum import ErrorEnum
 from src.references.refForbiddenChar import RefForbiddenChar
@@ -105,3 +106,11 @@ def queryYesNo(question, default='yes'):
             return valid[choice]
         else:
             print("Please respond with 'yes' or 'no' (or 'y' or 'n').\n")
+
+# Validate date formatting
+def validateDateFormat(string):
+    try:
+        datetime.datetime.strptime(string, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False

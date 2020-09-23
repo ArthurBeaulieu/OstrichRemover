@@ -207,4 +207,4 @@ class ErrorEnum(Enum):
     INCONSISTENT_RELEASE_DATE = {
         'errorCode': 38,
         'errorValue': "Release date tag is not consistent over album tracks"
-    }    
+    }

@@ -222,8 +222,10 @@ class Track(object):
             self.hasCover = False
 
 
+    # Inspects the track object to find if any of its tags has multiple fields
     def testTagsUnicity(self):
         if self.fileType == 'MP3':
+            # TODO handle for mp3
             pass
         elif self.fileType == 'FLAC':
             if 'TITLE' in self.audioTag and len(self.audioTag['TITLE']) > 1: return False
@@ -285,6 +287,8 @@ class Track(object):
     def setInternalTags(self, album):
         # Compilation tag is '0' for regular release, '1' for various artist and '2' for mixes
         compilation = '0'
+        default = '<fill me>'
+        # Since record company must contain this string, we then admit its a compilation
         if ' Records' in album.albumArtist:
             compilation = '1'
         if self.fileType == 'FLAC':
@@ -294,26 +298,51 @@ class Track(object):
                 self._addCoverToFile(album)
                 # Append tag by tag o the track
                 if self.fileNameList[5] is not None:
-                    self._setInternalTag('TITLE', self.fileNameList[5][:-5])
+                    self._setInternalTag('TITLE', self.fileNameList[5][:-5], default)
             if album.year is not None:
-                self._setInternalTag('DATE', str(album.year))
+                self._setInternalTag('DATE', str(album.year), '1900')
+            else:
+                self._setInternalTag('DATE', '1900')
             if self.artists is not None:
-                self._setInternalTag('ARTIST', '; '.join(self.artists))
+                self._setInternalTag('ARTIST', '; '.join(self.artists), default)
+            else:
+                self._setInternalTag('ARTIST', default)
             if album.albumArtist is not None:
-                self._setInternalTag('ALBUMARTIST', album.albumArtist)
+                self._setInternalTag('ALBUMARTIST', album.albumArtist, default)
+            else:
+                self._setInternalTag('ALBUMARTIST', default)
             if self.performers is not None:
-                self._setInternalTag('PERFORMER', '; '.join(self.performers))
+                self._setInternalTag('PERFORMER', '; '.join(self.performers), default)
+            else:
+                self._setInternalTag('PERFORMER', default)
             if len(self.fileNameList) == 6 and self.fileNameList[3] is not None:
-                self._setInternalTag('TRACKNUMBER', str(self.fileNameList[3][1:]).lstrip('0'))
+                self._setInternalTag('TRACKNUMBER', str(self.fileNameList[3][1:]).lstrip('0'), '0')
+            else:
+                self._setInternalTag('TRACKNUMBER', '0')
             if album.totalTrack is not None:
-                self._setInternalTag('TRACKTOTAL', str(album.totalTrack))
+                self._setInternalTag('TRACKTOTAL', str(album.totalTrack), '0')
+            else:
+                self._setInternalTag('TRACKTOTAL', '0')
             if len(self.folderNameList) == 2 and self.folderNameList[1] is not None:
-                self._setInternalTag('ALBUM', self.folderNameList[1])
+                self._setInternalTag('ALBUM', self.folderNameList[1], default)
+            else:
+                self._setInternalTag('ALBUM', default)
             if album.totalDisc is not None:
-                self._setInternalTag('DISCTOTAL', str(album.totalDisc))
+                self._setInternalTag('DISCTOTAL', str(album.totalDisc), '0')
+            else:
+                self._setInternalTag('DISCTOTAL', '0')
             if len(self.fileNameList) == 6 and self.fileNameList[3] is not None:
-                self._setInternalTag('DISCNUMBER', str(self.fileNameList[3][0]))
-            self._setInternalTag('COMPILATION', compilation)
+                self._setInternalTag('DISCNUMBER', str(self.fileNameList[3][0]), '0')
+            else:
+                self._setInternalTag('DISCNUMBER', '0')
+            # No need for test value as compilation is built locally (only for regular(0)/compilation(1), not live(2)/mix(3))
+            self._setInternalTag('COMPILATION', compilation, '-1')
+            # Create fields with default value to fasten manual tagging
+            self._setInternalTag('COMPOSER', default)
+            self._setInternalTag('LANGUAGE', default)
+            self._setInternalTag('PRODUCER', default)
+            self._setInternalTag('LABEL', default) # May be overwritten in _fillTagsFromPreviouslyExistingTag()
+            self._setInternalTag('RELEASEDATE', '1900-01-01')
             # If other tags were previously filled, try to integrate them according to the tagging convention
             self._fillTagsFromPreviouslyExistingTag()
         elif self.fileType == 'MP3':
@@ -346,11 +375,11 @@ class Track(object):
 
 
     # Check if the tag is already filled before adding one
-    def _setInternalTag(self, tag, value):
+    def _setInternalTag(self, tag, value, default=''):
         if tag in self.audioTag and self.audioTag[tag] is not value:
             self.audioTag[tag] = value
         else:
-            self.audioTag[tag] = ''
+            self.audioTag[tag] = default
 
 
     # This method will fill :
@@ -358,7 +387,7 @@ class Track(object):
     def _fillTagsFromPreviouslyExistingTag(self):
         if self.fileType == 'FLAC':
             if 'PUBLISHER' in self.audioTag and self.audioTag['PUBLISHER'] != ['']:
-                self._setInternalTag('LABEL', self.audioTag['PUBLISHER'][0])
+                self._setInternalTag('LABEL', self.audioTag['PUBLISHER'][0], '<fill me>')
                 self.audioTag['PUBLISHER'] = ''  # Clear publisher tag
 
 
