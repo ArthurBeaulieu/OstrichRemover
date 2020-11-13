@@ -44,7 +44,7 @@ class RefGenre(object):
               'Punk', 'Punk Rock', 'Raga Rock', 'Ragga', 'Raggatek', 'Raï', 'Rap', 'Rap Be', 'Rap Fr',
               'Rap Rock', 'Rap Uk', 'Rap Us', 'Rawstyle', 'R&B', 'Reggae', 'Reggae Metal',
               'Reggaestep', 'Reggaeton', 'Renaissance', 'Riddim', 'Rock', 'Rockabilly', "Rock'n'Roll", 'Rocksteady',
-              'Romantic', 'Roots Reggae', 'Shoegaze', 'Ska', 'Ska Punk', 'Slowcore', 'Slow Rock',
+              'Romantic', 'Roots Reggae', 'Shoegaze', 'Ska', 'Ska Punk', 'Skate Rock', 'Slowcore', 'Slow Rock',
               'Smooth Jazz', 'Soft Rock', 'Soul', 'Southern Rock', 'Southern Soul', 'Space Rock',
               'Speedcore', 'Speed Garage', 'Speed Metal', 'Stoner Rock', 'Sunshine Pop',
               'Surf Rock', 'Swing', 'Symphonic Metal', 'Symphonic Rock', 'Synthpop', 'Synthwave',
