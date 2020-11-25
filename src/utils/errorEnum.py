@@ -79,6 +79,11 @@ class ErrorEnum(Enum):
         'errorCode': 21,
         'errorValue': "Folder name release artist is not equal to the track album artist tag"
     }
+    # ErrorCode 39 : Folder name release date doesn't match the track release date tag
+    FOLDER_NAME_DATE_VS_RELEASE_DATE_TAG = {
+        'errorCode': 39,
+        'errorValue': "Folder name release date doesn't match the track release date tag"
+    }
     ## ------------
     # Category 3 : ID3 tags inconsistencies
     # ErrorCode 11 : Some tag requested by the naming convention aren't filled in track

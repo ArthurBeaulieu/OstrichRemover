@@ -53,6 +53,7 @@ class GraphUtils {
     this._styles = {
       height: this._parent.clientHeight - (2.5 * margin) - controlsOffset,
       width: this._parent.clientWidth - (2.5 * margin),
+      color: 'grey',
       margin: {
         top: margin,
         right: margin,
@@ -130,6 +131,7 @@ class GraphUtils {
         .attr('transform', `translate(${(this._styles.width)}, ${(this._styles.height - (this._styles.margin.top / 8))})`)
         .style('text-anchor', 'end')
         .style('font-size', '.75rem')
+        .style('fill', this._styles.color)
         .text('Date'); // X axis label is always a date so far
     // Add the Y axis
     if (this._yAxisValue === 'size') { // Size is bytes and therefore must be converted
@@ -155,6 +157,7 @@ class GraphUtils {
       .style('text-anchor', 'start')
       .style('text-transform', 'capitalize')
       .style('font-size', '.75rem')
+      .style('fill', this._styles.color)
       .text(this._yAxisValue);
   }
 
@@ -167,11 +170,12 @@ class GraphUtils {
     // Black vertical line
     this._mouseG.append('path')
       .attr('class', 'mouse-line')
-      .style('stroke', 'black')
+      .style('stroke', this._styles.color)
       .style('stroke-width', '1px')
       .style('opacity', '0');
     // This text will contain hovered month
     this._mouseG.append('text')
+      .style('fill', this._styles.color)
       .style('font-style', 'italic');
     // Graph title
     this._svg.append('text')
@@ -179,6 +183,7 @@ class GraphUtils {
       .attr('y', -(this._styles.margin.bottom / 3))
       .attr('text-anchor', 'middle')
       .style('font-size', '1.66rem')
+      .style('fill', this._styles.color)
       .text(this._title);
   }
 
@@ -197,6 +202,7 @@ class GraphUtils {
     lineLegend.append('text')
       .text(d => d)
       .style('font-size', '.8rem')
+      .style('fill', this._styles.color)
       .style('text-transform', 'capitalize')
       .attr('transform', 'translate(15, 9)'); // Align texts with boxes
     // Append colored circle

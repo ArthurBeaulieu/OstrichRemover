@@ -17,10 +17,10 @@ class Utils {
   static convertBytes(bytes) {
     // Don't wanna try here to do any 0 division
     if (bytes === 0) {
-      return '0 bytes';
+      return '0 B ';
     }
 
-    const sizes = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+    const sizes = ['B ', 'KB', 'MB', 'GB', 'TB'];
     const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
     if (i === 0) {
       return `${bytes} ${sizes[i]})`;
@@ -95,6 +95,13 @@ class Utils {
   // If input value is below zero, add red color, if equal 0 do nothing for color and above zero, add green color
   // This is to make UX for understand if numbers have raised of fall
   static setColorFromValue(value) {
+    // value to convert contains a string
+    let extension = '';
+    if (typeof value === 'string' && (value.indexOf('B') !== -1 || value.indexOf('b') !== -1)) {
+      extension = value.substring(value.length - 3, value.length);
+      value = value.slice(0, value.length - 3);
+    }
+
     let colorClass = '';
     let sign = '';
     if (value > 0) {
@@ -104,7 +111,7 @@ class Utils {
       colorClass = 'red';
     }
 
-    return `<b class="${colorClass}" style="float: right">${sign}${value}</b>`;
+    return `<b class="${colorClass}" style="float: right">${sign}${value}${extension}</b>`;
   }
 
 

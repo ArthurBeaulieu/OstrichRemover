@@ -5,7 +5,7 @@ import AnalysisView from './views/AnalysisView.js';
 
 
 let view = null; // The active view in report-container
-const scriptVersion = '1.5.1';
+const scriptVersion = '1.5.2';
 
 
 // Display notification global method that can accessed through window object
@@ -40,6 +40,28 @@ const restoreHomepage = () => {
 const clearView = () => {
   DisplayNotification('success', 'View cleared');
   restoreHomepage();
+}
+
+
+// Handle the UI theme
+let theme = 'LIGHT';
+const switchTheme = () => {
+  if (theme === 'LIGHT') {
+    theme = 'DARK';
+    document.body.classList.remove('light-theme');
+    document.body.classList.add('dark-theme');
+  } else {
+    theme = 'LIGHT';
+    document.body.classList.remove('dark-theme');
+    document.body.classList.add('light-theme');
+  }
+  window.localStorage.setItem('theme', theme);
+};
+// Init view with local storage value
+if (window.localStorage.getItem('theme') === 'DARK') {
+  theme = 'LIGHT'; // Force switching to dark
+  switchTheme();
+  document.querySelector('#theme-switch').checked = true;
 }
 
 
@@ -84,7 +106,8 @@ const DnDController = new DnD({
 });
 
 
-// Update title and liste to clear view events
+// Clear view events, update title and listen to theme switch
 document.querySelector('#home').addEventListener('click', clearView, false); // Clear view event
 document.querySelector('#clear-view').addEventListener('click', clearView, false); // Clear view event
 document.querySelector('#nav-title').innerHTML += ` ${scriptVersion}`; // Append script version to initialize page title
+document.querySelector('#theme-switch').addEventListener('click', switchTheme, false); // React to theme switching

@@ -309,7 +309,10 @@ def _printErroredTracksReport_aux(errorCode, trackTester):
         printTrackErrorInfo(errorCode, t.coverDesc, 'Cover description doesn\'t match the convention')
     # ErrorCode 37 : Release date tag is not using YYYY-MM-DD format
     elif errorCode == 37:
-        printTrackErrorInfo(errorCode, t.date, 'Release date is not a valid date')    
+        printTrackErrorInfo(errorCode, t.date, 'Release date is not a valid date')
+    # ErrorCode 39 : Folder name release date doesn't match the track release date tag
+    elif errorCode == 39:
+        printTrackErrorInfo(errorCode, t.date, 'Release date doesn\'t match the album folder name release date')
 
 
 # Auxilliary, print an error about a given album
@@ -331,7 +334,7 @@ def _printErroredAlbumsReport_aux(errorCode):
         printTrackErrorInfo(errorCode, 'Cover count error', 'No cover, or invalid amount of cover in album')
     # ErrorCode 38 : Release date is not consistent accross album
     elif errorCode == 38:
-        printTrackErrorInfo(errorCode, 'Inconsistent release date accross album', 'Please set each release date tag on file with the same value')        
+        printTrackErrorInfo(errorCode, 'Inconsistent release date accross album', 'Please set each release date tag on file with the same value')
 
 
 # Display the error message according to the topic and error code. It will display the two !matching values
@@ -436,7 +439,8 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 37:
         location1 = 'From release year      '
     # ErrorCode 38 : Release date is not consistent accross album
-    elif errorCode == 38:
+    # ErrorCode 39 : Folder name release date doesn't match the track release date tag
+    elif errorCode == 38 or errorCode == 39:
         location1 = 'From date tag on files '
         location2 = 'Action                 '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
@@ -527,8 +531,9 @@ def getTopicStringFromErrorCode(errorCode):
     elif errorCode == 32:
         topic = '---------- Tag error'
     # ErrorCode 33 : The year tag doesn't match the year in released date tag
-    # ErrorCode 38 : Release date is not consistent accross album    
-    elif errorCode == 33 or errorCode == 37 or errorCode == 38:
+    # ErrorCode 38 : Release date is not consistent accross album
+    # ErrorCode 39 : Folder name release date doesn't match the track release date tag
+    elif errorCode == 33 or errorCode == 37 or errorCode == 38 or errorCode == 39:
         topic = '------- Release date'
     return topic
 

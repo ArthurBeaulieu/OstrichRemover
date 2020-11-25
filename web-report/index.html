@@ -8,7 +8,7 @@
   <title>OstrichRemover</title>
   <link rel="icon" type="image/png" href="https://manazeak.org/static/img/logo/manazeak-logo-square.svg">
 </head>
-<body class="md">
+<body class="md light-theme">
   <nav>
     <ul>
       <li style="display:flex;align-items:center;padding-left:20px;padding-right:0;"><img src="https://manazeak.org/static/img/logo/manazeak-logo-square.svg" id="home" height="40" alt="manazeak-logo"></li>
@@ -32,6 +32,12 @@
   </main>
   <footer>
     <p>ManaZeak organization<br>2017 – 2020</p>
+    <div class="theme-switch-container">
+      <p>Dark theme</p>
+      <div class="switch-wrapper">
+        <input id="theme-switch" class="switch" type="checkbox" name="theme-switch-checkbox">
+      </div>
+    </div>
   </footer>
   <script src="./lib/d3.v5.min.js"></script>
   <script type="module" src="./js/App.js"></script>

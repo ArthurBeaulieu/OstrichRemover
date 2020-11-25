@@ -73,11 +73,12 @@ class AnalysisView {
       <h3 class="center">Meta analysis sum up</h3><em class="center">${this._data.metaAnalyze.folderPath}</em>
       <span class="center">Meta analysis duration :&nbsp;<b>${Utils.secondsToTimecode(this._data.elapsedSeconds)}</b></span>
       <span class="center"><b>${fd.date}</b>&nbsp;→&nbsp;<b>${ld.date}</b></span>
+      <span class="center"><i>${Math.floor(((new Date(ld.date).getTime() / 1000) - (new Date(fd.date).getTime() / 1000)) / 86400)} days</i></span>
     `;
     fsInfo.innerHTML = `
        <u><em class="lead">File system info</em></u>
        <br>Size: <b>${Utils.convertBytes(fd.folderInfo.size)}</b> → <b>${Utils.convertBytes(ld.folderInfo.size)}</b>
-       <b style="float: right">${Utils.convertBytes(ma.sizeDelta)}</b><br>
+       <b style="float: right">${Utils.setColorFromValue(Utils.convertBytes(ma.sizeDelta))}</b><br>
        Files: <b>${fd.folderInfo.files}</b> → <b>${ld.folderInfo.files}</b>
        ${Utils.setColorFromValue(ma.filesDelta)}<br>
        Folders: <b>${fd.folderInfo.folders}</b> → <b>${ld.folderInfo.folders}</b>
@@ -135,6 +136,8 @@ class AnalysisView {
     this._elements.views.quality.innerHTML = 'Quality';
     this._elements.views.size.innerHTML = 'Size';
     // Set cheboc internals and default to unchecked
+    checkboxContainer.className = 'switch-wrapper';
+    checkbox.className = 'switch';
     checkbox.type = 'checkbox';
     checkbox.checked = this._checked; // Checked must be a bool, not a string
     filledCurvesLabel.innerHTML = 'Filled curves';
@@ -157,6 +160,7 @@ class AnalysisView {
       localStorage.setItem('fill-checked', this._checked);
       this._changeView(this._activeGraph);
     }, false);
+    // Redraw on resize
     window.addEventListener('resize', () => {
       this._changeView(this._activeGraph);
     }, false);

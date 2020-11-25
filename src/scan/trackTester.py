@@ -56,7 +56,7 @@ class TrackTester:
                                     self.track.pathList[len(self.track.pathList) - 2])
         # ErrorCode 01 : Filename year doesn't match the album foldername year
         self._testErrorForErrorCode(ErrorEnum.FILENAME_YEAR_VS_ALBUM_FOLDER_NAME_YEAR, self.track.fileNameList[1],
-                                    self.track.folderNameList[0])
+                                    self.track.folderNameList[0][:4])
         # ErrorCode 02 : Filename album doesn't match the album foldername
         self._testErrorForErrorCode(ErrorEnum.FILENAME_ALBUM_VS_ALBUM_FOLDER_NAME, self.track.fileNameList[2],
                                     self.track.folderNameList[1])
@@ -66,7 +66,7 @@ class TrackTester:
         # ErrorCode 03 : Filename year doesn't math the track year tag
         self._testErrorForErrorCode(ErrorEnum.FILENAME_YEAR_VS_YEAR_TAG, self.track.fileNameList[1], self.track.year)
         # ErrorCode 04 : Foldername year doesn't math the track year tag
-        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_YEAR_VS_YEAR_TAG, self.track.folderNameList[0],
+        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_YEAR_VS_YEAR_TAG, self.track.folderNameList[0][:4],
                                     self.track.year)
         # ErrorCode 05 : Filename album doesn't match the track album
         self._testErrorForErrorCode(ErrorEnum.FILENAME_ALBUM_VS_ALBUM_TAG, self.track.fileNameList[2],
@@ -85,8 +85,11 @@ class TrackTester:
         self._testErrorForErrorCode(ErrorEnum.FILENAME_TITLE_VS_TITLE_TAG, self.track.fileNameList[5].rsplit('.', 1)[0],
                                     self.track.title)
         # ErrorCode 21 : Release artist folder name doesn't match the track album artist tag
-        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_RELEASE_ARTISTS_VS_ALBUM_ARTIST_TAG,
-                                    self.track.fileNameList[0], self.track.albumArtist)
+        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_RELEASE_ARTISTS_VS_ALBUM_ARTIST_TAG, self.track.fileNameList[0],
+                                    self.track.albumArtist)
+        # ErrorCode 39 : Folder name release date doesn't match the track release date tag
+        self._testErrorForErrorCode(ErrorEnum.FOLDER_NAME_DATE_VS_RELEASE_DATE_TAG, self.track.folderNameList[0],
+                                    self.track.date)
 
 
     # Testing Category 3 : ID3 tags inconsistencies

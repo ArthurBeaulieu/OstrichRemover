@@ -1,20 +1,47 @@
-html, body {
+.light-theme {
   --bg: rgba(52, 52, 52, 0.8);
   --bg-light-blue: rgba(100, 100, 255, 0.05);
   --white: rgba(255, 255, 255, 0.9);
+  --black: rgba(0, 0, 0, 0.9);
   --red: rgb(255, 100, 100);
   --redSoft: rgb(250, 205, 209);
   --green: rgb(55, 195, 64);
   --greenSoft: rgb(199, 237, 205);
   --overlay: rgba(0, 0, 0, 0.4);
   --border: rgba(127, 127, 127, 0.15);
+}
+
+.dark-theme {
+  --bg: rgba(52, 52, 52, 0.8);
+  --bg-light-blue: rgba(10, 10, 25, .5);
+  --white: rgba(0, 0, 0, 0.9);
+  --black: rgba(255, 255, 255, 0.9);
+  --red: rgb(255, 100, 100);
+  --redSoft: rgb(250, 205, 209);
+  --green: rgb(55, 195, 64);
+  --greenSoft: rgb(199, 237, 205);
+  --overlay: rgba(0, 0, 0, 0.4);
+  --border: rgba(127, 127, 127, 0.15);
+}
+
+html, body {
   --border-radius: 5px;
   --top-height: 50px;
   --foot-height: 50px;
   --margin: 20px;
   --padding: 10px;
+  background: var(--white);
   height: 100%;
   width: 100%;
+  transition: all .3s;
+}
+
+h1, h2, h3, h4, h5, h6, p, em, i, b, strong {
+  color: var(--black);
+}
+
+a {
+  color: var(--red);
 }
 
 nav {
@@ -51,8 +78,8 @@ nav ul li {
   padding: 0 calc(var(--top-height) / 2) 0 0;
 }
 
-nav a {
-  color: var(--white);
+nav a, nav h3 {
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
 }
 
@@ -78,6 +105,7 @@ footer {
   font-size: .8rem;
   height: var(--foot-height);
   justify-content: center;
+  position: relative;
   text-align: center;
   width: 100%;
 }
@@ -218,7 +246,7 @@ button.active {
 .legend rect {
   fill: white;
   opacity: 0.8;
-  stroke: rgba(52, 52, 52, 0.8);
+  stroke: var(--bg);
 }
 
 .grid .tick {
@@ -250,6 +278,11 @@ button.active {
   display: flex;
   height: 100%;
   margin-left: auto;
+  min-width: 10rem;
+}
+
+.report-container .col-seven .graph-controls div p {
+  margin-right: .5rem;
 }
 
 .purity-progress {
@@ -298,6 +331,59 @@ button.active {
 
 .red {
   color: var(--red);
+}
+
+/* Switch checkbox style */
+
+.theme-switch-container {
+  align-items: center;
+  display: flex;
+  position: absolute;
+  right: 0;
+}
+
+.switch-wrapper {
+  align-items: center;
+	display: flex;
+  flex: 1;
+	height: 100%;
+  justify-content: center;
+  max-width: 4rem;
+  width: 4rem;
+}
+
+input[type="checkbox"].switch {
+  appearance: none;
+	height: calc(1rem + 2px);
+	background-color: rgb(255, 107, 103);
+  border: solid 1px rgb(127, 127, 127);
+	border-radius: 3rem;
+  margin: 0;
+	position: relative;
+	outline: none;
+  width: 3rem;
+	transition: all .3s ease-in-out;
+}
+
+input[type="checkbox"].switch::after {
+  content: '';
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 .25rem rgba(0, 0, 0, .9);
+  height: 1rem;
+  left: 0;
+  position: absolute;
+  transform: scale(.7);
+  width: 1rem;
+  transition: all .3s ease-in-out;
+}
+
+input[type="checkbox"].switch:checked {
+  background-color: rgb(86, 212, 91);
+}
+
+input[type="checkbox"].switch:checked::after {
+  left: calc(100% - 1rem);
 }
 
 @keyframes rotatePlane {
