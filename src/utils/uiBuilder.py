@@ -120,6 +120,23 @@ def printFillEnd(duration, filledTracks):
     print('> {} tracks had their tags filled'.format(filledTracks))
 
 
+# Prints the stat scan begin message
+def printStatStart(targetFolder, totalTracks):
+    print('  Folder stat analysis : {} track(s) to analyze'.format(totalTracks))
+    print('> Extracting unique artists, genres and labels from \'{}\' and all its sub-directories...\n'.format(targetFolder))
+
+
+# Prints the stat scan progression
+def printStatProgress(percentage, filledTracks):
+    print('> {:02d}% -- {:6d} tracks were analyzed'.format(percentage, filledTracks))
+
+
+# Print the stat scanned end message
+def printStatEnd(duration, filledTracks):
+    print('  Stat analysis is done! It took {} seconds to perform the stat scan'.format(duration))
+    print('> {} tracks were analyzed'.format(filledTracks))
+
+
 # Prints the scan begin message
 def printAnalyzeStart(targetFolder, totalFiles):
     print('  Folder analysis : {} file(s) to analyze'.format(totalFiles))

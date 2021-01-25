@@ -182,7 +182,7 @@ class TrackTester:
         if self.track.composers == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Composers')
-        if self.track.producer == '':
+        if self.track.producers == '':
             self.missingTagsCounter += 1
             self.missingTags.append('Producer')
         if self.track.label == '':
@@ -241,9 +241,9 @@ class TrackTester:
                 self.errors.append(ErrorEnum.UNEXISTING_GENRE)
 
 
-    # Test ID3 tags order (names must be alpĥabetically sorted, while considering accent properly)
+    # Test ID3 tags order (names must be alphabetically sorted, while considering accent properly)
     def _testMissorderedTags(self):
-        # For acented char sorting
+        # For accented char sorting
         collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
         if sorted(removeSpecialCharFromArray(self.track.artists),
                   key=collator.getSortKey) != removeSpecialCharFromArray(self.track.artists):
@@ -379,7 +379,7 @@ class TrackTester:
                 return False
         else:
             hasError = False
-            # Checking first that the differents char are bc of an illegal symbol
+            # Checking first that the different char are bc of an illegal symbol
             for x in range(0, len(list1)):
                 # Forbidden char must have been replaced with a -,
                 # return False otherwise (char are different for no valuable reasons)

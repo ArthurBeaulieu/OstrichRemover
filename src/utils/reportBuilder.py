@@ -1,6 +1,7 @@
 # Python imports
 import datetime
 import json
+import icu
 # Project imports
 from src.utils.errorEnum import ErrorEnum
 from src.utils.tools import createDirectory
@@ -61,6 +62,28 @@ def computeMetaAnalyzeReport(version, duration, metaAnalyzer):
         'dumps': metaAnalyzer.dumps
     }
     return output
+
+
+# Generate an JSON file from the metaAnalyzer class
+def computeStatReport(version, duration, artists, genres, labels):
+    # Creating output dict object
+    collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
+    now = datetime.datetime.now()
+    output = {
+        'date': "{}-{}-{}".format(now.year, now.month, now.day),
+        'version': version,
+        'elapsedSeconds': duration,
+        'count': {
+            'artists': len(artists),
+            'genres': len(genres),
+            'labels': len(labels)
+        },
+        'artists': sorted(artists, key=collator.getSortKey),
+        'genres': sorted(genres, key=collator.getSortKey),
+        'labels': sorted(labels, key=collator.getSortKey)
+    }
+    return output
+
 
 
 # Convert the folderInfo object into a returned dict

@@ -13,13 +13,14 @@ from src.scan.albumTester import AlbumTester
 from src.fill.albumFiller import AlbumFiller
 from src.clean.albumCleaner import AlbumCleaner
 from src.analyze.metaAnalyzer import MetaAnalyzer
+from src.stat.statMaker import StatMaker
 from src.utils.tools import computePurity
 from src.utils.reportBuilder import *
 from src.utils.uiBuilder import *
 from src.utils.tools import *
 # Globals
 global scriptVersion
-scriptVersion = '1.5.2'
+scriptVersion = '1.5.3'
 
 
 # Script main frame
@@ -31,6 +32,7 @@ def main():
     ap.add_argument('-s', '--scan', help='Scan a folder to test it against naming convention', action='store_true')
     ap.add_argument('-f', '--fill', help='Prefill tags with folder name and file name information', action='store_true')
     ap.add_argument('-a', '--analyze', help='Analyze a folder of JSON dumps to make a meta analysis', action='store_true')
+    ap.add_argument('-t', '--stat', help='Aggregates stats about a given library', action='store_true')
     # Additional modes
     ap.add_argument('-c', '--clean', help='Clean all previously set tags, and ambiguous ones', action='store_true')
     # Arguments
@@ -53,6 +55,9 @@ def main():
     # Make a meta analysis of previously made scan to compile values
     elif args['analyze']:
         metaAnalysis(args)
+    # Make a meta analysis of previously made scan to compile values
+    elif args['stat']:
+        extractStats(args)
     # Clean all previously set tags (to prepare a track to be properly filled)
     elif args['clean']:
         if queryYesNo('> Warning, this command will erase any previously existing tags on audio files in this path. Just do it?', 'yes'):
@@ -190,6 +195,62 @@ def metaAnalysis(args):
     # Compute and save JSON report
     if args['dump']:
         saveReportFile(computeMetaAnalyzeReport(scriptVersion, duration, metaAnalyzer), 'meta-analyze')
+
+
+# This method will crawl an audio library and save all its main information (labels, artists, genres)
+def extractStats(args):
+    # Retrieve folder global information
+    printRetrieveFolderInfo()
+    folderInfo = FolderInfo(args['folder'])
+    printRootFolderInfo(folderInfo)
+    # Stat internals
+    artists = []
+    genres = []
+    labels = []
+    analyzedTracks = 0
+    totalTracks = folderInfo.flacCounter + folderInfo.mp3Counter
+    # Analyze progression utils
+    printStatStart(args['folder'], totalTracks)
+    step = 10
+    percentage = step
+    startTime = time.time()
+    # Sort directories so they are handled in the alphabetical order
+    for root, directories, files in sorted(os.walk(args['folder'])):
+        files = [f for f in files if not f[0] == '.'] # Ignore hidden files
+        directories[:] = [d for d in directories if not d[0] == '.'] # ignore hidden directories
+        # Split root into an array of folders
+        path = root.split(os.sep)
+        # Mutagen needs a preserved path when using ID3() or FLAC()
+        preservedPath = list(path)
+        rootPathLength = len(args['folder'].split(os.sep))
+        # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
+        for x in range(rootPathLength - 1):
+            path.pop(0)
+        # Current path is for an album directory : perform tests
+        if len(path) == 2 and path[1] != '':
+            albumStats = StatMaker(files, preservedPath)
+            artists = insertInListIfNotExisting(artists, albumStats.artists)
+            genres = insertInListIfNotExisting(genres, albumStats.genres)
+            labels = insertInListIfNotExisting(labels, albumStats.labels)
+            analyzedTracks += len(albumStats.tracks)
+        # Display a progress every step %
+        fillPercentage = (analyzedTracks * 100) / totalTracks
+        if totalTracks > 10 and fillPercentage >= step and analyzedTracks < totalTracks:
+            if (analyzedTracks * 100) / totalTracks > percentage and percentage < 100:
+                printStatProgress(percentage, analyzedTracks)
+                percentage += step
+    # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
+    if totalTracks > 10 and percentage != 10:
+        printLineBreak()
+    duration = round(time.time() - startTime, 2)
+    printStatEnd(duration, analyzedTracks)
+    # Compute and save JSON report
+    if args['dump']:
+        saveReportFile(computeStatReport(scriptVersion, duration, artists, genres, labels), 'stat')
+    else:
+        print(artists)
+        print(genres)
+        print(labels)
 
 
 # This method will clear ever tags in audio files for the scanned folder

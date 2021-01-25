@@ -26,7 +26,7 @@ class Track(object):
         self.composedPerformer = []
         self.composers = ''
         self.genres = []
-        self.producer = ''
+        self.producers = []
         self.label = ''
         self.trackNumber = 0
         self.totalTrack = 0
@@ -74,11 +74,11 @@ class Track(object):
         if 'TDRC' in self.audioTag and self.audioTag['TDRC'].text[0].get_text() != '':
             self.year = self.audioTag['TDRC'].text[0].get_text()[:4].rstrip()
         if 'TPUB' in self.audioTag and self.audioTag['TPUB'].text[0] != '':
-            self.producer = self.audioTag['TPUB'].text[0].rstrip()
+            self.producers = self.audioTag['TPUB'].text[0].rstrip().split('; ')
         if 'TCOP' in self.audioTag and self.audioTag['TCOP'].text[0] != '':
             self.label = self.audioTag['TCOP'].text[0].rstrip()
         if 'TCOM' in self.audioTag and self.audioTag['TCOM'].text[0] != '':
-            self.composers = self.audioTag['TCOM'].text[0]
+            self.composers = self.audioTag['TCOM'].text[0].rstrip().split('; ')
         if 'TOPE' in self.audioTag and self.audioTag['TOPE'].text[0] != '':
             self.performers = self.audioTag['TOPE'].text[0].rstrip().split('; ')
         if 'TLAN' in self.audioTag:
@@ -114,7 +114,7 @@ class Track(object):
         if 'TRACKNUMBER' in self.audioTag:
             self.trackNumber = self.audioTag['TRACKNUMBER'][0]
         if 'PRODUCER' in self.audioTag:
-            self.producer = self.audioTag['PRODUCER'][0]
+            self.producers = self.audioTag['PRODUCER'][0].split('; ')
         if 'LABEL' in self.audioTag:
             self.label = self.audioTag['LABEL'][0]
         if 'DISCNUMBER' in self.audioTag:
@@ -124,7 +124,7 @@ class Track(object):
         if 'TRACKTOTAL' in self.audioTag:
             self.totalTrack = self.audioTag['TRACKTOTAL'][0]
         if 'COMPOSER' in self.audioTag:
-            self.composers = self.audioTag['COMPOSER'][0]
+            self.composers = self.audioTag['COMPOSER'][0].split('; ')
         if 'PERFORMER' in self.audioTag:
             self.performers = self.audioTag['PERFORMER'][0].split('; ')
         if 'GENRE' in self.audioTag:

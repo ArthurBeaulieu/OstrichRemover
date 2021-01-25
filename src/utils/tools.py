@@ -107,6 +107,7 @@ def queryYesNo(question, default='yes'):
         else:
             print("Please respond with 'yes' or 'no' (or 'y' or 'n').\n")
 
+
 # Validate date formatting
 def validateDateFormat(string):
     try:
@@ -114,3 +115,9 @@ def validateDateFormat(string):
         return True
     except ValueError:
         return False
+
+def insertInListIfNotExisting(inputList, insertionList):
+    for item in insertionList:
+        if item not in inputList:
+            inputList.append(item)
+    return inputList

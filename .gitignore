@@ -1,5 +1,6 @@
 output/
 dump/
+stat/**.json
 meta-analyze/
 **/__pycache__/
 
