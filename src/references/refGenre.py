@@ -28,7 +28,7 @@ class RefGenre(object):
               'Indian Classical Music', 'Indie', 'Indie Dance', 'Indie Folk', 'Indie Pop',
               'Indie Rock', 'Industrial', 'Industrial Metal', 'Instrumental Rock', 'Jazz',
               'Jazz Funk', 'Jazz Fusion', 'Jazz Rap', 'Jazz Rock', 'J-Pop', 'Jumpstyle',
-              'Jungle', 'Jungle Terror', 'Kawaii Metal', 'K-Pop', 'Latin', 'Latin Rock',
+              'Jungle', 'Jungle Terror', 'K-Pop', 'Kawaii Metal', 'Krautrock', 'Latin', 'Latin Rock',
               'Leftfield', 'Liquid Funk', 'Lolicore', 'Mambo', 'Mashup', 'Melodic Black Metal', 'Melodic Death Metal',
               'Metal', 'Metalcore', 'Metalstep', 'Mid-Tempo', 'Minimal', 'Modal Jazz',
               'Modern', 'Moombahcore', 'Moombahton', 'Neo Soul', 'Neue Deutsche Härte',
