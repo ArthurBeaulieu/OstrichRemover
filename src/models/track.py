@@ -4,7 +4,7 @@ import PIL
 # Project imports
 from mutagen.id3 import ID3
 from mutagen.flac import FLAC, Picture
-from mutagen.id3._frames import TIT2, TDRC, TPE1, TPE2, TOPE, TRCK, TALB, TCMP, TCOM, TPOS, APIC
+from mutagen.id3._frames import TIT2, TDRC, TPE1, TPE2, TOPE, TRCK, TALB, TPUB, TCMP, TCOP, TLAN, TDOR, TCOM, TPOS, APIC
 
 
 # from utils.uiBuilder import printDetailledTrack # Uncomment for debug purpose only (printDetailledTrack() is very verbose)
@@ -181,7 +181,6 @@ class Track(object):
     def _computeFeaturing(self):
         if self.fileName.find('(feat.') != -1:
             startIndex = self.fileName.rfind('(feat.', 0, len(self.fileName))
-            # TODO handle matching brace -> in cas (feat. Zob(Thom))
             self.feat = self.fileName[startIndex + 7: self.fileName.find(')', startIndex)].split(', ')
             # +7 is to remove the `(feat. ` string from feat artist
             if len(self.feat) > 0 and self.feat[0] != '':
@@ -225,8 +224,21 @@ class Track(object):
     # Inspects the track object to find if any of its tags has multiple fields
     def testTagsUnicity(self):
         if self.fileType == 'MP3':
-            # TODO handle for mp3
-            pass
+            if 'TIT2' in self.audioTag and len(self.audioTag['TIT2'].text) > 1: return False
+            if 'TPE1' in self.audioTag and len(self.audioTag['TPE1'].text) > 1: return False
+            if 'TPE2' in self.audioTag and len(self.audioTag['TPE2'].text) > 1: return False
+            if 'TALB' in self.audioTag and len(self.audioTag['TALB'].text) > 1: return False
+            if 'TDRC' in self.audioTag and len(self.audioTag['TDRC'].text) > 1: return False
+            if 'TPUB' in self.audioTag and len(self.audioTag['TPUB'].text) > 1: return False
+            if 'TCOP' in self.audioTag and len(self.audioTag['TCOP'].text) > 1: return False
+            if 'TCOM' in self.audioTag and len(self.audioTag['TCOM'].text) > 1: return False
+            if 'TOPE' in self.audioTag and len(self.audioTag['TOPE'].text) > 1: return False
+            if 'TLAN' in self.audioTag and len(self.audioTag['TLAN'].text) > 1: return False
+            if 'TRCK' in self.audioTag and len(self.audioTag['TRCK'].text) > 1: return False
+            if 'TPOS' in self.audioTag and len(self.audioTag['TPOS'].text) > 1: return False
+            if 'TBPM' in self.audioTag and len(self.audioTag['TBPM'].text) > 1: return False
+            if 'TCMP' in self.audioTag and len(self.audioTag['TCMP'].text) > 1: return False
+            if 'TDOR' in self.audioTag and len(self.audioTag['TDOR'].text) > 1: return False
         elif self.fileType == 'FLAC':
             if 'TITLE' in self.audioTag and len(self.audioTag['TITLE']) > 1: return False
             if 'DATE' in self.audioTag and len(self.audioTag['DATE']) > 1: return False
@@ -254,14 +266,20 @@ class Track(object):
         # We could use audioTag.delete() but we just want to clear the tags supported by convention
         if self.fileType == 'MP3':
             self.audioTag.add(TIT2(text=''))
-            self.audioTag.add(TDRC(text=''))
             self.audioTag.add(TPE1(text=''))
             self.audioTag.add(TPE2(text=''))
-            self.audioTag.add(TOPE(text=''))
-            self.audioTag.add(TRCK(text=''))
             self.audioTag.add(TALB(text=''))
+            self.audioTag.add(TDRC(text=''))
+            self.audioTag.add(TPUB(text=''))
+            self.audioTag.add(TCOP(text=''))
+            self.audioTag.add(TCOM(text=''))
+            self.audioTag.add(TOPE(text=''))
+            self.audioTag.add(TLAN(text=''))
+            self.audioTag.add(TRCK(text=''))
             self.audioTag.add(TPOS(text=''))
+            self.audioTag.add(TBPM(text=''))
             self.audioTag.add(TCMP(text=''))
+            self.audioTag.add(TDOR(text=''))
         elif self.fileType == 'FLAC':
             self.audioTag['TITLE'] = ''
             self.audioTag['DATE'] = ''
@@ -342,7 +360,11 @@ class Track(object):
             self._setInternalTag('LANGUAGE', default)
             self._setInternalTag('PRODUCER', default)
             self._setInternalTag('LABEL', default) # May be overwritten in _fillTagsFromPreviouslyExistingTag()
-            self._setInternalTag('RELEASEDATE', '1900-01-01')
+            # Release date
+            if len(album.folderNameList[0]) > 4:
+                self._setInternalTag('RELEASEDATE', album.folderNameList[0], '1900-01-01')
+            else:
+                self._setInternalTag('RELEASEDATE', '{}-01-01'.format(album.year), '1900-01-01')
             # If other tags were previously filled, try to integrate them according to the tagging convention
             self._fillTagsFromPreviouslyExistingTag()
         elif self.fileType == 'MP3':
@@ -350,26 +372,35 @@ class Track(object):
                 self._buildArtistsList()
                 self._buildPerformersList()
                 self._addCoverToFile(album)
-                # Append tag by tag o the track
+                # Append tag by tag on the track
                 if self.fileNameList[5] is not None:  # Track title
                     self.audioTag.add(TIT2(text=self.fileNameList[5][:-4]))  # -4 for '.mp3' string
-            if album.year is not None:  # Year
-                self.audioTag.add(TDRC(text=str(album.year)))
             if self.artists is not None:  # Artist
                 self.audioTag.add(TPE1(text='; '.join(self.artists)))
             if album.albumArtist is not None:  # Album artist
                 self.audioTag.add(TPE2(text=album.albumArtist))
+            if len(self.folderNameList) == 2 and self.folderNameList[1] is not None:  # Album title
+                self.audioTag.add(TALB(text=self.folderNameList[1]))
+            if album.year is not None:  # Year
+                self.audioTag.add(TDRC(text=str(album.year)))
             if self.performers is not None:  # Performer (original artist)
                 self.audioTag.add(TOPE(text='; '.join(self.performers)))
             if len(self.fileNameList) == 6 and self.fileNameList[
                 3] is not None and album.totalTrack is not None:  # track N°/track total
                 self.audioTag.add(TRCK(text=str(self.fileNameList[3][1:]).lstrip('0') + '/' + str(album.totalTrack)))
-            if len(self.folderNameList) == 2 and self.folderNameList[1] is not None:  # Album title
-                self.audioTag.add(TALB(text=self.folderNameList[1]))
             if len(self.fileNameList) == 6 and self.fileNameList[
                 3] is not None and album.totalDisc is not None:  # disc N°/disc total
                 self.audioTag.add(TPOS(text=str(self.fileNameList[3][0]) + '/' + str(album.totalDisc)))
             self.audioTag.add(TCMP(text=compilation))  # Compilation
+            self.audioTag.add(TPUB(text=default))  # Producer
+            self.audioTag.add(TCOP(text=default))  # Label
+            self.audioTag.add(TCOM(text=default))  # Composer
+            self.audioTag.add(TLAN(text=default))  # Language
+            # Release date
+            if len(album.folderNameList[0]) > 4:
+                self.audioTag.add(TDOR(text=album.folderNameList[0]))
+            else:
+                self.audioTag.add(TDOR(text='{}-01-01'.format(album.year)))
         # Now save all the new tags into the audio file
         self.audioTag.save(self.audioTagPath)
 
@@ -421,17 +452,17 @@ class Track(object):
 
     # Append a cover to the track only if it is 1k by 1k and if there is not any cover
     def _addCoverToFile(self, album):
+        # Build the file path by concatenating folder in the file path
+        path = ''
+        for folder in self.pathList:
+            path += '{}/'.format(folder)
+        path += album.coverName        
         if self.fileType == 'FLAC':
             if not self.hasCover or (
                     self.audioTag.pictures[0].height != 1000 and self.audioTag.pictures[0].width != 1000):
                 if self.hasCover:
                     self.audioTag.clear_pictures()
-                # Build the file path by concatenating folder in the file path
-                path = ''
-                for folder in self.pathList:
-                    path += '{}/'.format(folder)
-                path += album.coverName
-                with open(path, "rb") as img:
+                with open(path, 'rb') as img:
                     data = img.read()
                 # Open physical image
                 im = PIL.Image.open(path)
@@ -439,8 +470,8 @@ class Track(object):
                 # Create picture and set its internals
                 picture = Picture()
                 picture.data = data
-                picture.type = 3  # COVER_FRONT
-                picture.desc = path.rsplit('/', 1)[-1]  # Add picture name as a description
+                picture.type = 3 # COVER_FRONT
+                picture.desc = path.rsplit('/', 1)[-1] # Add picture name as a description
                 picture.mime = mimetypes.guess_type(path)[0]
                 picture.width = width
                 picture.height = height
@@ -449,5 +480,10 @@ class Track(object):
                 self.audioTag.add_picture(picture)
                 self.audioTag.save()
         else:
-            # TODO for APIC frame
-            pass
+            # Remove any previous cover
+            self.audioTag.delall('APIC')
+            # Read and save cover into file
+            imgData = open(path, 'rb').read()
+            mime = mimetypes.guess_type(path)[0]
+            self.audioTag.add(APIC(3,  mime, 3, album.coverName, imgData))
+            self.audioTag.save(v2_version=3)

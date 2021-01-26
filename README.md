@@ -1,6 +1,6 @@
 # OstrichRemover
 
-![](https://badgen.net/badge/version/1.5.3/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.5.4/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 ##### Like your audio files to be correctly tagged ? *OstrichRemover* might help you !
 
@@ -107,11 +107,7 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 - [x] Update web report to support meta analysis dumps
 - [x] Web improvement (local storage, error handling, full responsive)
 - [ ] Service usage to make ostrich call an output point when done ;
-- [ ] Continuous integration (sonar)
-
-##### v3.0
 - [ ] Packaging in pip (PyPi)
-- [ ] Qt interface
 - [ ] ManaZeak integration as a plugin
 
  You can still learn more about the following milestones and the current tasks on the associated [Trello board](https://trello.com/b/0nVfm0Xz/mzkostrichremover). Contributions and ideas welcome!
