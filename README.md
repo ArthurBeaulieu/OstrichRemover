@@ -30,7 +30,7 @@ The script will crawl the folder you gave as an argument and will report you any
 - *Category 3* – ID3 tags inconsistencies ;  
 - *Category 4* – Tags coherence with against album analysis.
 
-Before running the script in scan mode, you must ensure that the folder you are about to test matches the [ManaZeak tree structure  and naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention), since other folder structure may results in a biased result. Then in your cloned repository, run:
+Before running the script in scan mode, you must ensure that the folder you are about to test matches the [ManaZeak tree structure  and naming convention](https://github.com/ManaZeak/ManaZeak/wiki/%5BPRJ%5D-Audio-Naming-convention), since other folder structure may results in a biased result. Then in your cloned repository, run:
 
 `$ python ./OstrichRemover.py -s ./path/to/library/folder/`
 
@@ -42,7 +42,7 @@ Available options :
 - `-v` or `--verbose` for a verbose output ;
 - `-e` or `--errors` to only display errors that occured.
 
-The script will also crawl the folder you gave as an argument, but this time it will fill the file tags, using the filename. This script usage assumes that you have already properly named the file in the tested folder. According to the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention),  it will automatically fill the following tags:
+The script will also crawl the folder you gave as an argument, but this time it will fill the file tags, using the filename. This script usage assumes that you have already properly named the file in the tested folder. According to the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/%5BPRJ%5D-Audio-Naming-convention), it will automatically fill the following tags:
 
 - title ;
 - artist ;
