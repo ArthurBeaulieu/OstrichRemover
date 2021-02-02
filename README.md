@@ -4,7 +4,7 @@
 
 ##### Like your audio files to be correctly tagged ? *OstrichRemover* might help you !
 
-This script is specially made to test a musical folder against the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/Naming-convention). It is highly recommended to read the naming convention before going any further. Based on this convention, *OstrichRemover* was designed to work in four fields: verifying, pre-tagging, analyzing and generating stats on your musical library.
+This script is specially made to test a musical folder against the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/%5BPRJ%5D-Audio-Naming-convention). It is highly recommended to read the naming convention before going any further. Based on this convention, *OstrichRemover* was designed to work in four fields: verifying, pre-tagging, analyzing and generating stats on your musical library.
 
 For any concerns, you can check the [wiki](https://github.com/ArthurBeaulieu/OstrichRemover/wiki), however, if you encounter any problem that is undocumented, please contact [support@manazeak.org](mailto:support@manazeak.org)
 
