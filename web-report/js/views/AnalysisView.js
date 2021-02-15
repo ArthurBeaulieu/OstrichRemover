@@ -1,6 +1,5 @@
 import GraphFactory from '../utils/GraphFactory.js';
 import Utils from '../utils/Utils.js';
-'use strict';
 
 
 class AnalysisView {
@@ -24,7 +23,7 @@ class AnalysisView {
         quality: null,
         size: null
       }
-    }
+    };
 
     this._buildUI();
     document.body.removeChild(window.overlay);

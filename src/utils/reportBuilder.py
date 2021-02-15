@@ -64,7 +64,7 @@ def computeMetaAnalyzeReport(version, duration, metaAnalyzer):
     return output
 
 
-# Generate an JSON file from the metaAnalyzer class
+# Generate an JSON file from the stats class
 def computeStatReport(version, duration, artists, genres, labels):
     # Creating output dict object
     collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
@@ -78,7 +78,7 @@ def computeStatReport(version, duration, artists, genres, labels):
             'genres': len(genres),
             'labels': len(labels)
         },
-        'artists': sorted(artists, key=collator.getSortKey),
+        'artists': sorted(artists, key=lambda x: collator.getSortKey(x['artist'])),
         'genres': sorted(genres, key=collator.getSortKey),
         'labels': sorted(labels, key=collator.getSortKey)
     }

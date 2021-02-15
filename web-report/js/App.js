@@ -1,11 +1,12 @@
 import DnD from './utils/DnD.js';
 import ErrorsView from './views/ErrorsView.js';
 import AnalysisView from './views/AnalysisView.js';
+import StatsView from './views/StatsView.js';
 'use strict';
 
 
 let view = null; // The active view in report-container
-const scriptVersion = '1.5.4';
+const scriptVersion = '1.5.5';
 
 
 // Display notification global method that can accessed through window object
@@ -76,10 +77,16 @@ const loadJSON = (fileInfo, data) => {
   document.body.appendChild(window.overlay); // Overlay must be removed in ViewClass
   // Fill view
   window.setTimeout(() => {
-    if (data.artists !== undefined) { // The dropped JSON is a scan dump
-      document.querySelector('#nav-title').innerHTML += ` – Error scan`;
-      view = new ErrorsView(data, document.querySelector('.report-container'));
-      DisplayNotification('success', 'Error scan loaded');
+    if (data.artists !== undefined) {
+      if (data.count !== undefined) { // The dropped JSON is a stats dump
+        document.querySelector('#nav-title').innerHTML += ` – Library stats`;
+        view = new StatsView(data, document.querySelector('.report-container'));
+        DisplayNotification('success', 'Stats loaded');
+      } else { // The dropped JSON is a scan dump
+        document.querySelector('#nav-title').innerHTML += ` – Error scan`;
+        view = new ErrorsView(data, document.querySelector('.report-container'));
+        DisplayNotification('success', 'Error scan loaded');
+      }
     } else if (data.dumps !== undefined && data.metaAnalyze !== undefined) { // The dropped JSON is a meta analysis
       document.querySelector('#nav-title').innerHTML += ` – Meta analysis`;
       view = new AnalysisView(data, document.querySelector('.report-container'));

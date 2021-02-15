@@ -12,6 +12,7 @@ class StatMaker:
         self.artists = []
         self.genres = []
         self.labels = []
+        self.artistsDetails = []
         self._createTracks()
         self._analyzeTracks()
 
@@ -42,15 +43,47 @@ class StatMaker:
             # Analyzing artists
             for artist in track.artists:
                 if artist not in self.artists:
+                    self.artistsDetails.append({
+                        'artist': artist,
+                        'info': [{
+                            'album': track.albumTitle,
+                            'albumArtist': track.albumArtist,
+                            'as': 'releaseArtist'
+                        }]
+                    })
                     self.artists.append(artist)
             for performer in track.performers:
                 if performer not in self.artists:
+                    self.artistsDetails.append({
+                        'artist': performer,
+                        'info': [{
+                            'album': track.albumTitle,
+                            'albumArtist': track.albumArtist,
+                            'as': 'performer'
+                        }]
+                    })
                     self.artists.append(performer)
             for composer in track.composers:
                 if composer not in self.artists:
+                    self.artistsDetails.append({
+                        'artist': composer,
+                        'info': [{
+                            'album': track.albumTitle,
+                            'albumArtist': track.albumArtist,
+                            'as': 'composer'
+                        }]
+                    })
                     self.artists.append(composer)
             for producer in track.producers:
                 if producer not in self.artists:
+                    self.artistsDetails.append({
+                        'artist': producer,
+                        'info': [{
+                            'album': track.albumTitle,
+                            'albumArtist': track.albumArtist,
+                            'as': 'producer'
+                        }]
+                    })
                     self.artists.append(producer)
             # Analyzing genres
             for genre in track.genres:

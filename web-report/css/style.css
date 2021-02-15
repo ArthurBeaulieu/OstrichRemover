@@ -1,5 +1,6 @@
 .light-theme {
   --bg: rgba(52, 52, 52, 0.8);
+  --modal-bg: rgba(230, 230, 230);
   --bg-light-blue: rgba(100, 100, 255, 0.05);
   --white: rgba(255, 255, 255, 0.9);
   --black: rgba(0, 0, 0, 0.9);
@@ -13,6 +14,7 @@
 
 .dark-theme {
   --bg: rgba(52, 52, 52, 0.8);
+  --modal-bg: rgba(52, 52, 52);
   --bg-light-blue: rgba(10, 10, 25, .5);
   --white: rgba(0, 0, 0, 0.9);
   --black: rgba(255, 255, 255, 0.9);
@@ -32,6 +34,7 @@ html, body {
   --padding: 10px;
   background: var(--white);
   height: 100%;
+  position: relative;
   width: 100%;
   transition: all .3s;
 }
@@ -331,6 +334,81 @@ button.active {
 
 .red {
   color: var(--red);
+}
+
+/* Stat view */
+
+.artists-wrapper {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.artists-wrapper .artist {
+  align-items: center;
+  background-color: none;
+  border: solid 1px var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: .5rem;
+  margin: .5rem;
+  width: 20rem;
+  transition: all .2s;
+}
+
+.artists-wrapper .artist:active,
+.artists-wrapper .artist:focus,
+.artists-wrapper .artist:hover {
+  background-color: var(--white);
+}
+
+.artists-wrapper .artist p {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  width: 18rem;
+}
+
+/* Modal */
+
+.modal {
+  background-color: var(--modal-bg);
+  border-radius: 5px;
+  position: absolute;
+  left: calc(50% - 25rem);
+  height: 80%;
+  text-align: center;
+  top: 10%;
+  width: 50rem;
+  z-index: 9999;
+}
+
+.modal .artists-wrapper {
+  align-items: flex-start;
+  border-bottom: 1px solid #eaecef;
+  display: flex;
+  flex-wrap: wrap;
+  height: calc(100% - 5rem - 48px - 19.6px); /* See header/button margins etc */
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.modal h1 {
+  height: 3rem;
+  margin-bottom: 0;
+}
+
+.modal button {
+  margin-top: 19.6px;
 }
 
 /* Switch checkbox style */

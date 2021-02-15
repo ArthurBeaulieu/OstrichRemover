@@ -1,5 +1,4 @@
 import Utils from '../utils/Utils.js';
-'use strict';
 
 
 class ErrorsView {
@@ -12,7 +11,7 @@ class ErrorsView {
     this._elements = {
       folder: null,
       artists: null
-    }
+    };
 
     this._buildUI();
     document.body.removeChild(window.overlay);

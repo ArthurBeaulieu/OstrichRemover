@@ -20,7 +20,7 @@ from src.utils.uiBuilder import *
 from src.utils.tools import *
 # Globals
 global scriptVersion
-scriptVersion = '1.5.4'
+scriptVersion = '1.5.5'
 
 
 # Script main frame
@@ -229,7 +229,7 @@ def extractStats(args):
         # Current path is for an album directory : perform tests
         if len(path) == 2 and path[1] != '':
             albumStats = StatMaker(files, preservedPath)
-            artists = insertInListIfNotExisting(artists, albumStats.artists)
+            artists = insertArtistInListIfNotExisting(artists, albumStats.artistsDetails)
             genres = insertInListIfNotExisting(genres, albumStats.genres)
             labels = insertInListIfNotExisting(labels, albumStats.labels)
             analyzedTracks += len(albumStats.tracks)

@@ -1,6 +1,6 @@
 # OstrichRemover
 
-![](https://badgen.net/badge/version/1.5.4/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.5.5/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 ##### Like your audio files to be correctly tagged ? *OstrichRemover* might help you !
 

@@ -121,3 +121,19 @@ def insertInListIfNotExisting(inputList, insertionList):
         if item not in inputList:
             inputList.append(item)
     return inputList
+
+
+def insertArtistInListIfNotExisting(inputList, insertionList):
+    for item in insertionList:
+        if len(inputList) == 0:
+            inputList.append(item)
+        else:
+            found = False
+            for artists in inputList:
+                if artists['artist'] == item['artist']:
+                    found = True
+                    artists['info'].append(item['info'][0])
+                    break
+            if found == False:
+                inputList.append(item)
+    return inputList
