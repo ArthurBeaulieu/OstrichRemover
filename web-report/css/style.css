@@ -338,6 +338,23 @@ button.active {
 
 /* Stat view */
 
+.nav-item {
+  margin-bottom: 2rem;
+}
+
+.nav-item em, .nav-item b, .nav-item p {
+  cursor: pointer;
+  margin-bottom: 0;
+  transition: all .2s;
+}
+
+.nav-item.active em, .nav-item.active b, .nav-item.active p,
+.nav-item:active em, .nav-item:active b, .nav-item:active p,
+.nav-item:focus em, .nav-item:focus b, .nav-item:focus p,
+.nav-item:hover em, .nav-item:hover b, .nav-item:hover p {
+  color: var(--green);
+}
+
 .artists-wrapper {
   align-items: center;
   display: flex;

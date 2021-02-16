@@ -65,7 +65,7 @@ def computeMetaAnalyzeReport(version, duration, metaAnalyzer):
 
 
 # Generate an JSON file from the stats class
-def computeStatReport(version, duration, artists, genres, labels):
+def computeStatReport(version, duration, artists, genres, labels, path):
     # Creating output dict object
     collator = icu.Collator.createInstance(icu.Locale('fr_FR.UTF-8'))
     now = datetime.datetime.now()
@@ -78,6 +78,7 @@ def computeStatReport(version, duration, artists, genres, labels):
             'genres': len(genres),
             'labels': len(labels)
         },
+        'folderPath': path,
         'artists': sorted(artists, key=lambda x: collator.getSortKey(x['artist'])),
         'genres': sorted(genres, key=collator.getSortKey),
         'labels': sorted(labels, key=collator.getSortKey)
@@ -113,8 +114,11 @@ def _computeFolderInfo(folderInfo, errorCounter, purity):
 
 
 # Save the output json file
-def saveReportFile(report, directory):
-    createDirectory(directory)
-    fileName = "OstrichRemover-{}".format(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
-    with open('{}/{}.json'.format(directory, fileName), 'w') as file:
-        json.dump(report, file, indent=2)
+def saveReportFile(report, type, minify):
+    createDirectory('dump')
+    fileName = "OstrichRemover-{}-{}".format(type, datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+    with open('dump/{}.json'.format(fileName), 'w') as file:
+        if minify == True:
+            json.dump(report, file, separators=(',', ':'))
+        else:
+            json.dump(report, file, indent=2)

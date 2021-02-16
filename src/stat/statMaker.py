@@ -48,7 +48,7 @@ class StatMaker:
                         'info': [{
                             'album': track.albumTitle,
                             'albumArtist': track.albumArtist,
-                            'as': 'releaseArtist'
+                            'as': 'artist'
                         }]
                     })
                     self.artists.append(artist)

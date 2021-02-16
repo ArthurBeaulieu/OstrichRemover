@@ -19,7 +19,8 @@ When all requierements are installed, you can launch *OstrichRemover* in four ma
 ## Scan mode (`-s` or `--scan`)
 
 Available options :
-- `-d` or `--dump` to dump a JSON report in the `./output` folder ;
+- `-d` or `--dump` to dump a JSON report in the `./dump` folder ;
+- `-m` or `--minify` to minify the JSON output ;
 - `-v` or `--verbose` for a verbose output.
 
 The script will crawl the folder you gave as an argument and will report you any error it found in your file naming / tagging. If specified with a `-d` of `--dump` flag, errors can be outputed in a JSON file, to be further reviewed in the `web-report/index.html` file (just drag and drop the json file in the input area).
@@ -66,7 +67,8 @@ In any case, if the filled track name doesn't fit the convention, it will be not
 ## Analyze mode (`-a` or `--analyze`)
 
 Available options :
-- `-d` or `--dump` to dump the analysis result in a json file.
+- `-d` or `--dump` to dump a JSON report in the `./dump` folder ;
+- `-m` or `--minify` to minify the JSON output.
 
 The analysis mode is made to use any JSON dumps generated with the `-sd` or `--scan --dump` command. Just provide the path where all your dumps resides and let the script generates you a meta analysis of them. The main goal of this command is to prepare data to be displayed in a graph (hello d3js). To do so, run (add `-d` or `--dump` to generate the JSON report) :
 
@@ -75,7 +77,8 @@ The analysis mode is made to use any JSON dumps generated with the `-sd` or `--s
 ## Stat scan mode (`-t` or `--stat`)
 
 Available options :
-- `-d` or `--dump` to dump the stat scan result in a json file.
+- `-d` or `--dump` to dump a JSON report in the `./dump` folder ;
+- `-m` or `--minify` to minify the JSON output.
 
 This mode will crawl the audio library, and collect stats about the number of unique artists (in all artist, performer, composer and producer fields), as well as for genres and labels. This way it offers a sorted list them so you can identify typos and such. To do so, run  (add `-d` or `--dump` to generate the JSON report) :
 
@@ -106,7 +109,10 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 - [x] Meta analyzer for scan dumps
 - [x] Update web report to support meta analysis dumps
 - [x] Web improvement (local storage, error handling, full responsive)
-- [ ] Service usage to make ostrich call an output point when done ;
+- [x] Library statistic mode
+
+#### v3.0
+- [ ] Service usage to make ostrich call an output point when done
 - [ ] Packaging in pip (PyPi)
 - [ ] ManaZeak integration as a plugin
 

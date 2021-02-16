@@ -36,7 +36,8 @@ def main():
     # Additional modes
     ap.add_argument('-c', '--clean', help='Clean all previously set tags, and ambiguous ones', action='store_true')
     # Arguments
-    ap.add_argument('-d', '--dump', help='Dump errors as JSON in ./output folder', action='store_true')
+    ap.add_argument('-d', '--dump', help='Dump JSON in ./dump folder', action='store_true')
+    ap.add_argument('-m', '--minify', help='Minify the JSON output', action='store_true')
     ap.add_argument('-e', '--errors', help='Log errors only during run', action='store_true')
     ap.add_argument('-v', '--verbose', help='Log detailed progress when running', action='store_true')
     args = vars(ap.parse_args())
@@ -124,7 +125,7 @@ def scanFolder(args):
     # Compute and save JSON report
     if args['dump']:
         saveReportFile(computeFillReport(scriptVersion, duration, folderInfo, albumTesters, errorCounter,
-                                     computePurity(errorCounter, scannedTracks)), 'dump')
+                                     computePurity(errorCounter, scannedTracks)), 'Errors', args['minify'])
     # Verbose report
     if args['verbose']:
         printErroredTracksReport(albumTesters)
@@ -194,7 +195,7 @@ def metaAnalysis(args):
     printAnalyzeEnd(duration, len(jsonFiles))
     # Compute and save JSON report
     if args['dump']:
-        saveReportFile(computeMetaAnalyzeReport(scriptVersion, duration, metaAnalyzer), 'meta-analyze')
+        saveReportFile(computeMetaAnalyzeReport(scriptVersion, duration, metaAnalyzer), 'Meta-Analyze', args['minify'])
 
 
 # This method will crawl an audio library and save all its main information (labels, artists, genres)
@@ -246,7 +247,7 @@ def extractStats(args):
     printStatEnd(duration, analyzedTracks)
     # Compute and save JSON report
     if args['dump']:
-        saveReportFile(computeStatReport(scriptVersion, duration, artists, genres, labels), 'stat')
+        saveReportFile(computeStatReport(scriptVersion, duration, artists, genres, labels, folderInfo.folder), 'Stats', args['minify'])
     else:
         print(artists)
         print(genres)
