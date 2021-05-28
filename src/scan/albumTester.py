@@ -112,6 +112,6 @@ class AlbumTester:
                 if trackTester.track.date != albumDate and dateLockErrors is False:
                     dateLockErrors = True
                     self.errorCounter += 1
-                    self.errors.append(ErrorEnum.INCONSISTENT_RELEASE_DATE)                    
+                    self.errors.append(ErrorEnum.INCONSISTENT_RELEASE_DATE)
             return errorCounter
         return 0
