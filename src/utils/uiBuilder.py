@@ -352,6 +352,12 @@ def _printErroredAlbumsReport_aux(errorCode):
     # ErrorCode 38 : Release date is not consistent accross album
     elif errorCode == 38:
         printTrackErrorInfo(errorCode, 'Inconsistent release date accross album', 'Please set each release date tag on file with the same value')
+    # ErrorCode 40 : The album folder doesn't contain any files
+    elif errorCode == 40:
+        printTrackErrorInfo(errorCode, 'Album folder is empty', 'There are no files in the folder, it should be removed')
+    # ErrorCode 41 : The album folder only contain an image
+    elif errorCode == 41:
+        printTrackErrorInfo(errorCode, 'Album folder only has an image', 'There is only a cover in the folder, it should be removed')
 
 
 # Display the error message according to the topic and error code. It will display the two !matching values
@@ -460,6 +466,11 @@ def printTrackErrorInfo(errorCode, string1, string2):
     elif errorCode == 38 or errorCode == 39:
         location1 = 'From date tag on files '
         location2 = 'Action                 '
+    # ErrorCode 40 : The album folder doesn't contain any files
+    # ErrorCode 41 : The album folder only contain an image
+    elif errorCode == 40 or errorCode == 41:
+        location1 = 'From album folder      '
+        location2 = 'Action                 '
     print('| | | {:02d} {} -> {} : \'{}\''.format(errorCode, topic, location1, string1))
     print('| | |                            {} : \'{}\''.format(location2, string2))
 
@@ -552,6 +563,10 @@ def getTopicStringFromErrorCode(errorCode):
     # ErrorCode 39 : Folder name release date doesn't match the track release date tag
     elif errorCode == 33 or errorCode == 37 or errorCode == 38 or errorCode == 39:
         topic = '------- Release date'
+    # ErrorCode 40 : The album folder doesn't contain any files
+    # ErrorCode 41 : The album folder only contain an image
+    elif errorCode == 40 or errorCode == 41:
+        topic = '------- Album folder'
     return topic
 
 

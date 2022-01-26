@@ -31,6 +31,14 @@ class AlbumTester:
         lockErrors = False
         # Determine album title from path (if not properly named, will raise an error later on)
         self.album.albumTitle = self.preservedPath[len(self.preservedPath) - 1][7:] # Remove 7 first char of path (year and ' - ' separator)
+        # Check that album folder does contains files
+        if len(self.album.filesIterable) == 0:
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.EMPTY_ALBUM_FOLDER)
+        # Check that album folder does contains files
+        if len(self.album.filesIterable) == 1 and len(fnmatch.filter(os.listdir('\\'.join(self.preservedPath)),'*.jpg')) == 1:
+            self.errorCounter += 1
+            self.errors.append(ErrorEnum.ALBUM_ONLY_HAS_COVER)
         # Filling internals
         for fileName in self.album.filesIterable:
             if fileName[-3:] == 'MP3' or fileName[-3:] == 'mp3' or fileName[-4:] == 'FLAC' or fileName[-4:] == 'flac':

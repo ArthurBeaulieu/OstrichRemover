@@ -20,7 +20,7 @@ from src.utils.uiBuilder import *
 from src.utils.tools import *
 # Globals
 global scriptVersion
-scriptVersion = '1.5.5'
+scriptVersion = '1.5.6'
 
 
 # Script main frame
@@ -36,10 +36,11 @@ def main():
     # Additional modes
     ap.add_argument('-c', '--clean', help='Clean all previously set tags, and ambiguous ones', action='store_true')
     # Arguments
-    ap.add_argument('-d', '--dump', help='Dump JSON in ./dump folder', action='store_true')
+    ap.add_argument('-d', '--dump', help='Dump JSON in ./dump folder by default, see -p for custom output folder', action='store_true')
     ap.add_argument('-m', '--minify', help='Minify the JSON output', action='store_true')
     ap.add_argument('-e', '--errors', help='Log errors only during run', action='store_true')
     ap.add_argument('-v', '--verbose', help='Log detailed progress when running', action='store_true')
+    ap.add_argument('-p', '--path', help='The output path to store the dumped JSON', type=os.path.abspath)
     args = vars(ap.parse_args())
     # Preventing path from missing its trailing slash (or backslash for win compatibility)
     if not args['folder'].endswith('\\') and not args['folder'].endswith('/'):
@@ -125,7 +126,7 @@ def scanFolder(args):
     # Compute and save JSON report
     if args['dump']:
         saveReportFile(computeFillReport(scriptVersion, duration, folderInfo, albumTesters, errorCounter,
-                                     computePurity(errorCounter, scannedTracks)), 'Errors', args['minify'])
+                                     computePurity(errorCounter, scannedTracks)), 'Errors', args['minify'], args['path'])
     # Verbose report
     if args['verbose']:
         printErroredTracksReport(albumTesters)
@@ -195,7 +196,7 @@ def metaAnalysis(args):
     printAnalyzeEnd(duration, len(jsonFiles))
     # Compute and save JSON report
     if args['dump']:
-        saveReportFile(computeMetaAnalyzeReport(scriptVersion, duration, metaAnalyzer), 'Meta-Analyze', args['minify'])
+        saveReportFile(computeMetaAnalyzeReport(scriptVersion, duration, metaAnalyzer), 'Meta-Analyze', args['minify'], args['path'])
 
 
 # This method will crawl an audio library and save all its main information (labels, artists, genres)
@@ -247,7 +248,7 @@ def extractStats(args):
     printStatEnd(duration, analyzedTracks)
     # Compute and save JSON report
     if args['dump']:
-        saveReportFile(computeStatReport(scriptVersion, duration, artists, genres, labels, folderInfo.folder), 'Stats', args['minify'])
+        saveReportFile(computeStatReport(scriptVersion, duration, artists, genres, labels, folderInfo.folder), 'Stats', args['minify'], args['path'])
     else:
         print(artists)
         print(genres)

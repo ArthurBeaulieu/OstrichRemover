@@ -1,6 +1,6 @@
 # OstrichRemover
 
-![](https://badgen.net/badge/version/1.5.5/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.5.6/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 ##### Like your audio files to be correctly tagged ? *OstrichRemover* might help you !
 
@@ -20,16 +20,18 @@ When all requierements are installed, you can launch *OstrichRemover* in four ma
 
 Available options :
 - `-d` or `--dump` to dump a JSON report in the `./dump` folder ;
+- `-p` or `--path` to specify the output path to dump the JSON report in ;
 - `-m` or `--minify` to minify the JSON output ;
 - `-v` or `--verbose` for a verbose output.
 
 The script will crawl the folder you gave as an argument and will report you any error it found in your file naming / tagging. If specified with a `-d` of `--dump` flag, errors can be outputed in a JSON file, to be further reviewed in the `web-report/index.html` file (just drag and drop the json file in the input area).
-*OstrichRemover* can detect **40 errors** per file (so far). Those errors are grouped in four categories that are detailed [in the wiki](https://github.com/ArthurBeaulieu/OstrichRemover/wiki/Tracked-Errors), respectively:
+*OstrichRemover* can detect **42 errors** per file (so far). Those errors are grouped in five categories that are detailed [in the wiki](https://github.com/ArthurBeaulieu/OstrichRemover/wiki/Tracked-Errors), respectively:
 
 - *Category 1* – File system naming inconsistencies ;  
 - *Category 2* – File system naming against ID3 tags ;  
 - *Category 3* – ID3 tags inconsistencies ;  
-- *Category 4* – Tags coherence with against album analysis.
+- *Category 4* – Tags coherence with against album analysis ;
+- *Category 5* – Miscelaneous errors.
 
 Before running the script in scan mode, you must ensure that the folder you are about to test matches the [ManaZeak tree structure  and naming convention](https://github.com/ManaZeak/ManaZeak/wiki/%5BPRJ%5D-Audio-Naming-convention), since other folder structure may results in a biased result. Then in your cloned repository, run:
 
@@ -41,7 +43,7 @@ The script computes a purity grade, that takes into account the total number of 
 
 Available options :
 - `-v` or `--verbose` for a verbose output ;
-- `-e` or `--errors` to only display errors that occured.
+- `-e` or `--errors` to only display errors that occurred.
 
 The script will also crawl the folder you gave as an argument, but this time it will fill the file tags, using the filename. This script usage assumes that you have already properly named the file in the tested folder. According to the [ManaZeak naming convention](https://github.com/ManaZeak/ManaZeak/wiki/%5BPRJ%5D-Audio-Naming-convention), it will automatically fill the following tags:
 
@@ -68,6 +70,7 @@ In any case, if the filled track name doesn't fit the convention, it will be not
 
 Available options :
 - `-d` or `--dump` to dump a JSON report in the `./dump` folder ;
+- `-p` or `--path` to specify the output path to dump the JSON report in ;
 - `-m` or `--minify` to minify the JSON output.
 
 The analysis mode is made to use any JSON dumps generated with the `-sd` or `--scan --dump` command. Just provide the path where all your dumps resides and let the script generates you a meta analysis of them. The main goal of this command is to prepare data to be displayed in a graph (hello d3js). To do so, run (add `-d` or `--dump` to generate the JSON report) :
@@ -78,6 +81,7 @@ The analysis mode is made to use any JSON dumps generated with the `-sd` or `--s
 
 Available options :
 - `-d` or `--dump` to dump a JSON report in the `./dump` folder ;
+- `-p` or `--path` to specify the output path to dump the JSON report in ;
 - `-m` or `--minify` to minify the JSON output.
 
 This mode will crawl the audio library, and collect stats about the number of unique artists (in all artist, performer, composer and producer fields), as well as for genres and labels. This way it offers a sorted list them so you can identify typos and such. To do so, run  (add `-d` or `--dump` to generate the JSON report) :
@@ -88,7 +92,7 @@ This mode will crawl the audio library, and collect stats about the number of un
 
 ### Clean mode (`-c` or `--clean`)
 
-The script will crawl the folder you gave as an argument, to clean all existing track metadata. It is mainly crafted to prepare tracks to be filled later on, to avoid ambiguous tags to remain (for example TOTALTRACK, TOTALTRACKS, TRACKTOTAL...). Warning, this command will remove all tags in files with no remorses at all, use with caution and self-awarness. To do so, run:
+The script will crawl the folder you gave as an argument, to clean all existing track metadata. It is mainly crafted to prepare tracks to be filled later on, to avoid ambiguous tags to remain (for example TOTALTRACK, TOTALTRACKS, TRACKTOTAL...). Warning, this command will remove all tags in files with no remorses at all, **use with caution and self-awarness**. To do so, run:
 
 `$ pyton ./OstrichRemover.py -c ./path/to/library/folder/`
 

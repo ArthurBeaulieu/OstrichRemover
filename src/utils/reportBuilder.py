@@ -114,10 +114,15 @@ def _computeFolderInfo(folderInfo, errorCounter, purity):
 
 
 # Save the output json file
-def saveReportFile(report, type, minify):
-    createDirectory('dump')
+def saveReportFile(report, type, minify, path):
+    # Set default path to dump folder if not provided
+    if path is None:
+        path = 'dump'
+    # Ensure folder is created if not existing
+    createDirectory(path)
+    # Then name and dump report as JSON file
     fileName = "OstrichRemover-{}-{}".format(type, datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
-    with open('dump/{}.json'.format(fileName), 'w') as file:
+    with open('{}/{}.json'.format(path, fileName), 'w') as file:
         if minify == True:
             json.dump(report, file, separators=(',', ':'))
         else:

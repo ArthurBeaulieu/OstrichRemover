@@ -213,3 +213,15 @@ class ErrorEnum(Enum):
         'errorCode': 38,
         'errorValue': "Release date tag is not consistent over album tracks"
     }
+    ## ------------
+    # Category 5 : Miscelaneous errors
+    # ErrorCode 40 : The album folder doesn't contain any files
+    EMPTY_ALBUM_FOLDER = {
+        'errorCode': 40,
+        'errorValue': "The album folder doesn't contain any files"
+    }
+    # ErrorCode 41 : The album folder only contain an image
+    ALBUM_ONLY_HAS_COVER = {
+        'errorCode': 41,
+        'errorValue': "The album folder only contains a cover"
+    }
