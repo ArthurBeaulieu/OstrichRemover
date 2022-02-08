@@ -39,7 +39,7 @@ class RefGenre(object):
               'Post-Punk', 'Post-Punk Revival', 'Post-Rock', 'Power Metal', 'Power Pop',
               'Power Rock', 'Primus', 'Progressive Death Metal', 'Progressive House',
               'Progressive Metal', 'Progressive Metalcore', 'Progressive Psytrance',
-              'Progressive Rock', 'Progressive Trance', 'Psychedelic Blues', 'Psychedelic Funk',
+              'Progressive Rock', 'Progressive Soul', 'Progressive Trance', 'Psychedelic Blues', 'Psychedelic Funk',
               'Psychedelic Pop', 'Psychedelic Rock', 'Psychedelic Soul', 'Psychill', 'Psytrance',
               'Punk', 'Punk Rock', 'Raga Rock', 'Ragga', 'Raggatek', 'Raï', 'Rap', 'Rap Be', 'Rap Fr',
               'Rap Rock', 'Rap Uk', 'Rap Us', 'Rawstyle', 'R&B', 'Reggae', 'Reggae Metal',
