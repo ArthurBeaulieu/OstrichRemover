@@ -12,7 +12,7 @@ class RefGenre(object):
               'Comedy Rock', 'Complextro', 'Country', 'Country Rock', 'Dance', 'Dancehall',
               'Dance Pop', 'Dark Ambient', 'Deathcore', 'Death Metal', 'Deep House',
               'Desert Rock', 'Dirty Dutch', 'Dirty Electro', 'Disco', 'Doom Metal',
-              'Downtempo', 'Dream Pop', 'Drum & Bass', 'Drumstep', 'Dub', 'Dubstep',
+              'Downtempo', 'Dream Pop', 'Drill', 'Drum & Bass', 'Drumstep', 'Dub', 'Dubstep',
               'Dutch House', 'East Coast Hip-Hop', 'Electric Blues', 'Electric Pow Wow', 'Electro', 'Electroclash',
               'Electro Funk', 'Electro House', 'Electro Jazz', 'Electronic', 'Electropop',
               'Electro Soul', 'Electro Swing', 'Eurodance', 'Europop', 'Experimental', 'Fidget House',
