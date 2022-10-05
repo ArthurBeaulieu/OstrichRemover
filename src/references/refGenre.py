@@ -16,7 +16,7 @@ class RefGenre(object):
               'Dutch House', 'East Coast Hip-Hop', 'Electric Blues', 'Electric Pow Wow', 'Electro', 'Electroclash',
               'Electro Funk', 'Electro House', 'Electro Jazz', 'Electronic', 'Electropop',
               'Electro Soul', 'Electro Swing', 'Eurodance', 'Europop', 'Experimental', 'Fidget House',
-              'Flamenco', 'Folk', 'Folk Rock', 'Frenchcore', 'French House', 'Funk',
+              'Flamenco', 'Folk', 'Folk Metal', 'Folk Rock', 'Frenchcore', 'French House', 'Funk',
               'Funk Metal', 'Funk Rock', 'Funkstep', 'Future Bass', 'Future Beats',
               'Future Bounce', 'Future Funk', 'Future House', 'Future Jazz', 'Gabber', 'Gangsta Rap',
               'Garage House', 'Garage Rock', 'G-Funk', 'G-House', 'Glam Metal', 'Glam Rock',
