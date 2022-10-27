@@ -5,7 +5,7 @@ class RefGenre(object):
               'Alternative Rock', 'Ambient', 'Ambient Pop', 'Arena Rock', 'Avant-Garde',
               'Avant-Garde Metal', 'Ballroom', 'Bhangra', 'Baroque', 'Baroque Pop', 'Bass House', 'Bassline',
               'Big Beat', 'Big Room', 'Bitpop', 'Black Metal', 'Blues', 'Blues Rock', 'Bolero',
-              'Boogaloo', 'Boogie Rock', 'Boom Bap', 'Bossa Nova', 'Bounce', 'Breakbeat', 'Breakcore',
+              'Boogaloo', 'Boogie Rock', 'Boom Bap', 'Bop', 'Bossa Nova', 'Bounce', 'Breakbeat', 'Breakcore',
               'Breaks', 'Britpop', 'Broken Beat', 'Brostep', 'Calypso', 'Canterbury Scene', 'Celtic', 'Celtic Rock',
               'Chanson Française', 'Chillgressive', 'Chill-Out', 'Chillstep', 'Chill Trap',
               'Chillwave', 'Chiptune', 'Christian Rock', 'Classical', 'Classic Rock', 'Cloud Rap',
