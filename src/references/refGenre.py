@@ -48,7 +48,7 @@ class RefGenre(object):
               'Smooth Jazz', 'Soft Rock', 'Soul', 'Southern Rock', 'Southern Soul', 'Space Rock',
               'Speedcore', 'Speed Garage', 'Speed Metal', 'Stoner Rock', 'Sunshine Pop',
               'Surf Rock', 'Swing', 'Symphonic Metal', 'Symphonic Rock', 'Synthpop', 'Synthwave',
-              'Tech House', 'Techno', 'Texas Blues', 'Thrash Metal', 'Traditional Pop',
+              'Tango', 'Tech House', 'Techno', 'Texas Blues', 'Thrash Metal', 'Traditional Pop',
               'Trance', 'Trap', 'Tribal', 'Tribal House', 'Tribecore', 'Trip-Hop',
               'Tropical House', 'Turntablism', 'UK Garage', 'Vaporwave', 'Vocal', 'Vocal Jazz',
               'West Coast Hip-Hop', 'World Music', 'Zeuhl', 'Zouk']
