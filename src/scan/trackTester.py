@@ -307,10 +307,10 @@ class TrackTester:
             self.errorCounter += 1
             self.errors.append(ErrorEnum.MISSING_TAGS)
             return
-        # Ensure that BPM isn't a floating value
-        if '.' in self.track.bpm or ',' in self.track.bpm:
-            self.errorCounter += 1
-            self.errors.append(ErrorEnum.FLOATING_BPM)
+        # Ensure that BPM isn't a floating value -> Canceled test as BPM CAN be floating values
+        #if '.' in self.track.bpm or ',' in self.track.bpm:
+        #    self.errorCounter += 1
+        #    self.errors.append(ErrorEnum.FLOATING_BPM)
         # Ensure that the tag year isn't unrealistic
         if int(self.track.year) < 1900 or int(self.track.year) > datetime.datetime.now().year:
             self.errorCounter += 1
