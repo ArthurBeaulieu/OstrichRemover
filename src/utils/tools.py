@@ -63,11 +63,14 @@ def computePurity(errorCounter, tracksSample):
 
 
 # Sanitize a given string and replace all forbidden char with a `-`
-def removeSpecialCharFromString(string):
+def removeSpecialCharFromString(str):
     # Checking first that the differents char are bc of an illegal symbol
-    for x in range(0, len(string)):
-        if string[x] in RefForbiddenChar.forbiddenChars:
-            string[x] = '-'
+    string = ''
+    for x in range(0, len(str)):
+        if str[x] in RefForbiddenChar.fsForbiddenChars:
+            string += '-'
+        else:
+            string += str[x]
     return string
 
 

@@ -8,5 +8,9 @@ class Album(object):
         self.totalTrack = 0
         self.totalDisc = '1'
         self.year = 0
+        self.label = ''
+        self.genres = []
+        self.compilation = 0
+        self.lang = ''
         self.hasCover = False
         self.coverName = ''

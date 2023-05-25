@@ -1,4 +1,5 @@
 # Python imports
+import os
 import datetime
 import json
 import icu
@@ -127,3 +128,206 @@ def saveReportFile(report, type, minify, path):
             json.dump(report, file, separators=(',', ':'))
         else:
             json.dump(report, file, indent=2)
+
+
+# Save the output json file
+def saveGeneratedJSONFile(elements, contributions, type, path):
+    # Set default path to dump folder if not provided
+    if path is None:
+        path = 'dump'
+    # Ensure folder is created if not existing
+    path = '{}/{}/txt'.format(path, type);
+    createDirectory(path)
+    for element in elements:
+        # Then name and dump report as JSON file
+        filePath = "{}".format('{}/{}.json'.format(path, element))
+        # Only create JSON if not alreay exists
+        jsonContent = generateOutputJSON(type, element, contributions[element])
+        if not os.path.exists(filePath):
+            with open(filePath, 'w', encoding='utf-8') as file:
+                json.dump(jsonContent, file, indent=2, ensure_ascii=False)
+        # Otherwise, mudt only update useful values and not erase anything
+        else:
+            with open(filePath, 'r', encoding='utf-8') as file:
+                fData = json.loads(file.read())
+                if type == 'artists':
+                    if fData['realName'] != jsonContent['realName'] or fData['originCountry'] != jsonContent['originCountry'] or fData['yearsActive'] != jsonContent['yearsActive'] or sorted(fData['artists']) != sorted(jsonContent['artists']) or sorted(fData['genres']) != sorted(jsonContent['genres']) or sorted(fData['labels']) != sorted(jsonContent['labels']):
+                        fData['realName'] = jsonContent['realName']
+                        fData['originCountry'] = jsonContent['originCountry']
+                        fData['yearsActive'] = jsonContent['yearsActive']
+                        fData['genres'] = jsonContent['genres']
+                        fData['labels'] = jsonContent['labels']
+                        with open(filePath, 'w', encoding='utf-8') as file:
+                            json.dump(fData, file, indent=2, ensure_ascii=False)
+                elif type == 'genres':
+                    if fData['yearsActive'] != jsonContent['yearsActive'] or sorted(fData['places']) != sorted(jsonContent['places']) or sorted(fData['artists']) != sorted(jsonContent['artists']) or sorted(fData['labels']) != sorted(jsonContent['labels']):
+                        fData['yearsActive'] = jsonContent['yearsActive']
+                        fData['places'] = jsonContent['places']
+                        fData['artists'] = jsonContent['artists']
+                        fData['labels'] = jsonContent['labels']
+                        with open(filePath, 'w', encoding='utf-8') as file:
+                            json.dump(fData, file, indent=2, ensure_ascii=False)
+
+
+
+def generateOutputJSON(type, element, contributions):
+    if type == 'artists':
+        return generateArtistJSON(element, contributions)
+    elif type == 'genres':
+        return generateGenreJSON(element, contributions)
+    else:
+        return generateLabelJSON(element, contributions)
+
+
+def generateArtistJSON(artist, contributions):
+    labels = []
+    genres = []
+    artists = []
+    start = 3000
+    end = 1000
+    lang = []
+    realName = ''
+    for album in contributions['albumArtist']:
+        if album.compilation == '0':
+            genres = genres + list(set(album.genres) - set(genres))
+        if not album.label in labels:
+            labels.append(album.label)
+        if int(album.year) < int(start):
+            start = album.year
+        if int(album.year) > int(end):
+            end = album.year
+        if len(lang) == 0:
+            lang = album.lang
+    for album in contributions['artist']:
+        if album.compilation == '0':
+            genres = genres + list(set(album.genres) - set(genres))
+        if not album.label in labels:
+            labels.append(album.label)
+        if int(album.year) < int(start):
+            start = album.year
+        if int(album.year) > int(end):
+            end = album.year
+        if not album.albumArtist in artists:
+            artists.append(album.albumArtist)
+    for album in contributions['performer']:
+        if album.compilation == '0':
+            genres = genres + list(set(album.genres) - set(genres))
+        if not album.label in labels:
+            labels.append(album.label)
+        if int(album.year) < int(start):
+            start = album.year
+        if int(album.year) > int(end):
+            end = album.year
+    for album in contributions['producer']:
+        if album.compilation == '0':
+            genres = genres + list(set(album.genres) - set(genres))
+        if not album.label in labels:
+            labels.append(album.label)
+        if int(album.year) < int(start):
+            start = album.year
+        if int(album.year) > int(end):
+            end = album.year
+    for album in contributions['composer']:
+        if album.compilation == '0':
+            genres = genres + list(set(album.genres) - set(genres))
+        if not album.label in labels:
+            labels.append(album.label)
+        if int(album.year) < int(start):
+            start = album.year
+        if int(album.year) > int(end):
+            end = album.year
+    if 'realName' in contributions and contributions['realName'] != None:
+        realName = contributions['realName']
+    output = {
+        "type": "",
+        "name": artist,
+        "realName": realName,
+        "alias": [],
+        "originCountry": lang,
+        "birth": "",
+        "placeOfBirth": "",
+        "countryOfBirth": "",
+        "death": "",
+        "placeOfDeath": "",
+        "countryOfDeath": "",
+        "yearsActive": "{}-{}".format(start, end),
+        "members": [],
+        "pastMembers": [],
+        "links": [],
+        "artists": artists,
+        "genres": genres,
+        "labels": labels,
+        "bio": {
+            "en": ""
+        },
+        "testimony": {
+            "en": {
+                "from": "",
+                "text": ""
+            }
+        }
+    }
+    return output
+
+
+def generateGenreJSON(genre, contributions):
+    artists = []
+    labels = []
+    start = 3000
+    end = 1000
+    places = []
+    for album in contributions:
+        if not album.albumArtist in artists:
+            artists.append(album.albumArtist)
+        if not album.label in labels:
+            labels.append(album.label)
+        if int(album.year) < int(start):
+            start = album.year
+        if int(album.year) > int(end):
+            end = album.year
+        if album.lang not in places:
+            places = places + list(set(album.lang) - set(places))
+    output = {
+        "name": genre,
+        "alias": [],
+        "start": "",
+        "end": "",
+        "originCountry": [],
+        "places": places,
+        "yearsActive": "{}-{}".format(start, end),
+        "parent": "",
+        "influences": [],
+        "subgenres": [],
+        "artists": artists,
+        "labels": labels,
+        "desc": {
+            "en": ""
+        }
+    }
+    return output
+
+
+def generateLabelJSON(label, contributions):
+    artists = []
+    start = 3000
+    end = 1000
+    for album in contributions:
+        if not album.albumArtist in artists:
+            artists.append(album.albumArtist)
+        if int(album.year) < int(start):
+            start = album.year
+        if int(album.year) > int(end):
+            end = album.year
+    output = {
+        "name": label,
+        "alias": [],
+        "start": "",
+        "end": "",
+        "originCountry": [],
+        "yearsActive": "{}-{}".format(start, end),
+        "artists": artists,
+        "desc": {
+            "en": ""
+        }
+    }
+    return output

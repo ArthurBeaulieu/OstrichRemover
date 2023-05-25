@@ -171,6 +171,20 @@ def printAnalyzeEnd(duration, analyzedFiles):
     print('> {} json(s) have been analyzed'.format(analyzedFiles))
 
 
+def printGenerationStart(totalTracks, targetFolder):
+    print('  Generate JSON files for artists and genres from : {} track(s) to parse'.format(totalTracks))
+    print('> Dumping JSON files in folder \'{}\'...\n'.format(targetFolder))
+
+
+def printGenerationProgress(percentage, parsedTracks):
+    print('> {:02d}% -- {:6d} tracks were parsed'.format(percentage, parsedTracks))
+
+
+def printGenerationEnd(duration, artists, genres):
+    print('  Generating file is done! It took {} seconds to create those assets'.format(duration))
+    print('> {} artists and {} genre now have an associated JSON file'.format(artists, genres))
+
+
 # Prints the scan begin message
 def printCleanStart(targetFolder, totalTracks):
     print('  Folder scan : {} track(s) to clean'.format(totalTracks))

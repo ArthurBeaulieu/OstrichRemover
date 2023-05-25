@@ -7,6 +7,7 @@ import sys
 import argparse
 import time
 import datetime
+import re
 # Project imports
 from src.models.folderInfo import FolderInfo
 from src.scan.albumTester import AlbumTester
@@ -20,7 +21,7 @@ from src.utils.uiBuilder import *
 from src.utils.tools import *
 # Globals
 global scriptVersion
-scriptVersion = '1.5.6'
+scriptVersion = '1.6.0'
 
 
 # Script main frame
@@ -33,6 +34,7 @@ def main():
     ap.add_argument('-f', '--fill', help='Prefill tags with folder name and file name information', action='store_true')
     ap.add_argument('-a', '--analyze', help='Analyze a folder of JSON dumps to make a meta analysis', action='store_true')
     ap.add_argument('-t', '--stat', help='Aggregates stats about a given library', action='store_true')
+    ap.add_argument('-g', '--gen', help='Generates a JSON for each release artist', action='store_true')
     # Additional modes
     ap.add_argument('-c', '--clean', help='Clean all previously set tags, and ambiguous ones', action='store_true')
     # Arguments
@@ -60,6 +62,9 @@ def main():
     # Make a meta analysis of previously made scan to compile values
     elif args['stat']:
         extractStats(args)
+    # Create a JSON file for all release artists and genre founds
+    elif args['gen']:
+        generateJSON(args)
     # Clean all previously set tags (to prepare a track to be properly filled)
     elif args['clean']:
         if queryYesNo('> Warning, this command will erase any previously existing tags on audio files in this path. Just do it?', 'yes'):
@@ -253,6 +258,165 @@ def extractStats(args):
         print(artists)
         print(genres)
         print(labels)
+
+
+# Thuis method will crawl the audio library and generate for each unique artist and genre a JSON file for ManaZeak assets
+def generateJSON(args):
+    # Retrieve folder global information
+    printRetrieveFolderInfo()
+    folderInfo = FolderInfo(args['folder'])
+    printRootFolderInfo(folderInfo)
+    # Scan internals
+    totalTracks = folderInfo.flacCounter + folderInfo.mp3Counter
+    rootPathLength = len(args['folder'].split(os.sep))
+    parsedTracks = 0
+    errorCounter = 0
+    albumTesters = []
+
+    artists = []
+    artistsAlbums = {}
+    genres = []
+    genresAlbums = {}
+    labels = []
+    labelsAlbums = {}
+    # Scan progression utils
+    step = 10
+    percentage = step
+    previousLetter = '1' # Ordered folder/file parsing begins with numbers
+    # Start scan
+    printGenerationStart(totalTracks, args['path'])
+    startTime = time.time()
+    # Sort directories so they are handled in the alphabetical order
+    for root, directories, files in sorted(os.walk(args['folder'])):
+        files = [f for f in files if not f[0] == '.'] # Ignore hidden files
+        directories[:] = [d for d in directories if not d[0] == '.'] # ignore hidden directories
+        # Split root into an array of folders
+        path = root.split(os.sep)
+        # Mutagen needs a preserved path when using ID3() or FLAC()
+        preservedPath = list(path)
+        # Poping all path element that are not the root folder, the artist sub folder or the album sub sub folder
+        for x in range(rootPathLength - 1):
+            path.pop(0)
+        # Current path is for an album directory : perform tests
+        if len(path) == 2 and path[1] != '':
+            albumTester = AlbumTester(files, preservedPath)
+            parsedTracks += albumTester.album.totalTrack
+            # Artists section
+            # Append release artist if not already added
+            if not albumTester.album.albumArtist in artists:
+                artists.append(removeSpecialCharFromString(albumTester.album.albumArtist))
+            if not albumTester.album.albumArtist in artistsAlbums:
+                artistsAlbums[removeSpecialCharFromString(albumTester.album.albumArtist)] = {
+                    'albumArtist': [albumTester.album],
+                    'artist': [],
+                    'performer': [],
+                    'producer': [],
+                    'composer': []
+                }
+            else:
+                artistsAlbums[removeSpecialCharFromString(albumTester.album.albumArtist)]['albumArtist'].append(albumTester.album)
+            # Label filling
+            if not albumTester.album.label in labels:
+                labels.append(removeSpecialCharFromString(albumTester.album.label))
+            if not albumTester.album.label in labelsAlbums:
+                labelsAlbums[removeSpecialCharFromString(albumTester.album.label)] = [albumTester.album]
+            else:
+                labelsAlbums[removeSpecialCharFromString(albumTester.album.label)].append(albumTester.album)
+            # Iterate over tracks now
+            for track in albumTester.tracks:
+                for artist in track.track.artists:
+                    if not artist in artists:
+                        artists.append(removeSpecialCharFromString(artist))
+                    if not artist in artistsAlbums:
+                        artistsAlbums[removeSpecialCharFromString(artist)] = {
+                            'albumArtist': [],
+                            'artist': [albumTester.album],
+                            'performer': [],
+                            'producer': [],
+                            'composer': []
+                        }
+                    else:
+                        artistsAlbums[removeSpecialCharFromString(artist)]['artist'].append(albumTester.album)
+                for performer in track.track.performers:
+                    if not performer in artists:
+                        artists.append(removeSpecialCharFromString(performer))
+                    if not performer in artistsAlbums:
+                        artistsAlbums[removeSpecialCharFromString(performer)] = {
+                            'albumArtist': [],
+                            'artist': [],
+                            'performer': [albumTester.album],
+                            'producer': [],
+                            'composer': []
+                        }
+                    else:
+                        artistsAlbums[removeSpecialCharFromString(performer)]['performer'].append(albumTester.album)
+                for producer in track.track.producers:
+                    if not producer in artists:
+                        artists.append(removeSpecialCharFromString(producer))
+                    if not producer in artistsAlbums:
+                        artistsAlbums[removeSpecialCharFromString(producer)] = {
+                            'albumArtist': [],
+                            'artist': [],
+                            'performer': [],
+                            'producer': [albumTester.album],
+                            'composer': []
+                        }
+                    else:
+                        artistsAlbums[removeSpecialCharFromString(producer)]['producer'].append(albumTester.album)
+                for composer in track.track.composers:
+                    c = re.sub(r' \([^()]*\)', '', composer)
+                    realName = re.search(r'\((.*?)\)', composer)
+                    if not c in artists:
+                        artists.append(removeSpecialCharFromString(c))
+                    if not c in artistsAlbums:
+                        artistsAlbums[removeSpecialCharFromString(c)] = {
+                            'albumArtist': [],
+                            'artist': [],
+                            'performer': [],
+                            'producer': [],
+                            'composer': [albumTester.album]
+                        }
+                    else:
+                        artistsAlbums[removeSpecialCharFromString(c)]['composer'].append(albumTester.album)
+                    if realName != None and realName.group(1).find(',') == -1:
+                        artistsAlbums[removeSpecialCharFromString(c)]['realName'] = removeSpecialCharFromString(realName.group(1))
+                # Updating genre
+                for genre in track.track.genres:
+                    if not genre in genres:
+                        genres.append(genre)
+                    if not genre in genresAlbums:
+                        genresAlbums[genre] = [albumTester.album]
+                    else:
+                        genresAlbums[genre].append(albumTester.album)
+            # Display a progress every step %
+            scannedPercentage = (parsedTracks * 100) / totalTracks
+            if totalTracks > 10 and scannedPercentage >= step and parsedTracks < totalTracks:
+                if (parsedTracks * 100) / totalTracks > percentage and percentage < 100:
+                    printGenerationProgress(percentage, parsedTracks)
+                    percentage += step
+    # In this case, ui has display a percentage progression. No need to add a line break if no progression is to be displayed
+    if totalTracks > 10 and percentage != 10:
+        printLineBreak()
+    duration = round(time.time() - startTime, 2)
+    printGenerationEnd(duration, len(artists), len(genres))
+    # Compute and save JSON report
+    if args['path']:
+        saveGeneratedJSONFile(artists, artistsAlbums, 'artists', args['path'])
+        saveGeneratedJSONFile(genres, genresAlbums, 'genres', args['path'])
+        saveGeneratedJSONFile(labels, labelsAlbums, 'labels', args['path'])
+    # Perform cleaning on files (remove all not in lists)
+    for filename in os.listdir(args['path'] + '/artists/txt'):
+        if filename[:-5] not in artists:
+            os.remove(args['path'] + '/artists/txt/' + filename)
+    for filename in os.listdir(args['path'] + '/genres/txt'):
+        if filename[:-5] not in genres:
+            os.remove(args['path'] + '/genres/txt/' + filename)
+    for filename in os.listdir(args['path'] + '/labels/txt'):
+        if filename[:-5] not in labels:
+            os.remove(args['path'] + '/labels/txt/' + filename)
+    # Verbose report
+    if args['verbose']:
+        printErroredTracksReport(albumTesters)
 
 
 # This method will clear ever tags in audio files for the scanned folder

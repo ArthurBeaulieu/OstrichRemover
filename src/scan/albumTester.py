@@ -29,8 +29,7 @@ class AlbumTester:
     # Analyse first the global album errors (compute a total disc/track and global album year)
     def _analyseAlbumInternals(self):
         lockErrors = False
-        # Determine album title from path (if not properly named, will raise an error later on)
-        self.album.albumTitle = self.preservedPath[len(self.preservedPath) - 1][7:] # Remove 7 first char of path (year and ' - ' separator)
+        self.album.folderNameList = self.preservedPath[len(self.preservedPath) - 1].split(' - ')
         # Check that album folder does contains files
         if len(self.album.filesIterable) == 0:
             self.errorCounter += 1
@@ -74,7 +73,27 @@ class AlbumTester:
         for fileName in self.files:
             trackTester = self._testFile(fileName, self.preservedPath, self.album)
             if trackTester is not None:
+                if self.album.label == '':
+                    self.album.label = trackTester.track.label
+                if self.album.albumArtist == '':
+                    self.album.albumArtist = trackTester.track.albumArtist
+                # Determine album title from path (if not properly named, will raise an error later on)
+                if self.album.albumTitle == '':
+                    self.album.albumTitle = trackTester.track.albumTitle
+                self.album.compilation = trackTester.track.compilation
+                self.album.lang = trackTester.track.lang
+                self.album.genres = self.album.genres + list(set(trackTester.track.genres) - set(self.album.genres))
                 self.tracks.append(trackTester)
+                y = str(trackTester.track.year)
+                y2 = str(trackTester.track.date)
+                if len(y) != 4:
+                    print(trackTester.track.albumArtist + '/' + trackTester.track.title + ', issue with year')
+                if len(y2) != 10:
+                    print(trackTester.track.albumArtist + '/' + trackTester.track.title + ', issue with date')
+                if 'RECORDINGDATE' in trackTester.track.audioTag:
+                    y3 = trackTester.track.audioTag['RECORDINGDATE'][0]
+                    if len(y3) != 21:
+                        print(trackTester.track.albumArtist + '/' + trackTester.track.title + ', issue with recording date')
 
 
     @staticmethod
