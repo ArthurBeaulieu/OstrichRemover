@@ -2,7 +2,7 @@ class RefGenre(object):
     # Allowed genres and style according to the naming convention
     genres = ['2-Step-Garage', 'Abstract', 'Abstract Hip-Hop', 'Acid House', 'Acid Rock', 'Acid Techno', 'Acoustic',
               'African Blues', 'Afrobeat', 'Alternative Hip-Hop', 'Alternative Metal',
-              'Alternative Rock', 'Ambient', 'Ambient Pop', 'Arena Rock', 'Avant-Garde',
+              'Alternative Rock', 'Ambient', 'Ambient Pop', 'Anatolian Rock', 'Arena Rock', 'Avant-Garde',
               'Avant-Garde Metal', 'Ballroom', 'Bhangra', 'Baroque', 'Baroque Pop', 'Bass House', 'Bassline',
               'Big Beat', 'Big Room', 'Bitpop', 'Black Metal', 'Blues', 'Blues Rock', 'Bolero',
               'Boogaloo', 'Boogie Rock', 'Boom Bap', 'Bop', 'Bossa Nova', 'Bounce', 'Breakbeat', 'Breakcore',
