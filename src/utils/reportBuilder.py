@@ -5,7 +5,7 @@ import json
 import icu
 # Project imports
 from src.utils.errorEnum import ErrorEnum
-from src.utils.tools import createDirectory
+from src.utils.tools import createDirectory, removeSpecialCharFromString
 
 
 # Generate an JSON file from the albumTesters array
@@ -141,8 +141,8 @@ def saveGeneratedJSONFile(elements, contributions, type, path):
     for element in elements:
         # Then name and dump report as JSON file
         filePath = "{}".format('{}/{}.json'.format(path, element))
-        # Only create JSON if not alreay exists
         jsonContent = generateOutputJSON(type, element, contributions[element])
+        # Only create JSON if not alreay exists
         if not os.path.exists(filePath):
             with open(filePath, 'w', encoding='utf-8') as file:
                 json.dump(jsonContent, file, indent=2, ensure_ascii=False)
@@ -167,10 +167,17 @@ def saveGeneratedJSONFile(elements, contributions, type, path):
                         fData['labels'] = jsonContent['labels']
                         with open(filePath, 'w', encoding='utf-8') as file:
                             json.dump(fData, file, indent=2, ensure_ascii=False)
+                elif type == 'labels':
+                    if fData['yearsActive'] != jsonContent['yearsActive'] or sorted(fData['artists']) != sorted(jsonContent['artists']):
+                        fData['yearsActive'] = jsonContent['yearsActive']
+                        fData['artists'] = jsonContent['artists']
+                        with open(filePath, 'w', encoding='utf-8') as file:
+                            json.dump(fData, file, indent=2, ensure_ascii=False)
 
 
 
 def generateOutputJSON(type, element, contributions):
+    print(element)
     if type == 'artists':
         return generateArtistJSON(element, contributions)
     elif type == 'genres':
@@ -198,6 +205,8 @@ def generateArtistJSON(artist, contributions):
             end = album.year
         if len(lang) == 0:
             lang = album.lang
+        if not removeSpecialCharFromString(album.albumArtist) in artists:
+            artists.append(removeSpecialCharFromString(album.albumArtist))
     for album in contributions['artist']:
         if album.compilation == '0':
             genres = genres + list(set(album.genres) - set(genres))
@@ -207,8 +216,8 @@ def generateArtistJSON(artist, contributions):
             start = album.year
         if int(album.year) > int(end):
             end = album.year
-        if not album.albumArtist in artists:
-            artists.append(album.albumArtist)
+        if not removeSpecialCharFromString(album.albumArtist) in artists:
+            artists.append(removeSpecialCharFromString(album.albumArtist))
     for album in contributions['performer']:
         if album.compilation == '0':
             genres = genres + list(set(album.genres) - set(genres))
@@ -218,6 +227,8 @@ def generateArtistJSON(artist, contributions):
             start = album.year
         if int(album.year) > int(end):
             end = album.year
+        if not removeSpecialCharFromString(album.albumArtist) in artists:
+            artists.append(removeSpecialCharFromString(album.albumArtist))
     for album in contributions['producer']:
         if album.compilation == '0':
             genres = genres + list(set(album.genres) - set(genres))
@@ -227,6 +238,8 @@ def generateArtistJSON(artist, contributions):
             start = album.year
         if int(album.year) > int(end):
             end = album.year
+        if not removeSpecialCharFromString(album.albumArtist) in artists:
+            artists.append(removeSpecialCharFromString(album.albumArtist))
     for album in contributions['composer']:
         if album.compilation == '0':
             genres = genres + list(set(album.genres) - set(genres))
@@ -236,6 +249,8 @@ def generateArtistJSON(artist, contributions):
             start = album.year
         if int(album.year) > int(end):
             end = album.year
+        if not removeSpecialCharFromString(album.albumArtist) in artists:
+            artists.append(removeSpecialCharFromString(album.albumArtist))
     if 'realName' in contributions and contributions['realName'] != None:
         realName = contributions['realName']
     output = {

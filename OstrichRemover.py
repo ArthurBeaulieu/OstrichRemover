@@ -398,7 +398,7 @@ def generateJSON(args):
     if totalTracks > 10 and percentage != 10:
         printLineBreak()
     duration = round(time.time() - startTime, 2)
-    printGenerationEnd(duration, len(artists), len(genres))
+    printGenerationEnd(duration, len(artists), len(genres), len(labels))
     # Compute and save JSON report
     if args['path']:
         saveGeneratedJSONFile(artists, artistsAlbums, 'artists', args['path'])

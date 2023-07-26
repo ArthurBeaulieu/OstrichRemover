@@ -180,9 +180,9 @@ def printGenerationProgress(percentage, parsedTracks):
     print('> {:02d}% -- {:6d} tracks were parsed'.format(percentage, parsedTracks))
 
 
-def printGenerationEnd(duration, artists, genres):
+def printGenerationEnd(duration, artists, genres, labels):
     print('  Generating file is done! It took {} seconds to create those assets'.format(duration))
-    print('> {} artists and {} genre now have an associated JSON file'.format(artists, genres))
+    print('> {} artists, {} genres and {} labels now have an associated JSON file'.format(artists, genres, labels))
 
 
 # Prints the scan begin message

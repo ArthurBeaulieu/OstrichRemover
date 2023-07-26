@@ -273,7 +273,7 @@ button.active {
 }
 
 .report-container .col-seven .graph-controls button {
-  margin: 0 calc(var(--margin) / 3);
+  margin: calc(var(--margin) / 2) calc(var(--margin) / 3);
 }
 
 .report-container .col-seven .graph-controls div {
