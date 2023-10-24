@@ -173,16 +173,10 @@ def saveGeneratedJSONFile(elements, contributions, type, path):
 
 def generateOutputJSON(type, element, contributions):
     if type == 'artists':
-        if element.startswith(" "):
-            print('Artist', element, contributions)
         return generateArtistJSON(element, contributions)
     elif type == 'genres':
-        if element.startswith(" "):
-            print('Genre', element, contributions)
         return generateGenreJSON(element, contributions)
     else:
-        if element.startswith(" "):
-            print('Label', element, contributions)
         return generateLabelJSON(element, contributions)
 
 
