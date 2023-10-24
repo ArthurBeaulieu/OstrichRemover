@@ -6,7 +6,7 @@ import StatsView from './views/StatsView.js';
 
 
 let view = null; // The active view in report-container
-const scriptVersion = '1.6.0';
+const scriptVersion = '1.6.1';
 
 
 // Display notification global method that can accessed through window object

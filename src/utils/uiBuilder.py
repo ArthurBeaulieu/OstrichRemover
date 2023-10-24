@@ -54,7 +54,7 @@ def printRootFolderInfo(folderInfo):
     print('> Folder size  : {}\n'.format(convertBytes(folderInfo.folderSize)))
     print('  Library informations')
     print('> Artist(s) : {:6d}\n> Album(s)  : {:6d}'.format(folderInfo.artistsCounter, folderInfo.albumsCounter))
-    print('> Track(s)  : {:6d}\n> Cover(s)  : {:6d}\n'.format(folderInfo.tracksCounter, folderInfo.coversCounter))
+    print('> Cover(s)  : {:6d}\n> Track(s)  : {:6d}\n'.format(folderInfo.coversCounter, folderInfo.tracksCounter))
     print('  Audio files informations')
     print('> FLAC  : {:6d} file(s) ({} %)\n> MP3   : {:6d} file(s) ({} %)'.format(folderInfo.flacCounter, folderInfo.flacPercentage, folderInfo.mp3Counter, folderInfo.mp3Percentage))
     print('> Total : {:6d} file(s)\n'.format(folderInfo.flacCounter + folderInfo.mp3Counter))

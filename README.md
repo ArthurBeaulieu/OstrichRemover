@@ -1,6 +1,6 @@
 # OstrichRemover
 
-![](https://badgen.net/badge/version/1.6.0/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
+![](https://badgen.net/badge/version/1.6.1/blue) ![](https://badgen.net/badge/license/GPL-3.0/green)
 
 ##### Like your audio files to be correctly tagged ? *OstrichRemover* might help you !
 
@@ -75,7 +75,7 @@ Available options :
 
 The analysis mode is made to use any JSON dumps generated with the `-sd` or `--scan --dump` command. Just provide the path where all your dumps resides and let the script generates you a meta analysis of them. The main goal of this command is to prepare data to be displayed in a graph (hello d3js). To do so, run (add `-d` or `--dump` to generate the JSON report) :
 
-`$ pyton ./OstrichRemover.py -a ./path/to/json/dumps/`
+`$ python ./OstrichRemover.py -a ./path/to/json/dumps/`
 
 ## Stat scan mode (`-t` or `--stat`)
 
@@ -86,7 +86,17 @@ Available options :
 
 This mode will crawl the audio library, and collect stats about the number of unique artists (in all artist, performer, composer and producer fields), as well as for genres and labels. This way it offers a sorted list them so you can identify typos and such. To do so, run  (add `-d` or `--dump` to generate the JSON report) :
 
-`$ pyton ./OstrichRemover.py -t ./path/to/library/folder/`
+`$ python ./OstrichRemover.py -t ./path/to/library/folder/`
+
+## JSON generator mode (`-g` or `--gen`)
+
+Available options :
+- `-d` or `--dump` to dump a JSON report in the `./dump` folder ;
+- `-p` or `--path` to specify the output path to dump the JSON report in.
+
+This mode will crawl the audio library, and generate a JSON file for artists, genres and labels it came accross (in all artist, performer, composer and producer fields). The generated JSON matches the advanced naming convention of ManaZeak and can therefor be provided as-is to ManaZeak web application. To do so, run  (add `-d` or `--dump` to generate the JSON report) :
+
+`$ python ./OstrichRemover.py -gd ./path/to/library/folder/ -p ./path/to/output/`
 
 ## Additional commands
 
@@ -94,7 +104,7 @@ This mode will crawl the audio library, and collect stats about the number of un
 
 The script will crawl the folder you gave as an argument, to clean all existing track metadata. It is mainly crafted to prepare tracks to be filled later on, to avoid ambiguous tags to remain (for example TOTALTRACK, TOTALTRACKS, TRACKTOTAL...). Warning, this command will remove all tags in files with no remorses at all, **use with caution and self-awarness**. To do so, run:
 
-`$ pyton ./OstrichRemover.py -c ./path/to/library/folder/`
+`$ python ./OstrichRemover.py -c ./path/to/library/folder/`
 
 ---
 
@@ -114,10 +124,10 @@ The script will crawl the folder you gave as an argument, to clean all existing 
 - [x] Update web report to support meta analysis dumps
 - [x] Web improvement (local storage, error handling, full responsive)
 - [x] Library statistic mode
+- [x] JSON generator for extended naming convention
+- [ ] Quality assurance
 
 #### v3.0
 - [ ] Service usage to make ostrich call an output point when done
 - [ ] Packaging in pip (PyPi)
 - [ ] ManaZeak integration as a plugin
-
- You can still learn more about the following milestones and the current tasks on the associated [Trello board](https://trello.com/b/0nVfm0Xz/mzkostrichremover). Contributions and ideas welcome!
